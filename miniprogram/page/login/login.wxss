@@ -1,0 +1,28 @@
+/* pages/login/login.wxss */
+
+.LoginFather  {
+
+  height: 100%;/**元素高度**/
+  width: 100%;/**元素宽度**/
+  color:rgb(127, 77, 241); /* 颜色 */
+  text-align: center; /*文字在其元素内部排列模式：居中  */
+  border-style: double;/*给元素添加边框，样式:double  */
+  padding: 100rpx 0; /*元素上下内边距 100rpx 左右内边距0rpx  这个会影响背景颜色的延生*/
+  margin-top: 200rpx;/*元素顶部外边距 30rpx  */
+  background-color: rgb(131, 166, 168);/*元素内部背景颜色 绿  */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;/**子元素水平方向居中**/
+  align-items: center;/**子元素垂直方向居中**/
+  border-radius:10rpx ;/**圆角**/
+  }
+  
+
+
+  .LoginButton{
+    text-align: center; /*文字在其元素内部排列模式：居中  */
+    font-size: 40rpx;/*文字大小  */
+    border-radius: 40rpx;/*圆角  */
+
+
+  }

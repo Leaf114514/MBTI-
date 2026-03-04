@@ -1,5 +1,5 @@
 {
-  "projectname": "mbti",
+  "projectname": "hunb",
   "setting": {
     "urlCheck": true,
     "coverView": true,
@@ -18,5 +18,6 @@
     "useIsolateContext": false,
     "ignoreDevUnusedFiles": true
   },
-  "libVersion": "3.14.2"
+  "libVersion": "3.14.2",
+  "condition": {}
 }
