@@ -1,0 +1,38 @@
+app.josn
+	pages
+		增加"page/my/my"页面
+	tabBar
+		末，云开发页面更名为my，指向页面变更为page/my/my
+miniprogram
+	image	
+		增加 default.png
+	my	
+		wxml （全是新增）
+			
+		wxss
+			front_end_file类用以规定页面总内容
+			avatar类 用以展示头像框
+			avatar_image 用以规定图片样式
+			.gender_box 用以规定性别选择框
+			gender_value用以规定性别选择类的性别文字样式
+			modal-content用以规定性别选择类的弹窗内容样式
+			gender_btn_group 用以规定性别选择弹窗男女按钮的总类样式
+			gender_btn用以规定性别选择弹窗男女按钮的分类样式
+			gender_btn.active 性别选择类-弹窗内容样式-选中状态样式
+		js
+			data
+				avatarUrl 默认存放一张图片 用以存放修改后的头像
+				gender: '' 储存性别
+				showModal: false 控制弹窗是否显示
+			新增change_avatar方法 反馈按下头像更换
+			并且调用get_wechat_avatar更换头像逻辑（已备注）
+			新增get_wechat_avatar
+			新增change_avat
+			新增 open_gender_modal
+			新增 close_gender_modal
+			新增 choose_gender
+			新增 clear_gender
+
+			onLoad
+				新增检测头像更换内容
+				新增检测性别选择内容
