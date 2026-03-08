@@ -1,0 +1,12 @@
+{
+  "_openid": "o-sample-openid-123456",
+  "name": "张三",
+  "birthday": "1995-05-20",
+  "gender": "male",
+  "createTime": {
+    "$date": "2024-03-08T10:00:00.000Z"
+  },
+  "updateTime": {
+    "$date": "2024-03-08T10:00:00.000Z"
+  }
+}
