@@ -1,0 +1,79 @@
+/* page/my/my.wxss */
+
+/* 页面内容总类 */
+.front_end_file{
+  display: flex;
+  flex-direction: column;
+  align-items: center;  
+
+}
+/* 头像框类 */
+.avatar {
+  border-radius: 20rpx;
+  margin: 0rpx 150rpx 10rpx 150rpx; 
+  padding: 10rpx;
+  background-color: #2bc552;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200rpx;
+  height: 200rpx;
+}
+
+/* 图片样式类 */
+.avatar_image {
+
+  width: 100%;
+  height: 100%;
+  border-radius: 15rpx; 
+}
+
+/* 性别选择类-总框 */
+.gender_box {
+  display: flex; 
+  align-items: center;
+  padding: 20rpx 30rpx;
+  margin: 30rpx;
+  background: #f5f5f5;
+  border-radius: 10rpx;
+  font-size: 32rpx;
+}
+
+/* 性别选择类-性别文字 */
+.gender_value {
+  color: #000;
+}
+
+/*  性别选择类-弹窗内容样式 */
+.modal-content {
+  padding: 20rpx 0;
+  text-align: center;
+}
+
+/* 性别选择类-弹窗内容样式-男/女按钮组-总类*/
+.gender_btn_group {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 40rpx;
+  
+}
+/* 性别选择类-弹窗内容样式-男/女按钮组-分类*/
+.gender_btn {
+  width: 120rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 32rpx;
+  border-radius: 40rpx;  
+  display: flex;
+  flex-direction: column; 
+  align-items: center;   
+  justify-content: center;
+}
+
+/* 性别选择类-弹窗内容样式-选中状态样式 */
+.gender_btn.active {
+  background: #08d85f;
+  color: #000000;
+  border: none;
+}
+

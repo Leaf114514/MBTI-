@@ -3,7 +3,8 @@
     "page/component/index",
     "page/API/index",
     "page/cloud/index",
-    "page/extend/index"
+    "page/extend/index",
+    "page/my/my"
   ],
   "subpackages": [
     {
@@ -241,10 +242,10 @@
         "text": "接口"
       },
       {
-        "pagePath": "page/cloud/index",
+        "pagePath": "page/my/my",
         "iconPath": "@iconPathCloud",
         "selectedIconPath": "@selectedIconPathCloud",
-        "text": "云开发"
+        "text": "我的"
       }
     ]
   },
