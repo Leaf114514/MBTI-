@@ -1,0 +1,10 @@
+<view class="container">
+  <view class="header">
+    <text class="title">发现你的性格</text>
+    <text class="subtitle">探索内在的自我</text>
+  </view>
+  
+  <view class="content">
+    <!-- 这里留白或放置极简的推荐内容 -->
+  </view>
+</view>

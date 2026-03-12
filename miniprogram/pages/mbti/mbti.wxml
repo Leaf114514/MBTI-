@@ -1,0 +1,10 @@
+<view class="container">
+  <view class="header">
+    <text class="title">MBTI 测试</text>
+    <text class="subtitle">深入了解你的性格类型</text>
+  </view>
+  
+  <view class="content">
+    <!-- 这里放置 MBTI 内容 -->
+  </view>
+</view>

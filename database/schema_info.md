@@ -33,4 +33,4 @@
 
 ### 初始化数据 (Seed Data)
 
-本地 `database/user_info.json` 文件包含了单条示例数据的 JSON 对象。你可以直接通过云开发控制台的“导入”功能进行导入。
+本地 `database/user_info.json` 文件包含了示例数据，可通过云开发控制台的“导入”功能进行导入测试。

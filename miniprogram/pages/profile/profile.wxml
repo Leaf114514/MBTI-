@@ -1,0 +1,10 @@
+<view class="container">
+  <view class="header">
+    <text class="title">个人中心</text>
+    <text class="subtitle">管理你的个人信息</text>
+  </view>
+  
+  <view class="content">
+    <!-- 个人中心逻辑 -->
+  </view>
+</view>
