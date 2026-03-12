@@ -1,0 +1,13 @@
+<view class="container">
+  <view class="header">
+    <text class="title">人格类型解析</text>
+    <text class="subtitle">深入了解每种性格的特点</text>
+  </view>
+  
+  <scroll-view scroll-y class="mbti-list">
+    <view class="mbti-item" wxfor="{{mbtiList}}" wxkey="name">
+      <view class="mbti-name">{{item.name}}</view>
+      <view class="mbti-desc">{{item.description}}</view>
+    </view>
+  </scroll-view>
+</view>

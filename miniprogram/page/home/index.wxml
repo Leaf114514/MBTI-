@@ -1,0 +1,14 @@
+<view class="container">
+  <view class="header">
+    <text class="title">欢迎使用 MBTI 测试</text>
+    <text class="subtitle">发现真实的自己</text>
+  </view>
+  
+  <view class="main-content">
+    <!-- 留白区域 -->
+  </view>
+  
+  <view class="footer">
+    <button class="start-btn">立即开始测试</button>
+  </view>
+</view>
