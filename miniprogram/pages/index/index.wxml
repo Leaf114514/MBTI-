@@ -1,0 +1,23 @@
+
+<view class="container">
+  <view class="title">{{message}}</view>
+
+  <button bindtap="handleLogin">微信登录</button>
+
+  <view wx:if="{{loginStatus}}" class="status">
+    <text>{{loginStatus}}</text>
+  </view>
+
+  <view wx:if="{{userInfo}}" class="user-card">
+    <view>User ID: {{userInfo._id}}</view>
+    <view>OpenID: {{userInfo.openid}}</view>
+    <view>Is New User: {{isNewUser}}</view>
+    <view>Nickname: {{userInfo.profile.nickName}}</view>
+    <image
+      wx:if="{{userInfo.profile.avatarUrl}}"
+      src="{{userInfo.profile.avatarUrl}}"
+      mode="aspectFit"
+      class="avatar"
+    />
+  </view>
+</view>
