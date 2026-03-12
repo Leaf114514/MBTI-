@@ -1,4 +1,4 @@
-
+// legacy module
 Page({
   data: {
     userInfo: null,
