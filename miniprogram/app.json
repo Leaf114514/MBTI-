@@ -1,6 +1,11 @@
 {
   "pages": [
-    "pages/index/index"
+    "page/login/login",
+    "page/home/home",
+    "page/component/index",
+    "page/API/index",
+    "page/cloud/index",
+    "page/extend/index"
   ],
   "window": {
     "navigationBarTitleText": "Home"

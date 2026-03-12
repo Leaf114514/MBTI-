@@ -1,0 +1,16 @@
+<!--pages/login/login.wxml-->
+
+<!--微信快捷登录按钮-->
+<view class="LoginFather">
+    
+    <button 
+      class="LoginButton"
+      type="primary"
+      bindtap="handleWechatLogin"
+      open-type="getUserInfo"  
+       >
+      微信快捷登录
+    </button>
+  
+    </view>
+
