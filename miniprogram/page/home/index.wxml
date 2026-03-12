@@ -1,0 +1,5 @@
+<view class="container">
+  <view class="placeholder">
+    <text>主页内容</text>
+  </view>
+</view>
