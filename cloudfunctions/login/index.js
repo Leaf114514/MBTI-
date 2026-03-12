@@ -1,4 +1,4 @@
-
+// cloudfunctions/login/index.js
 const cloud = require('wx-server-sdk');
 
 cloud.init({
@@ -13,14 +13,12 @@ exports.main = async (event, context) => {
     const wxContext = cloud.getWXContext();
     const { OPENID, APPID, UNIONID } = wxContext;
 
-    // Look up existing user by OPENID
     const userQueryResult = await usersCollection.where({
       openid: OPENID
     }).get();
 
     const now = new Date();
 
-    // Existing user
     if (userQueryResult.data.length > 0) {
       const existingUser = userQueryResult.data[0];
 
@@ -39,14 +37,16 @@ exports.main = async (event, context) => {
         user: {
           _id: existingUser._id,
           openid: existingUser.openid,
-          profile: existingUser.profile || {},
+          profile: existingUser.profile || {
+            nickName: '',
+            avatarUrl: ''
+          },
           createdAt: existingUser.createdAt,
           lastLoginAt: now
         }
       };
     }
 
-    // New user
     const addResult = await usersCollection.add({
       data: {
         openid: OPENID,
