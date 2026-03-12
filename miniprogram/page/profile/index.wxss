@@ -1,56 +1,12 @@
 .container {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   height: 100vh;
-  padding: 40rpx;
-  box-sizing: border-box;
   background-color: #ffffff;
 }
 
-.user-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 60rpx;
-  margin-bottom: 80rpx;
-}
-
-.avatar {
-  width: 160rpx;
-  height: 160rpx;
-  border-radius: 50%;
-  background-color: #f0f0f0;
-  margin-bottom: 20rpx;
-}
-
-.nickname {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #333333;
-}
-
-.menu-list {
-  flex: 1;
-}
-
-.menu-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 30rpx 0;
-  border-bottom: 1rpx solid #eeeeee;
-}
-
-.menu-title {
-  font-size: 30rpx;
-  color: #333333;
-}
-
-.menu-arrow {
-  font-size: 28rpx;
-  color: #cccccc;
-}
-
-.footer-blank {
-  height: 120rpx; /* 留出底部菜单栏空间 */
+.placeholder {
+  font-size: 32rpx;
+  color: #999999;
 }

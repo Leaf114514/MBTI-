@@ -1,17 +1,5 @@
 <view class="container">
-  <view class="user-info">
-    <image class="avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-    <text class="nickname">{{userInfo.nickName}}</text>
-  </view>
-  
-  <view class="menu-list">
-    <view class="menu-item" wxfor="{{menuItems}}" wxkey="id">
-      <text class="menu-title">{{item.title}}</text>
-      <text class="menu-arrow">></text>
-    </view>
-  </view>
-  
-  <view class="footer-blank">
-    <!-- 留白 -->
+  <view class="placeholder">
+    <text>个人中心内容</text>
   </view>
 </view>
