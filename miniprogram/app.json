@@ -1,12 +1,12 @@
 {
   "pages": [
+    "page/home/index",
+    "page/mbti/index",
+    "page/profile/index",
     "page/component/index",
     "page/API/index",
     "page/cloud/index",
-    "page/extend/index",
-    "page/home/index",
-    "page/mbti/index",
-    "page/profile/index"
+    "page/extend/index"
   ],
   "subpackages": [
     {
