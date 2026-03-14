@@ -1,0 +1,10 @@
+.container {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 28rpx 24rpx 40rpx;
+  background: #f5f7fb;
+}
+
+.page-content {
+  width: 100%;
+}

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "主页",
+  "usingComponents": {
+    "article-panel": "/components/article-panel/index"
+  }
+}
