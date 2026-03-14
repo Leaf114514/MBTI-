@@ -1,12 +1,10 @@
 .container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: #ffffff;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 28rpx 24rpx 40rpx;
+  background: #f5f7fb;
 }
 
-.placeholder {
-  font-size: 32rpx;
-  color: #999999;
+.page-content {
+  width: 100%;
 }

@@ -2,6 +2,7 @@
   "pages": [
     "page/home/index",
     "page/mbti/index",
+    "page/article/index",
     "page/profile/index",
     "page/component/index",
     "page/API/index",

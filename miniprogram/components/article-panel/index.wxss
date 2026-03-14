@@ -1,0 +1,51 @@
+.article-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.panel-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #1f2a37;
+}
+
+.article-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.article-card {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 20rpx;
+  border-radius: 20rpx;
+  background: #ffffff;
+  box-shadow: 0 10rpx 20rpx rgba(31, 42, 55, 0.08);
+}
+
+.article-cover {
+  width: 160rpx;
+  height: 120rpx;
+  border-radius: 14rpx;
+  flex-shrink: 0;
+}
+
+.article-title {
+  font-size: 30rpx;
+  color: #1f2a37;
+  line-height: 1.4;
+}
+
+.empty-state {
+  padding: 30rpx;
+  border-radius: 20rpx;
+  background: #f3f4f6;
+}
+
+.empty-text {
+  color: #6b7280;
+  font-size: 26rpx;
+}

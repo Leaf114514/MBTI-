@@ -1,5 +1,9 @@
 <view class="container">
-  <view class="placeholder">
-    <text>主页内容</text>
+  <view class="page-content">
+    <article-panel
+      title="{{sectionTitle}}"
+      articles="{{recommendedArticles}}"
+      bind:select="onSelectArticle"
+    />
   </view>
 </view>
