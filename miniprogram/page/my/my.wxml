@@ -1,41 +1,22 @@
-
+<view class="style_edit_btn" > <text bindtap="goToProfile">编辑</text></view>
 <view class="front_end_file">
     <!-- 头像框 -->
-<view class="avatar"bindtap="change_avatar">
+<view class="avatar">
   <image class="avatar_image" src="{{avatarUrl}}" mode="aspectFill"/>
-  
 </view>
-   <!-- 性别栏 -->
-  <view class="gender_box" bindtap="open_gender_modal">
-   <text class="gender_value">{{gender || '性别未设置'}}</text>
+
+   <!-- 名字栏 -->
+<view class="attribute_box" >
+   <text class="attribute_value">{{userName || '名字未设置'}}</text>
   </view>
-
-
-  <!-- 性别选择弹窗栏 -->
-  <modal 
-  title="选择性别" 
-  hidden="{{!showModal}}" 
-  confirm-text="取消" 
-  bindconfirm="close_gender_modal"
-  cancel-text="清空"
-  bindcancel="clear_gender"
->
-  <view class="modal_content">
-    <!-- 男女按钮 -->
-    <view class="gender_btn_group">
-      <button 
-        class="gender_btn {{gender === '男' ? 'active' : ''}}"
-        bindtap="choose_gender"
-        data-gender="男"
-      >男</button>
-      <button 
-        class="gender_btn {{gender === '女' ? 'active' : ''}}"
-        bindtap="choose_gender"
-        data-gender="女"
-      >女</button>
-    </view>
+   <!-- 属性栏 -->
+  <view class="attribute_box" >
+   <text class="attribute_value">{{gender || '性别未设置'}}</text>
+   <text class="attribute_value">{{tempBirthday || '生日未设置'}}</text>
   </view>
-</modal>
-
 </view>
+
+
+
+
 

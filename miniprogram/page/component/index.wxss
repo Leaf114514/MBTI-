@@ -1,6 +1,1 @@
-@import "../common/index.wxss";
-
-.weui-agree__link {
-  display: inline;
-  color: var(--weui-LINK);
-}
+/* page/component/index.wxss */

@@ -1,0 +1,193 @@
+/* page/my/my.wxss */
+
+/* 页面内容总类 */
+.front_end_file {
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* 占满页面宽度 */
+}
+/* 栏样式 */
+.avatar_row {
+  display: flex;
+  align-items: center; 
+  justify-content: space-between; 
+  width: 100%;
+  padding: 20rpx 30rpx;
+  background-color: #fff; 
+  border-bottom: 5rpx solid #eee; 
+  box-sizing: border-box; 
+}
+/* 右侧图片框样式 */
+.avatar {
+  border-radius: 20rpx;
+  padding: 8rpx;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80rpx;  /* 缩小尺寸 */
+  height: 80rpx;
+  margin-right: 20rpx; /* 和文字之间的间距 */
+}
+
+/* 图片样式类 */
+.avatar_image {
+
+  width: 100%;
+  height: 100%;
+  border-radius: 15rpx; 
+}
+
+
+
+/* 右侧文字父样式 */
+.gender_value {
+  border-radius: 20rpx;
+  padding: 8rpx;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 30rpx; /* 和文字之间的间距 */
+}
+
+
+/*  性别选择类-弹窗内容样式 */
+.modal-content {
+  padding: 20rpx 0;
+  text-align: center;
+}
+
+/* 性别选择类-弹窗内容样式-男/女按钮组-总类*/
+.gender_btn_group {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 40rpx;
+  
+}
+/* 性别选择类-弹窗内容样式-男/女按钮组-分类*/
+.gender_btn {
+  width: 120rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 32rpx;
+  border-radius: 40rpx;  
+  display: flex;
+  flex-direction: column; 
+  align-items: center;   
+  justify-content: center;
+}
+
+/* 性别选择类-弹窗内容样式-选中状态样式 */
+.gender_btn.active {
+  background: #08d85f;
+  color: #000000;
+  border: none;
+}
+
+.birthday_box {
+  display: flex; 
+  align-items: center;
+  padding: 20rpx 30rpx;
+  margin: 30rpx;
+  border-radius: 10rpx;
+  font-size: 32rpx;
+}
+
+
+
+/* 弹窗遮罩层 */
+.modal_mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+}
+
+/* 名字弹窗容器 */
+.modal_box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 560rpx;
+  padding: 36rpx 30rpx 30rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  box-sizing: border-box;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+}
+
+.modal_title {
+  margin-bottom: 30rpx;
+  font-size: 34rpx;
+  text-align: center;
+  color: #222;
+}
+
+.name_input {
+  height: 80rpx;
+  padding: 0 20rpx;
+  margin-bottom: 30rpx;
+  border: 1rpx solid #ddd;
+  border-radius: 12rpx;
+}
+
+.modal_btn_box {
+  display: flex;
+  justify-content: space-between;
+}
+
+.modal_btn_box button {
+  width: 46%;
+  border-radius: 10rpx;
+  font-size: 30rpx;
+}
+
+/* 生日弹窗容器 */
+.birthday_modal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border-radius: 20rpx 20rpx 0 0;
+  z-index: 100;
+}
+
+/* 轮盘选择器容器 */
+.picker_wrap {
+  padding: 30rpx;
+  border-bottom: 1rpx solid #eee;
+}
+.picker_text {
+  font-size: 32rpx;
+  color: #333;
+  text-align: center;
+}
+
+/* 弹窗按钮容器 */
+.modal_btn_wrap {
+  display: flex;
+  justify-content: space-between;
+  padding: 20rpx 30rpx;
+}
+.modal_btn {
+  width: 45%;
+  padding: 15rpx 0;
+  border-radius: 10rpx;
+  font-size: 30rpx;
+}
+/* 取消按钮样式 */
+.cancel_btn {
+  background: #f5f5f5;
+  color: #666;
+}
+/* 确定按钮样式 */
+.confirm_btn {
+  background: #2bc552;
+  color: #fff;
+}

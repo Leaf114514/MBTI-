@@ -1,7 +1,7 @@
 {
   "projectname": "%E5%89%8D%E7%AB%AF%E6%A1%A3%E6%A1%88%E4%BF%A1%E6%81%AF",
   "setting": {
-    "urlCheck": true,
+    "urlCheck": false,
     "coverView": true,
     "lazyloadPlaceholderEnable": false,
     "skylineRenderEnable": false,
@@ -19,5 +19,17 @@
     "ignoreDevUnusedFiles": true
   },
   "libVersion": "3.14.2",
-  "condition": {}
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "page/my/my",
+          "pathName": "page/my/my",
+          "query": "",
+          "scene": null,
+          "launchMode": "default"
+        }
+      ]
+    }
+  }
 }

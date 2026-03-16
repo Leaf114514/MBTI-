@@ -28,52 +28,37 @@
   border-radius: 15rpx; 
 }
 
-/* 性别选择类-总框 */
-.gender_box {
+/* 属性栏 */
+.attribute_box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 80rpx;
+  padding: 0 20rpx;
+}
+
+/* 属性栏-文字栏 */
+.attribute_value {
+  color: #000;
+}
+
+/* 生日选择总 */
+.birthday_box {
   display: flex; 
   align-items: center;
   padding: 20rpx 30rpx;
   margin: 30rpx;
-  background: #f5f5f5;
   border-radius: 10rpx;
   font-size: 32rpx;
 }
 
-/* 性别选择类-性别文字 */
-.gender_value {
-  color: #000;
-}
+.style_edit_btn {
 
-/*  性别选择类-弹窗内容样式 */
-.modal-content {
-  padding: 20rpx 0;
-  text-align: center;
-}
-
-/* 性别选择类-弹窗内容样式-男/女按钮组-总类*/
-.gender_btn_group {
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 40rpx;
-  
-}
-/* 性别选择类-弹窗内容样式-男/女按钮组-分类*/
-.gender_btn {
-  width: 120rpx;
-  height: 80rpx;
-  line-height: 80rpx;
+  display: block;
+  text-align: right;
+  color: #12B7F5 !important; 
   font-size: 32rpx;
-  border-radius: 40rpx;  
-  display: flex;
-  flex-direction: column; 
-  align-items: center;   
-  justify-content: center;
+  padding: 8rpx 24rpx;
+  border-radius: 8rpx;
+  transition: opacity 0.2s;
 }
-
-/* 性别选择类-弹窗内容样式-选中状态样式 */
-.gender_btn.active {
-  background: #08d85f;
-  color: #000000;
-  border: none;
-}
-

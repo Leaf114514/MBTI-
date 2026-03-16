@@ -1,0 +1,24 @@
+app.json
+	pages  新增且"page/login/login"设为初始页面
+	pages  新增 "page/home/home"页面
+app.wxss
+	删除全部内容以方便后续设定
+page
+	新增login文件夹（页面）
+	新增home文件夹（页面）
+	login
+		.wxss 	
+			新增
+			.LoginFather 类 用以控制整个登录内容样式
+			.LoginButton 类 用以控制登录页面按钮样式
+
+		.wxml
+			新增
+			登录页面 微信快捷登录 按钮（已备注）
+			使用handleWechatLogin函数作为按下按钮调用
+
+		.js
+			新增handleWechatLogin(仅测试）（触发返回0）
+			
+	针对后端留言：
+		handleWechatLogin函数需要实现触发后调用微信登录的能力，并跳转至首页（page/home/home）

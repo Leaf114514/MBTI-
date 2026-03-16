@@ -1,0 +1,107 @@
+
+
+<view class="front_end_file">
+    <!-- 头像框 -->
+
+
+  <!-- 头像行容器（横向布局） -->
+  <view class="avatar_row"bindtap="change_avatar">
+    <text class="row_label">头像设置</text>
+    <!-- 头像框 -->
+    <view class="avatar" >
+      <image class="avatar_image" src="{{avatarUrl}}" mode="aspectFill"/>
+    </view>
+
+
+  </view>
+   <!-- 姓名栏 -->
+   <view class="avatar_row" bindtap="show_name_input_modal">
+    <text class="row_label">名字设置</text>
+   <text class="gender_value">{{userName || '名字未设置'}}</text>
+  </view>
+
+   <!-- 性别栏 -->
+  <view class="avatar_row" bindtap="open_gender_modal">
+    <text class="row_label">性别设置</text>
+   <text class="gender_value">{{gender || '性别未设置'}}</text>
+  </view>
+
+  <!-- 生日栏（点击唤起弹窗） -->
+  <view class="avatar_row" bindtap="open_birthday_modal">
+    <text class="row_label">生日设置</text>
+    <view class="content_wrap">
+      <text class="gender_value">{{birthday || '未设置'}}</text>
+    </view>
+  </view>
+
+<!-- 名字输入弹窗 -->
+<view class="modal_mask" wx:if="{{showNameModal}}" bindtap="hideModal"></view>
+<view class="modal_box" wx:if="{{showNameModal}}">
+  <view class="modal_title">修改姓名</view>
+  <!-- 输入框 -->
+  <input 
+    class="name_input" 
+    placeholder="请输入新名字" 
+    value="{{newName}}" 
+    maxlength="15"
+    bindinput="inputName"
+  />
+  <!-- 按钮组 -->
+  <view class="modal_btn_box">
+    <button class="cancel_btn" bindtap="hideModal">取消</button>
+    <button class="confirm_btn" bindtap="confirm_modify_name">确定</button>
+  </view>
+</view>
+
+
+  <!-- 性别选择弹窗栏 -->
+  <modal 
+  title="选择性别" 
+  hidden="{{!showModal}}" 
+  confirm-text="取消" 
+  bindconfirm="close_gender_modal"
+  cancel-text="清空"
+  bindcancel="clear_gender"
+>
+  <view class="modal_content">
+    <!-- 男女按钮 -->
+    <view class="gender_btn_group">
+      <button 
+        class="gender_btn {{gender === '男' ? 'active' : ''}}"
+        bindtap="choose_gender"
+        data-gender="男"
+      >男</button>
+      <button 
+        class="gender_btn {{gender === '女' ? 'active' : ''}}"
+        bindtap="choose_gender"
+        data-gender="女"
+      >女</button>
+    </view>
+  </view>
+</modal>
+
+
+</view>
+
+
+
+<view class="modal_mask" wx:if="{{showBirthModal}}" bindtap="close_birthday_modal"></view>
+<view class="birthday_modal" wx:if="{{showBirthModal}}">
+  <!-- 轮盘选择器 -->
+  <picker 
+    mode="date" 
+    value="{{tempBirthday}}" 
+    bindchange="on_birthday_change"
+    start="1900-01-01"
+    end="2026-12-31"
+  >
+    <view class="picker_wrap">
+      <text class="picker_text">{{tempBirthday || '请选择生日'}}</text>
+    </view>
+  </picker>
+  <!-- 取消/确定按钮 -->
+  <view class="modal_btn_wrap">
+    <button class="modal_btn cancel_btn" bindtap="close_birthday_modal">取消</button>
+    <button class="modal_btn confirm_btn" bindtap="confirm_birthday">确定</button>
+  </view>
+</view>
