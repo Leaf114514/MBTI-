@@ -33,6 +33,10 @@ Page({
       });
 
       console.log('Login success:', result);
+
+      wx.switchTab({
+        url: '/page/home/index'
+      });
     } catch (err) {
       console.error('Cloud function call failed:', err);
       this.setData({
@@ -41,8 +45,7 @@ Page({
     }
   },
 
-  //测试按钮-仅返回值0
-async handleLogin() {
+  async handleLogin() {
     try {
       this.setData({
         loginStatus: '登录中'
@@ -69,6 +72,10 @@ async handleLogin() {
       });
 
       console.log('Login success:', result);
+
+      wx.switchTab({
+        url: '/page/home/index'
+      });
     } catch (err) {
       console.error('Cloud function call failed:', err);
       this.setData({
@@ -76,5 +83,4 @@ async handleLogin() {
       });
     }
   }
-})
-
+});
