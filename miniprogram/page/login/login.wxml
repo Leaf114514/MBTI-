@@ -1,8 +1,14 @@
 <!--pages/login/login.wxml-->
 
 <!--微信快捷登录按钮-->
-<view class="LoginFather">
-    
+<view class="login_father">
+  <image
+    class="login_image"
+    src="../../image/zhanweifu.png"
+    mode="aspectFit"
+  />
+
+  <view class="title">{{message}}</view>
     <button 
       class="LoginButton"
       type="primary"
@@ -13,9 +19,9 @@
     </button>
   
     </view>
-
+<!--
 <view class="container">
-  <view class="title">{{message}}</view>
+
 
   <button bindtap="handleLogin">微信登录</button>
 
@@ -36,3 +42,5 @@
     />
   </view>
 </view>
+
+-->

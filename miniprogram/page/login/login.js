@@ -3,7 +3,7 @@ Page({
     userInfo: null,
     isNewUser: false,
     loginStatus: '',
-    message: 'Hello World'
+    message: '占位符，用于展示登入标语'
   },
   
   async handleWechatLogin() {
