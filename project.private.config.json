@@ -19,5 +19,17 @@
     "ignoreDevUnusedFiles": true
   },
   "libVersion": "3.14.2",
-  "condition": {}
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "page/login/login",
+          "pathName": "page/login/login",
+          "query": "",
+          "scene": null,
+          "launchMode": "default"
+        }
+      ]
+    }
+  }
 }

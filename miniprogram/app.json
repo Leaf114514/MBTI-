@@ -2,12 +2,39 @@
   "pages": [
     "page/login/login",
     "page/home/home",
+    "page/home/index",
+    "page/mbti/index",
+    "page/article/index",
+    "page/profile/index",
     "page/component/index",
     "page/API/index",
     "page/cloud/index",
     "page/extend/index"
   ],
   "window": {
-    "navigationBarTitleText": "Home"
-  }
+    "navigationBarTitleText": "登录",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#07c160",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "page/home/index",
+        "text": "主页"
+      },
+      {
+        "pagePath": "page/mbti/index",
+        "text": "MBTI"
+      },
+      {
+        "pagePath": "page/profile/index",
+        "text": "个人"
+      }
+    ]
+  },
+  "cloud": true
 }

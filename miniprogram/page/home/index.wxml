@@ -1,0 +1,9 @@
+<view class="container">
+  <view class="page-content">
+    <article-panel
+      title="{{sectionTitle}}"
+      articles="{{recommendedArticles}}"
+      bind:select="onSelectArticle"
+    />
+  </view>
+</view>
