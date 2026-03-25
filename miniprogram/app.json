@@ -2,12 +2,71 @@
   "pages": [
     "page/login/login",
     "page/home/home",
+    "page/home/index",
+    "page/mbti/index",
+    "page/article/index",
+    "page/profile/index",
     "page/component/index",
     "page/API/index",
     "page/cloud/index",
     "page/extend/index"
   ],
   "window": {
-    "navigationBarTitleText": "Home"
-  }
+    "navigationBarTextStyle": "@navigationBarTextStyle",
+    "navigationBarTitleText": "演示",
+    "navigationBarBackgroundColor": "@navigationBarBackgroundColor",
+    "backgroundColor": "@backgroundColor"
+  },
+  "tabBar": {
+    "color": "@tabBarColor",
+    "selectedColor": "@tabBarSelectedColor",
+    "borderStyle": "@tabBarBorderStyle",
+    "backgroundColor": "@tabBarBackgroundColor",
+    "list": [
+      {
+        "pagePath": "page/home/index",
+        "iconPath": "@iconPathComponent",
+        "selectedIconPath": "@selectedIconPathComponent",
+        "text": "主页"
+      },
+      {
+        "pagePath": "page/mbti/index",
+        "iconPath": "@iconPathAPI",
+        "selectedIconPath": "@selectedIconPathAPI",
+        "text": "MBTI"
+      },
+      {
+        "pagePath": "page/profile/index",
+        "iconPath": "@iconPathCloud",
+        "selectedIconPath": "@selectedIconPathCloud",
+        "text": "个人"
+      }
+    ]
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "connectSocket": 10000,
+    "uploadFile": 10000,
+    "downloadFile": 10000
+  },
+  "workers": "workers",
+  "debug": false,
+  "style": "v2",
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示"
+    }
+  },
+  "cloud": true,
+  "sitemapLocation": "sitemap.json",
+  "themeLocation": "demo.theme.json",
+  "darkmode": true,
+  "resizable": true,
+  "useExtendedLib": {
+    "weui": true
+  },
+  "frameset": true,
+  "requiredBackgroundModes": ["audio", "location"],
+  "embeddedAppIdList": ["wxfdcee92a299bcaf1"],
+  "lazyCodeLoading": "requiredComponents"
 }

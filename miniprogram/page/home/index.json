@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "\u4e3b\u9875",
+  "usingComponents": {
+    "article-panel": "/components/article-panel/index"
+  }
+}

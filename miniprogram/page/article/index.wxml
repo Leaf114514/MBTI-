@@ -1,0 +1,7 @@
+<view class="container">
+  <view class="article-wrapper" wx:if="{{article}}">
+    <image class="article-cover" src="{{article.coverUrl}}" mode="aspectFill" />
+    <text class="article-title">{{article.title}}</text>
+    <text class="article-content">{{article.content}}</text>
+  </view>
+</view>

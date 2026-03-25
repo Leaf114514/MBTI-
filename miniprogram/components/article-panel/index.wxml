@@ -1,0 +1,24 @@
+<view class="article-panel">
+  <!-- 文章栏标题由父页面传入 -->
+  <text class="panel-title">{{title}}</text>
+
+  <!-- 有数据时渲染推荐文章列表 -->
+  <view class="article-list" wx:if="{{articles.length}}">
+    <view
+      class="article-card"
+      wx:for="{{articles}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onArticleTap"
+    >
+      <!-- 列表态只展示封面和标题，正文在详情页展示 -->
+      <image class="article-cover" src="{{item.coverUrl}}" mode="aspectFill" />
+      <text class="article-title">{{item.title}}</text>
+    </view>
+  </view>
+
+  <!-- 无数据时展示空态 -->
+  <view class="empty-state" wx:else>
+    <text class="empty-text">No articles.</text>
+  </view>
+</view>
