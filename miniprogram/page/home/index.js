@@ -34,8 +34,16 @@ Page({
       return;
     }
 
+    wx.showLoading({
+      title: '加载中',
+      mask: true
+    });
+
     wx.navigateTo({
-      url: detailUrl
+      url: detailUrl,
+      fail() {
+        wx.hideLoading();
+      }
     });
   }
 });

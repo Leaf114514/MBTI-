@@ -1,7 +1,37 @@
 <view class="container">
   <view class="article-wrapper" wx:if="{{article}}">
-    <image class="article-cover" src="{{article.coverUrl}}" mode="aspectFill" />
-    <text class="article-title">{{article.title}}</text>
-    <text class="article-content">{{article.content}}</text>
+    <image
+      class="article-cover"
+      src="{{article.coverUrl}}"
+      mode="aspectFill"
+      data-url="{{article.coverUrl}}"
+      bindtap="onPreviewImage"
+    />
+
+    <view class="article-header">
+      <text class="article-title">{{article.title}}</text>
+
+      <view class="author-row">
+        <image class="author-avatar" src="{{article.authorAvatarUrl}}" mode="aspectFill" />
+        <view class="author-meta">
+          <text class="author-name">{{article.authorName}}</text>
+          <text class="publish-time">{{formattedPublishTime}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="article-body">
+      <block wx:for="{{article.blocks}}" wx:key="index">
+        <text wx:if="{{item.type === 'text'}}" class="article-paragraph">{{item.content}}</text>
+        <image
+          wx:elif="{{item.type === 'image'}}"
+          class="article-image"
+          src="{{item.url}}"
+          mode="widthFix"
+          data-url="{{item.url}}"
+          bindtap="onPreviewImage"
+        />
+      </block>
+    </view>
   </view>
 </view>
