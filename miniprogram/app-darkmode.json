@@ -11,28 +11,22 @@
     "backgroundColor": "#191919",
     "list": [
       {
-        "pagePath": "page/component/index",
-        "iconPath": "image/icon_component_HL.png",
-        "selectedIconPath": "image/icon_component_dark.png",
-        "text": "组件"
+        "pagePath": "page/home/index",
+        "text": "主页",
+        "iconPath": "image/icon_component_dark.png",
+        "selectedIconPath": "image/icon_component_HL.png"
       },
       {
-        "pagePath": "page/extend/index",
-        "iconPath": "image/icon_component_HL.png",
-        "selectedIconPath": "image/icon_component_dark.png",
-        "text": "扩展能力"
+        "pagePath": "page/mbti/index",
+        "text": "MBTI",
+        "iconPath": "image/icon_API_dark.png",
+        "selectedIconPath": "image/icon_API_HL.png"
       },
       {
-        "pagePath": "page/API/index",
-        "iconPath": "image/icon_API_HL.png",
-        "selectedIconPath": "image/icon_API_dark.png",
-        "text": "接口"
-      },
-      {
-        "pagePath": "page/cloud/index",
-        "iconPath": "image/icon_cloud_HL.png",
-        "selectedIconPath": "image/icon_cloud_dark.png",
-        "text": "云开发"
+        "pagePath": "page/profile/index",
+        "text": "个人",
+        "iconPath": "image/icon_cloud_dark.png",
+        "selectedIconPath": "image/icon_cloud_HL.png"
       }
     ]
   }

@@ -2,7 +2,7 @@
  * 文章示例数据的唯一出口。
  * 页面和组件只通过本模块取数，避免直接依赖原始数据结构，降低耦合。
  */
-const SAMPLE_COVER_URL = '/page/extend/images/pic_article.png';
+const SAMPLE_COVER_URL = '/image/zhanweifu.png';
 
 /**
  * 内部完整文章模型：
