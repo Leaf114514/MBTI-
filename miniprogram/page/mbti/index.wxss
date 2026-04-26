@@ -1,12 +1,493 @@
-.container {
+@import "../../common/index.wxss";
+
+
+
+/* ===== 页面标题区域 ===== */
+.header-section {
+  padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-md);
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+}
+
+.page-title {
+  font-size: calc(var(--font-size-hero) * 1.2);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.title-divider {
+  height: 2rpx;
+  background-color: var(--color-primary);
+  margin-top: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+}
+
+.page-subtitle {
+  display: block;
+  font-size: var(--font-size-caption);
+  color: var(--color-text-tertiary);
+  line-height: var(--line-height-normal);
+}
+
+.history-entry {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.history-text {
+  font-size: var(--font-size-caption);
+  color: var(--color-primary);
+}
+
+
+
+/* ===== 选择器区域 ===== */
+.selector-section {
+  padding: 0 var(--spacing-lg);
+  padding-bottom: 200rpx;
+}
+
+.selector-card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  box-shadow: var(--shadow-card);
+}
+
+/* ===== 选择器行布局（标签左 / 显示右） ===== */
+.selector-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.selector-label {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.picker-display {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-md);
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-body);
+  color: var(--color-text-tertiary);
+}
+
+.picker-display.has-value {
+  color: var(--color-text-primary);
+}
+
+/* ===== 展开区域（滚轮 + 确认按钮）高度动画 ===== */
+.picker-expand {
+  overflow: hidden;
+}
+
+.picker-expand.anim-in {
+  animation: expand-in 0.4s var(--ease-spring) both;
+}
+
+.picker-expand.anim-out {
+  animation: expand-out 0.26s var(--ease-out) both;
+}
+
+@keyframes expand-in {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 500rpx;
+    opacity: 1;
+  }
+}
+
+@keyframes expand-out {
+  from {
+    max-height: 500rpx;
+    opacity: 1;
+  }
+  to {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+/* ===== 滚轮 ===== */
+.picker-wheels {
+  margin-top: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-input);
+}
+
+.mbti-picker-view {
+  width: 100%;
+  height: 300rpx;
+}
+
+.gender-picker-view {
+  width: 100%;
+  height: 200rpx;
+}
+
+.picker-indicator {
+  height: 80rpx;
+}
+
+.picker-item {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  background-color: #ffffff;
+  height: 80rpx;
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
 }
 
-.placeholder {
-  font-size: 32rpx;
-  color: #999999;
+/* ===== 确认按钮 ===== */
+.picker-confirm-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 72rpx;
+  margin-top: var(--spacing-sm);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-sm);
+}
+
+.picker-confirm-btn:active {
+  opacity: 0.9;
+}
+
+/* ===== 通用按钮 ===== */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 88rpx;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.btn-primary.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80rpx;
+  padding: 0 var(--spacing-lg);
+  background-color: var(--color-bg-input);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-body);
+  border-radius: var(--radius-md);
+}
+
+.btn-secondary:active {
+  background-color: var(--color-border);
+}
+
+.start-btn {
+  position: fixed;
+  bottom: 100rpx;
+  left: var(--spacing-lg);
+  right: var(--spacing-lg);
+  z-index: 100;
+}
+
+
+
+/* ===== 答题区域 ===== */
+.quiz-section {
+  padding: 0 var(--spacing-lg);
+  padding-bottom: 200rpx;
+}
+
+/* 进度条 */
+.progress-bar-container {
+  margin-bottom: var(--spacing-lg);
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xs);
+}
+
+.progress-text {
+  font-size: var(--font-size-subtitle);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+.progress-percent {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-regular);
+}
+
+.progress-bar {
+  height: 8rpx;
+  background-color: var(--color-bg-input);
+  border-radius: 4rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+  border-radius: 4rpx;
+  transition: width var(--duration-normal) var(--ease-out);
+}
+
+/* 题目卡片 */
+.question-card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-card);
+}
+
+.question-text {
+  display: block;
+  font-size: var(--font-size-subtitle);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--spacing-xl);
+}
+
+/* 选项列表 */
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.option-card {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-bg-page);
+  border: 2rpx solid transparent;
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.option-card:active {
+  transform: scale(0.98);
+}
+
+.option-card.selected {
+  background-color: rgba(255, 107, 107, 0.08);
+  border-color: var(--color-primary);
+}
+
+.option-key {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+  margin-right: var(--spacing-md);
+  flex-shrink: 0;
+}
+
+.option-card.selected .option-key {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.option-text {
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-normal);
+}
+
+/* 底部操作 */
+.quiz-actions {
+  position: fixed;
+  bottom: 100rpx;
+  left: var(--spacing-lg);
+  right: var(--spacing-lg);
+  z-index: 100;
+  display: flex;
+  gap: 20rpx;
+  background-color: var(--color-bg-page);
+  padding: var(--spacing-md) 0 0;
+}
+
+/* 上一题 / 下一题 / 提交 按钮等宽 */
+.quiz-btn {
+  flex: 1;
+}
+
+/* 下一题 / 提交按钮高度与上一题一致 */
+.quiz-actions .btn-primary {
+  height: 80rpx;
+}
+
+/* 取消答题确认态（红色） */
+.btn-danger {
+  background-color: var(--color-primary) !important;
+  color: var(--color-text-inverse) !important;
+}
+
+.btn-danger:active {
+  opacity: 0.9;
+}
+
+/* 按钮未满足条件态：半透明但仍可点击（用于触发提示） */
+.btn-warn {
+  opacity: 0.5;
+}
+
+/* 抖动动画 */
+.anim-shake {
+  animation: btn-shake 0.4s ease-out;
+}
+
+@keyframes btn-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-10rpx); }
+  40% { transform: translateX(10rpx); }
+  60% { transform: translateX(-6rpx); }
+  80% { transform: translateX(6rpx); }
+}
+
+/* ===== 页面转场动画 ===== */
+
+/* 选择器卡片 / 按钮掉落出屏幕（select → quiz） */
+.anim-fall-out {
+  animation: fall-out var(--fall-dur, 0.5s) ease-in forwards;
+}
+
+@keyframes fall-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(800rpx); }
+}
+
+/* 选择器卡片从下方升起入场（quiz → select） */
+.anim-rise-in {
+  animation: rise-in 0.45s var(--ease-spring) both;
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(300rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 题目卡片从上方落下入场（select → quiz） */
+.anim-drop-in {
+  animation: drop-in 0.5s var(--ease-spring) both;
+}
+
+@keyframes drop-in {
+  from { opacity: 0; transform: translateY(-600rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 题目卡片向上升起消失（quiz → select） */
+.anim-rise-out {
+  animation: rise-out 0.4s ease-in forwards;
+}
+
+@keyframes rise-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-600rpx); }
+}
+
+/* 通用淡入 / 淡出 */
+.anim-hidden {
+  opacity: 0;
+}
+
+.anim-fade-in {
+  animation: fade-in-anim 0.3s ease-out both;
+}
+
+.anim-fade-out {
+  animation: fade-in-anim 0.25s ease-in reverse both;
+}
+
+@keyframes fade-in-anim {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== 题目翻页动画（左右滑动） ===== */
+
+/* 下一题：当前卡片向左滑出 */
+.anim-flip-out-left {
+  animation: flip-out-left 0.22s ease-in forwards;
+}
+
+@keyframes flip-out-left {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-100%); opacity: 0; }
+}
+
+/* 下一题：新卡片从右滑入 */
+.anim-flip-in-right {
+  animation: flip-in-right 0.25s var(--ease-out) both;
+}
+
+@keyframes flip-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* 上一题：当前卡片向右滑出 */
+.anim-flip-out-right {
+  animation: flip-out-right 0.22s ease-in forwards;
+}
+
+@keyframes flip-out-right {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+
+/* 上一题：新卡片从左滑入 */
+.anim-flip-in-left {
+  animation: flip-in-left 0.25s var(--ease-out) both;
+}
+
+@keyframes flip-in-left {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
