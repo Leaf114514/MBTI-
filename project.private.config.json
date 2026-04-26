@@ -1,5 +1,5 @@
 {
-  "projectname": "MBTI-",
+  "projectname": "4%E6%9C%8825%E5%89%8D%E7%AB%AF",
   "setting": {
     "urlCheck": false,
     "coverView": true,
@@ -19,5 +19,17 @@
     "ignoreDevUnusedFiles": true
   },
   "libVersion": "3.14.2",
-  "condition": {}
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "page/mbti/index",
+          "pathName": "page/mbti/index",
+          "query": "",
+          "scene": null,
+          "launchMode": "default"
+        }
+      ]
+    }
+  }
 }

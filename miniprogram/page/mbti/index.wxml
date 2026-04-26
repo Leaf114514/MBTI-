@@ -1,5 +1,145 @@
-<view class="container">
-  <view class="placeholder">
-    <text>MBTI 页面内容</text>
+<view>
+ <!-- 标题 -->
+<view class="header-section">
+  <view class="title-row">
+    <text class="page-title">MBTI 故事之旅</text>
+    <view class="history-entry" bindtap="onViewHistory">
+      <text class="history-text">⏱历史故事</text>
+    </view>
   </view>
+  <view class="title-divider"></view>
+  <text class="page-subtitle" wx:if="{{!isContinueMode}}">选择你的性格类型，回答5个场景问题，AI为你编织专属故事</text>
+  <text class="page-subtitle" wx:else>续写第 {{currentRound + 1}} 轮 · 新的场景等待你的选择</text>
+</view>
+
+<!-- ===== 选择器阶段（转场期间保留 DOM） ===== -->
+<view class="selector-section" wx:if="{{phase === 'select' || selectLeaving}}">
+
+  <!-- MBTI 选择器 -->
+  <view class="selector-card {{mbtiCardAnim}}" style="{{mbtiCardDur}}" bindtap="onToggleMbtiPicker">
+    <view class="selector-row">
+      <text class="selector-label">你的 MBTI 类型</text>
+      <view class="picker-display {{(selectedMbti || isMbtiSelecting) ? 'has-value' : ''}}">
+        <text>{{isMbtiSelecting ? currentMbtiDisplay : (selectedMbti || '请选择')}}</text>
+      </view>
+    </view>
+    <view class="picker-expand {{isMbtiHiding ? 'anim-out' : 'anim-in'}}"
+      wx:if="{{isMbtiSelecting || isMbtiHiding}}" catchtap="noop">
+      <view class="picker-wheels">
+        <picker-view
+          class="mbti-picker-view"
+          indicator-class="picker-indicator"
+          value="{{mbtiPickerValue}}"
+          bindchange="onMbtiPickerChange"
+        >
+          <picker-view-column>
+            <view wx:for="{{MBTI_HEAD}}" wx:key="*this" class="picker-item">{{item}}</view>
+          </picker-view-column>
+          <picker-view-column>
+            <view wx:for="{{MBTI_TAIL}}" wx:key="*this" class="picker-item">{{item}}</view>
+          </picker-view-column>
+        </picker-view>
+      </view>
+      <view class="picker-confirm-btn" catchtap="onConfirmMbti">
+        <text>确认</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 性别选择器 -->
+  <view class="selector-card {{genderCardAnim}}" style="{{genderCardDur}}" bindtap="onToggleGenderPicker">
+    <view class="selector-row">
+      <text class="selector-label">你的性别</text>
+      <view class="picker-display {{(selectedGender || isGenderSelecting) ? 'has-value' : ''}}">
+        <text>{{isGenderSelecting ? currentGenderDisplay : (selectedGender || '请选择')}}</text>
+      </view>
+    </view>
+    <view class="picker-expand {{isGenderHiding ? 'anim-out' : 'anim-in'}}"
+      wx:if="{{isGenderSelecting || isGenderHiding}}" catchtap="noop">
+      <view class="picker-wheels">
+        <picker-view
+          class="gender-picker-view"
+          indicator-class="picker-indicator"
+          value="{{genderPickerValue}}"
+          bindchange="onGenderPickerChange"
+        >
+          <picker-view-column>
+            <view wx:for="{{GENDERS}}" wx:key="*this" class="picker-item">{{item}}</view>
+          </picker-view-column>
+        </picker-view>
+      </view>
+      <view class="picker-confirm-btn" catchtap="onConfirmGender">
+        <text>确认</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 开始答题按钮 -->
+  <view class="btn-primary start-btn {{startBtnAnim}} {{(!selectedMbti || !selectedGender) ? 'btn-warn' : ''}} {{startBtnShaking ? 'anim-shake' : ''}}"
+    style="{{startBtnDur}}" bindtap="onStartQuiz">
+    <text>{{startBtnWarn ? startBtnWarn : '开始答题'}}</text>
+  </view>
+</view>
+
+<!-- ===== 答题阶段（转场期间保留 DOM） ===== -->
+<view class="quiz-section" wx:if="{{phase === 'quiz' || quizLeaving}}">
+  <!-- 进度条 -->
+  <view class="progress-bar-container {{progressAnim}}">
+    <view class="progress-info">
+      <text class="progress-text">{{progress}}</text>
+      <text class="progress-percent">{{answeredPercent}} 已答</text>
+    </view>
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{progressPercent}}%"></view>
+    </view>
+  </view>
+
+  <!-- 题目卡片（带翻页动画） -->
+  <view class="question-card {{questionAnim}}" wx:for="{{questions}}" wx:key="id" wx:if="{{index === currentIndex}}">
+    <text class="question-text">{{item.question}}</text>
+
+    <!-- 选项列表 -->
+    <view class="options-list">
+      <view
+        class="option-card {{answers[item.id] === option.key ? 'selected' : ''}}"
+        wx:for="{{item.options}}"
+        wx:for-item="option"
+        wx:for-index="optIdx"
+        wx:key="key"
+        bindtap="onSelectOption"
+        data-question-id="{{item.id}}"
+        data-option-key="{{option.key}}"
+      >
+        <view class="option-key">{{option.key}}</view>
+        <text class="option-text">{{option.text}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="quiz-actions {{actionsAnim}}">
+    <!-- 第一题：取消答题（两次确认） -->
+    <view class="btn-secondary quiz-btn {{cancelConfirmPending ? 'btn-danger' : ''}}"
+      bindtap="onCancelQuiz" wx:if="{{currentIndex === 0}}">
+      <text>{{cancelConfirmPending ? '确认取消答题' : '取消答题'}}</text>
+    </view>
+    <!-- 非第一题：上一题 -->
+    <view class="btn-secondary quiz-btn" bindtap="onPrevQuestion" wx:if="{{currentIndex > 0}}">
+      <text>上一题</text>
+    </view>
+
+    <view class="btn-primary quiz-btn" bindtap="onNextQuestion" wx:if="{{currentIndex < questions.length - 1}}">
+      <text>下一题</text>
+    </view>
+
+    <view
+      class="btn-primary quiz-btn submit-btn {{answerCount < questions.length ? 'btn-warn' : ''}} {{submitBtnShaking ? 'anim-shake' : ''}}"
+      bindtap="onSubmit"
+      wx:if="{{currentIndex === questions.length - 1}}"
+    >
+      <text>{{submitBtnWarn ? submitBtnWarn : (isSubmitting ? '提交中...' : '提交答案')}}</text>
+    </view>
+  </view>
+</view>
+
 </view>
