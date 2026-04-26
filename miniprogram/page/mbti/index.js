@@ -12,7 +12,7 @@ const MBTI_TAIL = ['TJ', 'TP', 'FJ', 'FP']
 const GENDERS = ['男', '女']
 
 // 退场动画持续时间（ms），需与 WXSS 中 expand-out 保持一致
-const ANIM_OUT_DURATION = 200
+const ANIM_OUT_DURATION = 260
 
 // 每轮答题数量
 const QUESTION_COUNT = 5

@@ -93,38 +93,37 @@
   color: var(--color-text-primary);
 }
 
-/* ===== 展开区域（滚轮 + 确认按钮）缩放动画 ===== */
+/* ===== 展开区域（滚轮 + 确认按钮）高度动画 ===== */
 .picker-expand {
   overflow: hidden;
-  transform-origin: top center;
 }
 
 .picker-expand.anim-in {
-  animation: expand-in 0.25s var(--ease-spring) both;
+  animation: expand-in 0.4s var(--ease-spring) both;
 }
 
 .picker-expand.anim-out {
-  animation: expand-out 0.2s var(--ease-out) both;
+  animation: expand-out 0.26s var(--ease-out) both;
 }
 
 @keyframes expand-in {
   from {
-    transform: scaleY(0);
+    max-height: 0;
     opacity: 0;
   }
   to {
-    transform: scaleY(1);
+    max-height: 500rpx;
     opacity: 1;
   }
 }
 
 @keyframes expand-out {
   from {
-    transform: scaleY(1);
+    max-height: 500rpx;
     opacity: 1;
   }
   to {
-    transform: scaleY(0);
+    max-height: 0;
     opacity: 0;
   }
 }
