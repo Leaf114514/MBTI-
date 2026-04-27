@@ -1,33 +1,192 @@
-.container {
-  padding: 32rpx;
-}
+@import '../../common/index.wxss';
 
-
-
-.login_father{
-  min-height: 70vh;
+.login-page {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  padding: 0 32rpx;
+  padding: var(--spacing-xl);
+  background-color: var(--color-bg-page);
   box-sizing: border-box;
-  transform: translateY(-8vh);
+  position: relative;
+  overflow: hidden;
 }
 
-.login_image {
-  width: 240rpx;
-  height: 240rpx;
-  margin-bottom: -30rpx;
+/* ===== 掉落几何图形 ===== */
+.shapes-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+  transition: opacity 0.4s ease;
 }
 
-.title {
-  font-size: 36rpx;
-  margin-bottom: 15rpx;
+.shapes-hidden {
+  opacity: 0;
+}
+
+.shape {
+  position: absolute;
+  top: -60rpx;
+}
+
+.shape-square {
+  border-radius: 4rpx;
+}
+
+.shape-circle {
+  border-radius: 50%;
+}
+
+.shape-diamond {
+  border-radius: 4rpx;
+  transform: rotate(45deg);
+}
+
+/* 三角形仅用 inline border 渲染，无需额外 CSS */
+
+@keyframes shape-fall {
+  0% {
+    transform: translateY(-60rpx) rotate(0deg);
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(540deg);
+    opacity: 0;
+  }
+}
+
+/* ===== 左上角切换按钮 ===== */
+.toggle-btn {
+  position: absolute;
+  top: 24rpx;
+  left: 24rpx;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.35);
+  z-index: 10;
+}
+
+.toggle-label {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+@keyframes toggle-shake {
+  0%, 100% { transform: translateX(0); }
+  15%, 55%, 85% { transform: translateX(-4rpx); }
+  35%, 75% { transform: translateX(4rpx); }
+}
+
+.toggle-shake {
+  animation: toggle-shake 0.4s ease-in-out;
+}
+
+/* ===== 标题 ===== */
+.login-title {
+  margin-top: 22vh;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: var(--spacing-lg);
+  z-index: 1;
+}
+
+.title-letters {
+  display: flex;
+  align-items: baseline;
+}
+
+.title-letter {
+  font-size: 80rpx;
+  font-weight: 900;
+  color: #FFFFFF;
+  letter-spacing: 6rpx;
+}
+
+.title-suffix {
+  font-size: 32rpx;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-left: 4rpx;
+  align-self: flex-end;
+  transform: translateY(12rpx);
+}
+
+/* ===== 分割线 ===== */
+.title-divider {
+  width: 75%;
+  height: 4rpx;
+  background-color: #FF6B6B;
+  border-radius: 2rpx;
+  margin-bottom: 10rpx;
+  z-index: 1;
+}
+
+/* ===== 标语 ===== */
+.login-slogan {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
   text-align: center;
+  margin-bottom: var(--spacing-3xl);
+  z-index: 1;
 }
 
-.LoginButton {
-  width: 60%;
-  margin: 0 auto;
+/* ===== 登录按钮 ===== */
+.login-btn {
+  width: 80% !important;
+  max-width: 480rpx;
+  height: 96rpx !important;
+  line-height: 96rpx !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 48rpx !important;
+  background: linear-gradient(135deg, #FF6B6B, #FF8E8E) !important;
+  color: #FFFFFF !important;
+  font-size: var(--font-size-subtitle) !important;
+  font-weight: var(--font-weight-bold) !important;
+  letter-spacing: 2rpx;
+  box-shadow: 0 8rpx 24rpx rgba(255, 107, 107, 0.3);
+  transition: opacity var(--duration-normal) var(--ease-out);
+  z-index: 1;
+}
+
+.login-btn::after {
+  border: none;
+}
+
+.login-btn[disabled] {
+  opacity: 1 !important;
+  background: linear-gradient(135deg, #FF6B6B, #FF8E8E) !important;
+  color: #FFFFFF !important;
+}
+
+/* ===== 抖动动画 ===== */
+@keyframes btn-shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 50%, 90% { transform: translateX(-8rpx); }
+  30%, 70% { transform: translateX(8rpx); }
+}
+
+.login-btn-shake {
+  animation: btn-shake 0.5s ease-in-out;
 }

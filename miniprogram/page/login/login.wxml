@@ -1,46 +1,39 @@
 <!--pages/login/login.wxml-->
+<view class="login-page">
+  <!-- 左上角切换按钮 -->
+  <view class="toggle-btn {{toggleShaking ? 'toggle-shake' : ''}}" bindtap="toggleShapes">
+    <text class="toggle-label">{{toggleLabel}}</text>
+  </view>
 
-<!--微信快捷登录按钮-->
-<view class="login_father">
-  <image
-    class="login_image"
-    src="../../image/zhanweifu.png"
-    mode="aspectFit"
-  />
+  <!-- 掉落几何图形 — 始终渲染，用 class 控制显隐避免重置动画 -->
+  <view class="shapes-container {{shapesVisible ? '' : 'shapes-hidden'}}">
+    <view
+      wx:for="{{shapes}}"
+      wx:key="index"
+      class="shape shape-{{item.type}}"
+      style="{{item.inlineStyle}}"
+    ></view>
+  </view>
 
-  <view class="title">{{message}}</view>
-    <button 
-      class="LoginButton"
-      type="primary"
-      bindtap="handleWechatLogin"
-      open-type="getUserInfo"  
-       >
-      微信快捷登录
-    </button>
-  
+  <view class="login-title">
+    <view class="title-letters">
+      <text class="title-letter" style="-webkit-text-stroke: 1rpx {{letterColors[0]}}; text-shadow: 0 0 12rpx {{letterColors[0]}}, 0 0 24rpx {{letterColors[0]}};">M</text>
+      <text class="title-letter" style="-webkit-text-stroke: 1rpx {{letterColors[1]}}; text-shadow: 0 0 12rpx {{letterColors[1]}}, 0 0 24rpx {{letterColors[1]}};">B</text>
+      <text class="title-letter" style="-webkit-text-stroke: 1rpx {{letterColors[2]}}; text-shadow: 0 0 12rpx {{letterColors[2]}}, 0 0 24rpx {{letterColors[2]}};">T</text>
+      <text class="title-letter" style="-webkit-text-stroke: 1rpx {{letterColors[3]}}; text-shadow: 0 0 12rpx {{letterColors[3]}}, 0 0 24rpx {{letterColors[3]}};">I</text>
     </view>
-<!--
-<view class="container">
-
-
-  <button bindtap="handleLogin">微信登录</button>
-
-  <view wx:if="{{loginStatus}}" class="status">
-    <text>{{loginStatus}}</text>
+    <text class="title-suffix">洞察</text>
   </view>
 
-  <view wx:if="{{userInfo}}" class="user-card">
-    <view>User ID: {{userInfo._id}}</view>
-    <view>OpenID: {{userInfo.openid}}</view>
-    <view>Is New User: {{isNewUser}}</view>
-    <view>Nickname: {{userInfo.profile.nickName}}</view>
-    <image
-      wx:if="{{userInfo.profile.avatarUrl}}"
-      src="{{userInfo.profile.avatarUrl}}"
-      mode="aspectFit"
-      class="avatar"
-    />
-  </view>
+  <view class="title-divider"></view>
+
+  <text class="login-slogan">{{currentSlogan}}</text>
+
+  <button
+    class="login-btn {{btnShaking ? 'login-btn-shake' : ''}}"
+    bindtap="handleWechatLogin"
+    disabled="{{btnDisabled}}"
+  >
+    {{btnText}}
+  </button>
 </view>
-
--->
