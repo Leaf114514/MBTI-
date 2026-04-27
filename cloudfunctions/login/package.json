@@ -1,8 +1,12 @@
 {
   "name": "login",
   "version": "1.0.0",
+  "description": "用户登录/注册云函数（含 MBTI 和性别采集）",
   "main": "index.js",
   "dependencies": {
-    "wx-server-sdk": "latest"
+    "wx-server-sdk": "~2.6.3"
+  },
+  "config": {
+    "timeout": 10
   }
 }
