@@ -1,0 +1,12 @@
+{
+  "name": "getQuestions",
+  "version": "1.0.0",
+  "description": "题库两层随机抽取云函数",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  },
+  "config": {
+    "timeout": 10
+  }
+}
