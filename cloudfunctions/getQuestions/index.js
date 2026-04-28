@@ -230,12 +230,14 @@ function pickRandomOptions(options, optionsPerQuestion) {
  * - INVALID_COUNT: count 为正整数但小于3时触发
  * - INVALID_CATEGORY: category 类型不是 string 也不是 null/undefined 时触发
  * - EMPTY_BANK: 没有可用题目时触发
+ * - EXCLUDED_EMPTY: 排除 excludeCategories 后题库无可用题目时触发
  * - CLOUD_FUNCTION_ERROR: 未捕获的异常时触发（在入口处处理）
  *
  * @param {object} event - 云函数调用参数
  * @param {number} [event.count=5] - 抽题数量
  * @param {number} [event.optionsPerQuestion=3] - 每题选项数，-1 表示全部
  * @param {string|null} [event.category] - 题目分类筛选
+ * @param {string[]} [event.excludeCategories] - 需排除的侧重点列表（续写去重用）
  * @returns {Promise<object>} 标准返回结构
  */
 async function getQuestions(event) {
@@ -273,6 +275,22 @@ async function getQuestions(event) {
     category = null
   }
 
+  // ---- excludeCategories 参数验证（续写去重） ----
+  let excludeCategories = event.excludeCategories
+  // 只接受数组，非数组视为无排除
+  if (excludeCategories !== undefined && excludeCategories !== null) {
+    if (!Array.isArray(excludeCategories)) {
+      excludeCategories = []
+    } else {
+      // 过滤掉非字符串元素，去重
+      excludeCategories = [...new Set(
+        excludeCategories.filter(c => typeof c === 'string' && c.trim() !== '')
+      )]
+    }
+  } else {
+    excludeCategories = []
+  }
+
   // ---- 3. 构建查询条件并获取题目 ----
   const filter = { isActive: true }
   if (category !== null) {
@@ -296,21 +314,51 @@ async function getQuestions(event) {
     }
   }
 
-  // ---- 5. 动态边界计算 ----
-  const actualCount = Math.min(count, validQuestions.length)
+  // ---- 5. 按 excludeCategories 过滤（跨轮续写去重） ----
+  let availableQuestions = validQuestions
+  if (excludeCategories.length > 0) {
+    const excludedSet = new Set(excludeCategories)
+    availableQuestions = validQuestions.filter(q => !excludedSet.has(q.category))
+    // 排除后题库为空
+    if (availableQuestions.length === 0) {
+      return {
+        success: false,
+        data: null,
+        warnings: [],
+        error: { code: 'EXCLUDED_EMPTY', message: '排除已答分类后，题库无可用题目' }
+      }
+    }
+  }
+
+  // ---- 6. 侧重点去重：按 category 分组，每组随机取一题 ----
+  // 保证同一批次内抽取的题目 category 均不相同
+  function pickDistinctCategories(questions) {
+    const grouped = {}
+    for (const q of questions) {
+      const cat = q.category || '__uncategorized__'
+      if (!grouped[cat]) grouped[cat] = []
+      grouped[cat].push(q)
+    }
+    return Object.values(grouped).map(group => shufflePick(group, 1)[0])
+  }
+
+  const distinctQuestions = pickDistinctCategories(availableQuestions)
+
+  // ---- 7. 动态边界计算 ----
+  const actualCount = Math.min(count, distinctQuestions.length)
 
   // 收集题目不足警告
-  if (validQuestions.length < count) {
+  if (distinctQuestions.length < count) {
     warnings.push({
       type: 'insufficient_questions',
-      message: `请求 ${count} 题，题库仅有 ${validQuestions.length} 题，已全部返回`
+      message: `请求 ${count} 题，去除已答分类后仅有 ${distinctQuestions.length} 个不同侧重点，已全部返回`
     })
   }
 
-  // ---- 6. 第一层随机：抽取题目 ----
-  const pickedQuestions = shufflePick(validQuestions, actualCount)
+  // ---- 8. 第一层随机：从侧重点去重后的列表中抽取题目 ----
+  const pickedQuestions = shufflePick(distinctQuestions, actualCount)
 
-  // ---- 7. 第二层随机：每题抽取选项 ----
+  // ---- 9. 第二层随机：每题抽取选项 ----
   const resultQuestions = pickedQuestions.map(q => {
     const { options, warning } = pickRandomOptions(q.options, optionsPerQuestion)
 
@@ -331,7 +379,7 @@ async function getQuestions(event) {
     }
   })
 
-  // ---- 8. 构建并返回标准结构 ----
+  // ---- 10. 构建并返回标准结构 ----
   return {
     success: true,
     data: {
@@ -343,6 +391,7 @@ async function getQuestions(event) {
         // -1 时标记为 'all'
         requestedOptionsPerQuestion: optionsPerQuestion === -1 ? 'all' : optionsPerQuestion,
         category: category,
+        excludedCategoriesCount: excludeCategories.length,
         source: 'cloud'
       }
     },

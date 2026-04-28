@@ -78,6 +78,8 @@ class QuestionService {
     this._cache = new Map()
     /** @type {number} 缓存有效期，5分钟 */
     this._CACHE_TTL = 5 * 60 * 1000
+    /** @type {Set<string>} 已见侧重点集合，跨轮续写时自动追踪，无需前端手动管理 */
+    this._seenCategories = new Set()
   }
 
   /**
@@ -89,6 +91,7 @@ class QuestionService {
    * @returns {Object} 验证结果
    * - 验证失败：{ error: { code: 'INVALID_COUNT', message: '...' } }
    * - 验证通过：{ count, optionsPerQuestion, category }
+   * @description excludeCategories 不再从外部接收，由服务层内部通过 _seenCategories 自动管理
    */
   _sanitizeParams(params = {}) {
     // 校验 count 参数
@@ -121,15 +124,19 @@ class QuestionService {
 
   /**
    * 根据参数组合生成缓存键
-   * @param {Object} params - 已校验的参数
+   * @param {Object} params - 已校验的参数（含内部 excludeCategories）
    * @param {number} params.count - 题目数量
    * @param {number} params.optionsPerQuestion - 每题选项数
    * @param {string|null} params.category - 题目分类
-   * @returns {string} 缓存键，格式：count_optionsPerQuestion_category
+   * @param {string[]|null} params.excludeCategories - 排除的侧重点列表（由内部 _seenCategories 自动生成）
+   * @returns {string} 缓存键，格式：count_optionsPerQuestion_category_exclude_xxx
    */
   _getCacheKey(params) {
-    const { count, optionsPerQuestion, category } = params
-    return `${count}_${optionsPerQuestion}_${category || 'all'}`
+    const { count, optionsPerQuestion, category, excludeCategories } = params
+    const excludeKey = Array.isArray(excludeCategories) && excludeCategories.length > 0
+      ? [...excludeCategories].sort().join(',')
+      : 'none'
+    return `${count}_${optionsPerQuestion}_${category || 'all'}_exclude_${excludeKey}`
   }
 
   /**
@@ -195,7 +202,7 @@ class QuestionService {
 
   /**
    * 获取随机MBTI题目（主入口方法）
-   * 流程：参数验证 → 查缓存 → 调用云函数 → 缓存成功结果 → 返回
+   * 流程：参数验证 → 合并已见侧重点 → 查缓存 → 调用云函数 → 追踪侧重点 → 缓存成功结果 → 返回
    * @param {Object} [params={}] - 请求参数
    * @param {number} [params.count] - 题目数量，默认5，最小3
    * @param {number} [params.optionsPerQuestion] - 每题选项数，默认3，-1表示全部
@@ -204,9 +211,15 @@ class QuestionService {
    * - 成功：云函数返回的数据
    * - 参数错误：{ success: false, error: { code: 'INVALID_COUNT', message: '...' } }
    * - 网络/云函数错误：{ success: false, error: { code: 'CLOUD_FUNCTION_ERROR', message: '网络异常，请重试' } }
+   * @description
+   * 侧重点去重完全在 API 内部自动完成：
+   * - 每次成功获取题目后，自动将返回题目的 category 加入 _seenCategories
+   * - 下次调用时自动将 _seenCategories 作为 excludeCategories 传给云函数
+   * - 前端无需传 excludeCategories，也无需手动收集已答 category
+   * - 开始新一轮测试前调用 resetSession() 清空已见集合
    */
   async getRandomQuestions(params = {}) {
-    // 第一步：参数验证
+    // 第一步：参数验证（不含 excludeCategories，由内部自动管理）
     const sanitized = this._sanitizeParams(params)
 
     // 参数验证失败（如 count < 3），提前返回错误
@@ -214,23 +227,37 @@ class QuestionService {
       return { success: false, error: sanitized.error }
     }
 
-    // 第二步：查询缓存
-    const cachedResult = this._getCachedResult(sanitized)
+    // 第二步：合并内部已见侧重点，构建传给云函数的完整参数
+    const cloudParams = {
+      ...sanitized,
+      excludeCategories: this._seenCategories.size > 0 ? [...this._seenCategories] : null
+    }
+
+    // 第三步：查询缓存
+    const cachedResult = this._getCachedResult(cloudParams)
     if (cachedResult) {
+      // 命中缓存时仍需追踪返回题目的侧重点
+      if (cachedResult.success && cachedResult.data && cachedResult.data.questions) {
+        cachedResult.data.questions.forEach(q => this._seenCategories.add(q.category))
+      }
       return cachedResult
     }
 
-    // 第三步：调用云函数获取题目
+    // 第四步：调用云函数获取题目
     try {
       const result = await this._callCloudFunction('getQuestions', {
-        count: sanitized.count,
-        optionsPerQuestion: sanitized.optionsPerQuestion,
-        category: sanitized.category
+        count: cloudParams.count,
+        optionsPerQuestion: cloudParams.optionsPerQuestion,
+        category: cloudParams.category,
+        excludeCategories: cloudParams.excludeCategories
       })
 
-      // 第四步：只缓存成功结果，不缓存错误
+      // 第五步：追踪成功返回题目的侧重点 + 缓存
       if (result && result.success) {
-        this._cacheResult(sanitized, result)
+        if (result.data && result.data.questions) {
+          result.data.questions.forEach(q => this._seenCategories.add(q.category))
+        }
+        this._cacheResult(cloudParams, result)
       }
 
       return result
@@ -245,6 +272,15 @@ class QuestionService {
         }
       }
     }
+  }
+
+  /**
+   * 重置会话状态，清空已见侧重点集合
+   * @description 开始新一轮完整测试时调用，让 API 重新从全量题库中抽取
+   * 注意：不会清空缓存，仅清空 _seenCategories
+   */
+  resetSession() {
+    this._seenCategories.clear()
   }
 }
 
