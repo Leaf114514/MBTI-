@@ -1,0 +1,467 @@
+@import "../../common/index.wxss";
+
+/* 禁用页面级滚动，由 scroll-view 接管 */
+page {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.page-container {
+  min-height: 100vh;
+  background-color: var(--color-bg-page);
+}
+
+/* ===== Loading 动画 ===== */
+.loading-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 0 var(--spacing-xl);
+}
+
+/* 左右两侧进度条 */
+.loading-progress-bar {
+  position: absolute;
+  top: 100rpx;
+  bottom: 50rpx;
+  width: 6rpx;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 3rpx;
+  overflow: hidden;
+}
+
+.left-bar {
+  left: 8rpx;
+}
+
+.right-bar {
+  right: 8rpx;
+}
+
+.loading-progress-fill {
+  width: 100%;
+  background-color: var(--color-primary);
+  border-radius: 3rpx;
+  min-height: 12rpx;
+  transition: height 0.1s linear;
+}
+
+.loading-animation {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xl);
+}
+
+.loading-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  animation: bounce 1.4s ease-in-out infinite both;
+}
+
+.loading-dot:nth-child(1) { animation-delay: -0.32s; }
+.loading-dot:nth-child(2) { animation-delay: -0.16s; }
+.loading-dot:nth-child(3) { animation-delay: 0s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+.loading-text {
+  font-size: var(--font-size-subtitle);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.loading-hint {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-tertiary);
+}
+
+/* ===== 错误状态 ===== */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 0 var(--spacing-xl);
+}
+
+.error-title {
+  font-size: 80rpx;
+  font-weight: var(--font-weight-bold);
+  color: #FFFFFF;
+  -webkit-text-stroke: 1rpx rgba(255, 107, 107, 0.6);
+  margin-bottom: var(--spacing-lg);
+}
+
+.error-msg {
+  font-size: var(--font-size-body);
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin-bottom: var(--spacing-3xl);
+  line-height: var(--line-height-relaxed);
+}
+
+.error-hint {
+  font-size: var(--font-size-subtitle);
+  color: var(--color-text-tertiary);
+}
+
+.retry-btn {
+  width: 320rpx;
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 88rpx;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-md);
+}
+
+/* ===== 自定义固定导航栏 ===== */
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: var(--color-bg-card);
+}
+
+/* 第一行：圆形主页按钮 */
+.header-top-row {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 var(--spacing-md);
+}
+
+/* 首页按钮：红色描边 1rpx，透明背景，圆形 */
+.home-btn {
+  width: 56rpx;
+  height: 56rpx;
+  border: 1rpx solid var(--color-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.home-btn:active {
+  opacity: 0.6;
+}
+
+/* 第二行：标题 + 徽章水平对齐 */
+.header-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 0 var(--spacing-md) var(--spacing-sm);
+}
+
+/* CSS 绘制房子图标 */
+.house-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rpx;
+}
+
+.house-roof {
+  width: 0;
+  height: 0;
+  border-left: 10rpx solid transparent;
+  border-right: 10rpx solid transparent;
+  border-bottom: 9rpx solid var(--color-primary);
+}
+
+.house-wall {
+  width: 14rpx;
+  height: 9rpx;
+  border-left: 1rpx solid var(--color-primary);
+  border-right: 1rpx solid var(--color-primary);
+  border-bottom: 1rpx solid var(--color-primary);
+}
+
+/* ===== 标题 ===== */
+.story-title {
+  font-size: var(--font-size-subtitle);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ===== 续写次数气泡 ===== */
+.round-count-badge {
+  height: 36rpx;
+  margin-left: var(--spacing-sm);
+  padding: 0 12rpx;
+  display: flex;
+  align-items: center;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.round-count-badge text {
+  font-size: var(--font-size-micro);
+  color: #FFFFFF;
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+}
+
+/* ===== 历史按钮（固定高度，与续写气泡一致） ===== */
+.header-badge {
+  height: 36rpx;
+  margin-left: var(--spacing-sm);
+  padding: 0 16rpx;
+  display: flex;
+  align-items: center;
+  background-color: rgba(167, 139, 250, 0.12);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.header-badge text {
+  font-size: var(--font-size-micro);
+  color: var(--color-accent-purple);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+}
+
+.header-badge:active {
+  opacity: 0.7;
+}
+
+/* 红色分隔线（淡色 + 阴影） */
+.header-divider {
+  height: 2rpx;
+  background-color: rgba(255, 107, 107, 0.3);
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.15);
+}
+
+/* ===== 故事内容区 ===== */
+.story-content {
+  height: 100vh;
+  background-color: var(--color-bg-page);
+  position: relative;
+}
+
+/* scroll-view 接管滚动 */
+.story-scroll {
+  height: 100vh;
+}
+
+/* 故事正文卡片 */
+.story-body {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-card);
+  margin: var(--spacing-md) var(--spacing-lg);
+}
+
+/* 正文段落：首行缩进两格 */
+.story-text {
+  margin-bottom: var(--spacing-lg);
+}
+
+/* 紧接性格分析的正文段落：去掉底部间距 */
+.story-text.before-annotation {
+  margin-bottom: 0;
+}
+
+.story-text text {
+  font-size: var(--font-size-body);
+  color: #333333;
+  line-height: var(--line-height-relaxed);
+  text-indent: 2em;
+  display: block;
+}
+
+/* ===== 性格分析气泡 ===== */
+.annotation-wrapper {
+  margin: var(--spacing-xs) 0;
+}
+
+.annotation-divider-row {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+/* 分割线：与红色气泡同色 */
+.divider-line {
+  flex: 1;
+  height: 1rpx;
+  background-color: var(--color-primary);
+}
+
+/* 红色圆角气泡，相对分割线下移 30% */
+.annotation-bubble {
+  width: 44rpx;
+  height: 44rpx;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 var(--spacing-sm);
+  flex-shrink: 0;
+  transform: translateY(30%);
+}
+
+/* 透明三角指示器 */
+.bubble-triangle {
+  width: 0;
+  height: 0;
+}
+
+.bubble-triangle.down {
+  border-left: 8rpx solid transparent;
+  border-right: 8rpx solid transparent;
+  border-top: 8rpx solid var(--color-bg-card);
+}
+
+.bubble-triangle.up {
+  border-left: 8rpx solid transparent;
+  border-right: 8rpx solid transparent;
+  border-bottom: 8rpx solid var(--color-bg-card);
+}
+
+/* 展开动画外层容器 */
+.annotation-expand-wrapper {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  margin: 0 var(--spacing-lg);
+  /* 折叠时：较快 ease-out 收回 */
+  transition: max-height 0.25s ease-out,
+              opacity 0.2s ease-out,
+              margin 0.2s ease-out;
+}
+
+/* 展开时：弹簧变速弹出 + 额外下间距 */
+.annotation-expand-wrapper.expanded {
+  max-height: 600rpx;
+  opacity: 1;
+  margin-top: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  /* 展开时：弹簧曲线 overshoot */
+  transition: max-height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 0.3s ease-out,
+              margin 0.3s ease-out;
+}
+
+/* 展开后注释内容（颜色更淡） */
+.annotation-expand-content {
+  background-color: rgba(255, 107, 107, 0.04);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.annotation-expand-content text {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-tertiary);
+  line-height: var(--line-height-relaxed);
+  font-style: italic;
+  display: block;
+}
+
+/* ===== 底部操作栏 ===== */
+.action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-xl);
+  padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom));
+  background-color: var(--color-bg-card);
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+  z-index: 100;
+}
+
+.action-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80rpx;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.action-button:active {
+  transform: scale(0.96);
+  opacity: 0.8;
+}
+
+/* 返回按钮：红色描边白底 */
+.btn-outline {
+  background-color: #FFFFFF;
+  border: 1rpx solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* 续写按钮：红色底白字 */
+.btn-solid {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  border: none;
+}
+
+/* 通用抖动动画 */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-6rpx); }
+  30% { transform: translateX(6rpx); }
+  45% { transform: translateX(-5rpx); }
+  60% { transform: translateX(5rpx); }
+  75% { transform: translateX(-2rpx); }
+  90% { transform: translateX(2rpx); }
+}
+
+.shaking {
+  animation: shake 0.5s ease-out;
+}
+
+/* ===== 右侧阅读进度条 ===== */
+.scroll-progress {
+  position: fixed;
+  right: 8rpx;
+  width: 6rpx;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 3rpx;
+  z-index: 50;
+  overflow: hidden;
+  opacity: 0.8;
+}
+
+.scroll-progress-fill {
+  width: 100%;
+  background-color: var(--color-primary);
+  border-radius: 3rpx;
+  min-height: 12rpx;
+}

@@ -1,5 +1,5 @@
 {
-  "projectname": "MBTI-",
+  "projectname": "%E6%95%85%E4%BA%8B%E9%A1%B5",
   "setting": {
     "urlCheck": false,
     "coverView": true,
@@ -19,5 +19,17 @@
     "ignoreDevUnusedFiles": true
   },
   "libVersion": "3.14.2",
-  "condition": {}
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "page/Story/Story",
+          "pathName": "page/Story/Story",
+          "query": "",
+          "scene": null,
+          "launchMode": "default"
+        }
+      ]
+    }
+  }
 }

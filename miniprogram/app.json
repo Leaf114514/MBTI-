@@ -9,7 +9,10 @@
     "page/component/index",
     "page/API/index",
     "page/cloud/index",
-    "page/extend/index"
+    "page/extend/index",
+    "page/Story/Story",
+    "page/continue/continue",
+    "page/history/history"
   ],
   "window": {
     "navigationBarTitleText": "登录",
