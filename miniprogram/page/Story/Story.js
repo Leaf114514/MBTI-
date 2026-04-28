@@ -5,7 +5,7 @@ const TEST_CONTENT = require('./test-content.js')
 Page({
   data: {
     // 测试参数: 0=显示错误状态, 1=使用 test.txt 内容, 2=持续 Loading, 3=关闭测试走 API
-    test: 0,
+    test: 1,
 
     // 页面状态
     isLoading: true,
@@ -13,14 +13,8 @@ Page({
     hasError: false,
     errorMsg: '',
 
-    // 故事模式: 'generate'=逐轮生成, 'history'=历史回看
-    mode: 'history',
-    currentRound: 1,
-    maxRounds: 5,
-
     // 故事数据
     storySegments: [],
-    canContinue: true,
     storyTitle: '你的 MBTI 故事',
 
     // 自定义导航栏高度
@@ -57,12 +51,6 @@ Page({
       progressBottom: 100
     })
 
-    if (options.mode) {
-      this.setData({ mode: options.mode })
-    }
-    if (options.round) {
-      this.setData({ currentRound: parseInt(options.round) })
-    }
     this.loadStory()
   },
 
@@ -147,10 +135,6 @@ Page({
     wx.request({
       url: `${API_BASE}/story`,
       method: 'GET',
-      data: {
-        mode: this.data.mode,
-        round: this.data.currentRound
-      },
       success: (res) => {
         if (res.statusCode === 200 && res.data) {
           const segments = this.parseStoryContent(res.data.content || '')
@@ -159,11 +143,7 @@ Page({
               isLoading: false,
               storySegments: segments,
               storyTitle: res.data.title || '你的 MBTI 故事',
-              currentRound: res.data.currentRound || this.data.currentRound,
-              maxRounds: res.data.maxRounds || this.data.maxRounds,
-              continueCount: res.data.continueCount || 1,
-              canContinue: (res.data.currentRound || this.data.currentRound)
-                < (res.data.maxRounds || this.data.maxRounds)
+              continueCount: res.data.continueCount || 1
             }, () => this.queryBodyPosition())
           })
         } else {
@@ -200,17 +180,13 @@ Page({
     }
 
     const segments = this.parseStoryContent(content)
-    const annotationCount = segments.filter(s => s.type === 'annotation').length
 
     // 进度条走完后切换到内容
     this._finishLoadingProgress(() => {
       this.setData({
         isLoading: false,
         storySegments: segments,
-        storyTitle: title,
-        currentRound: annotationCount,
-        maxRounds: 5,
-        canContinue: true
+        storyTitle: title
       }, () => this.queryBodyPosition())
     })
   },
@@ -270,11 +246,6 @@ Page({
   // ============================
   //  按钮事件
   // ============================
-
-  // 错误状态 -> 重试
-  onRetry() {
-    this.loadStory()
-  },
 
   // 通用二级确认：抖动 → 字样变更 → 3s 超时恢复 → 二次点击执行
   _confirmAction(dataKey, timerProp, action) {
