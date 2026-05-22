@@ -1,0 +1,104 @@
+<view class="page-container">
+  <!-- Loading 动画 -->
+  <view class="loading-container" wx:if="{{isLoading}}">
+    <view class="loading-progress-bar left-bar">
+      <view class="loading-progress-fill" style="height: {{loadingProgress}}%;"></view>
+    </view>
+    <view class="loading-progress-bar right-bar">
+      <view class="loading-progress-fill" style="height: {{loadingProgress}}%;"></view>
+    </view>
+    <view class="loading-animation">
+      <view class="loading-dot"></view>
+      <view class="loading-dot"></view>
+      <view class="loading-dot"></view>
+    </view>
+    <text class="loading-text">{{loadingText}}</text>
+    <text class="loading-hint">AI 创作需要一点时间，请耐心等待</text>
+  </view>
+
+  <!-- 错误状态 -->
+  <view class="error-container" wx:elif="{{hasError}}" bindtap="goBack">
+    <text class="error-title">ERROR</text>
+    <text class="error-msg">{{errorMsg}}</text>
+    <text class="error-hint">点击任意位置返回</text>
+  </view>
+
+  <!-- 故事内容 -->
+  <view class="story-content" wx:else>
+    <!-- 自定义固定导航栏 -->
+    <view class="fixed-header" style="padding-top: {{statusBarHeight}}px;">
+      <view class="header-top-row">
+        <view class="home-btn" bindtap="goHome">
+          <view class="house-icon">
+            <view class="house-roof"></view>
+            <view class="house-wall"></view>
+          </view>
+        </view>
+      </view>
+      <view class="header-title-row">
+        <text class="story-title">{{storyTitle}}</text>
+        <view class="round-count-badge">
+          <text>续写:{{continueCount}}/5</text>
+        </view>
+        <view class="header-badge {{historyConfirming ? 'shaking' : ''}}" bindtap="goHistory">
+          <text>{{historyConfirming ? '确认' : '历史'}}</text>
+        </view>
+      </view>
+      <view class="header-divider"></view>
+    </view>
+
+    <!-- 右侧阅读进度条 -->
+    <view class="scroll-progress" style="top: {{progressTop}}px; bottom: {{progressBottom}}px;">
+      <view class="scroll-progress-fill" style="height: {{scrollProgress * 100}}%;"></view>
+    </view>
+
+    <!-- 滚动区域：scroll-view 接管滚动，隐藏原生滚动条 -->
+    <scroll-view
+      scroll-y
+      enhanced
+      show-scrollbar="{{false}}"
+      class="story-scroll"
+      bindscroll="onScroll"
+    >
+      <view style="height: {{navBarHeight}}px;"></view>
+
+      <!-- 故事正文卡片 -->
+      <view class="story-body">
+        <block wx:for="{{storySegments}}" wx:key="index">
+          <!-- 正文段落 -->
+          <view class="story-text {{item.beforeAnnotation ? 'before-annotation' : ''}}" wx:if="{{item.type === 'text'}}">
+            <text>{{item.content}}</text>
+          </view>
+          <!-- 性格分析气泡（默认折叠，无字样） -->
+          <view class="annotation-wrapper" wx:if="{{item.type === 'annotation'}}" bindtap="toggleAnnotation" data-index="{{index}}">
+            <view class="annotation-divider-row">
+              <view class="divider-line"></view>
+              <view class="annotation-bubble">
+                <view class="bubble-triangle {{item.expanded ? 'up' : 'down'}}"></view>
+              </view>
+              <view class="divider-line"></view>
+            </view>
+            <view class="annotation-expand-wrapper {{item.expanded ? 'expanded' : ''}}">
+              <view class="annotation-expand-content">
+                <text>{{item.content}}</text>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <!-- 底部留白，避免内容被操作栏遮挡 -->
+      <view style="height: {{progressBottom + 20}}px;"></view>
+    </scroll-view>
+
+    <!-- 底部操作栏 -->
+    <view class="action-bar">
+      <view class="action-button btn-outline {{backConfirming ? 'shaking' : ''}}" bindtap="goBack">
+        <text>{{backConfirming ? '确认返回？' : '返回'}}</text>
+      </view>
+      <view class="action-button btn-solid {{continueConfirming ? 'shaking' : ''}}" bindtap="goContinue">
+        <text>{{continueConfirming ? '为此篇续写？' : '续写'}}</text>
+      </view>
+    </view>
+  </view>
+</view>
