@@ -1,35 +1,80 @@
 const articleRepository = require('../../data/article-repository');
 const { parseArticleIdFromOptions } = require('../common/article-route');
 
+// 将文章发布时间格式化为详情页展示所需的年月日格式。
+function formatPublishTime(publishTime) {
+  if (!publishTime) {
+    return '';
+  }
+
+  const date = new Date(publishTime);
+
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
 Page({
   data: {
-    // 详情页渲染所需的完整文章对象。
-    article: null
+    article: null,
+    formattedPublishTime: ''
   },
 
-  // 从页面参数读取 id，并加载对应文章详情。
-  onLoad(options) {
-    const articleId = parseArticleIdFromOptions(options);
-    const article = articleRepository.getArticleById(articleId);
+  async onLoad(options) {
+    try {
+      const articleId = parseArticleIdFromOptions(options);
+      const article = await articleRepository.getArticleById(articleId);
 
-    // id 无效或不存在时，给出提示并停止后续渲染。
-    if (!article) {
-      this.showArticleNotFoundToast();
+      if (!article) {
+        wx.hideLoading();
+        this.showArticleNotFoundToast();
+        return;
+      }
+
+      wx.setNavigationBarTitle({
+        title: article.title
+      });
+
+      this.setData({
+        article,
+        formattedPublishTime: formatPublishTime(article.publishTime)
+      });
+    } catch (error) {
+      wx.hideLoading();
+      wx.showToast({
+        title: '文章加载失败',
+        icon: 'none'
+      });
+    }
+  },
+
+  onReady() {
+    wx.hideLoading();
+  },
+
+  onPreviewImage(event) {
+    const currentUrl = event && event.currentTarget && event.currentTarget.dataset
+      ? event.currentTarget.dataset.url
+      : '';
+    const article = this.data.article;
+    const urls = article && Array.isArray(article.imageUrls) ? article.imageUrls : [];
+
+    if (!currentUrl || !urls.length) {
       return;
     }
 
-    // 动态设置导航栏标题，提高页面语义一致性。
-    wx.setNavigationBarTitle({
-      title: article.title
-    });
-
-    // 写入数据，触发视图更新。
-    this.setData({
-      article
+    wx.previewImage({
+      current: currentUrl,
+      urls
     });
   },
 
-  // 统一管理“文章不存在”提示，便于后续统一文案。
   showArticleNotFoundToast() {
     wx.showToast({
       title: 'Article not found',

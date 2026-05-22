@@ -1,0 +1,13 @@
+{
+  "name": "generateStory",
+  "version": "1.0.0",
+  "description": "调用 DeepSeek API 生成 MBTI 故事（首轮+续写）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "got": "~11.8.6"
+  },
+  "config": {
+    "timeout": 60
+  }
+}

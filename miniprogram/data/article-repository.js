@@ -1,36 +1,8 @@
-/**
- * 文章示例数据的唯一出口。
- * 页面和组件只通过本模块取数，避免直接依赖原始数据结构，降低耦合。
- */
-const SAMPLE_COVER_URL = '/page/extend/images/pic_article.png';
+// 文章默认封面图与作者头像兜底资源。
+const SAMPLE_COVER_URL = '/packageExtend/pages/images/pic_article.png';
+const SAMPLE_AVATAR_URL = '/image/icon64_appwx_logo.png';
 
-/**
- * 内部完整文章模型：
- * - id: 文章唯一标识（用于路由和查询）
- * - title: 文章标题
- * - content: 文章正文
- * - coverUrl: 封面图地址（列表和详情复用）
- */
-const ARTICLES = Object.freeze([
-  {
-    id: 'article-1',
-    title: '\u6807\u9898',
-    content: '\u6b63\u6587',
-    coverUrl: SAMPLE_COVER_URL
-  },
-  {
-    id: 'article-2',
-    title: '\u6807\u9898',
-    content: '\u6b63\u6587',
-    coverUrl: SAMPLE_COVER_URL
-  }
-]);
-
-/**
- * 将输入 id 统一规整为可比较字符串。
- * @param {unknown} articleId
- * @returns {string}
- */
+// 将外部传入的文章 id 规整为可比较的字符串。
 function normalizeArticleId(articleId) {
   if (typeof articleId !== 'string') {
     return '';
@@ -39,61 +11,126 @@ function normalizeArticleId(articleId) {
   return articleId.trim();
 }
 
-/**
- * 组装列表页需要的轻量模型，避免暴露正文字段。
- * @param {{id: string, title: string, coverUrl: string}} article
- */
+// 将封面图和正文图片合并成统一预览列表。
+function createArticlePreviewList(coverUrl, contentImages) {
+  const safeContentImages = Array.isArray(contentImages) ? contentImages.filter(Boolean) : [];
+
+  if (!coverUrl) {
+    return safeContentImages;
+  }
+
+  return [coverUrl].concat(safeContentImages);
+}
+
+// 将云函数返回的文章标题区块映射为首页卡片模型。
 function toRecommendedArticle(article) {
+  const titleSection = article && article.titleSection ? article.titleSection : {};
+
   return {
-    id: article.id,
-    title: article.title,
-    coverUrl: article.coverUrl
+    id: article.id || '',
+    title: titleSection.title || '',
+    coverUrl: titleSection.coverUrl || SAMPLE_COVER_URL
   };
 }
 
-/**
- * 组装详情页需要的完整模型。
- * @param {{id: string, title: string, content: string, coverUrl: string}} article
- */
+// 将正文区块拆成页面可直接渲染的文本块和图片块。
+function toArticleBlocks(contentSection) {
+  const blocks = [];
+  const body = contentSection && typeof contentSection.body === 'string'
+    ? contentSection.body.trim()
+    : '';
+  const images = contentSection && Array.isArray(contentSection.images)
+    ? contentSection.images.filter(Boolean)
+    : [];
+
+  if (body) {
+    body.split(/\n+/).map((paragraph) => paragraph.trim()).filter(Boolean).forEach((paragraph) => {
+      blocks.push({
+        type: 'text',
+        content: paragraph
+      });
+    });
+  }
+
+  images.forEach((imageUrl) => {
+    blocks.push({
+      type: 'image',
+      url: imageUrl
+    });
+  });
+
+  return blocks;
+}
+
+// 将云函数返回的双区块文章结构映射为详情页模型。
 function toArticleDetail(article) {
+  const titleSection = article && article.titleSection ? article.titleSection : {};
+  const contentSection = article && article.contentSection ? article.contentSection : {};
+  const images = Array.isArray(contentSection.images) ? contentSection.images.filter(Boolean) : [];
+  const coverUrl = titleSection.coverUrl || SAMPLE_COVER_URL;
+
   return {
-    id: article.id,
-    title: article.title,
-    content: article.content,
-    coverUrl: article.coverUrl
+    id: article.id || '',
+    title: titleSection.title || '',
+    authorName: titleSection.authorName || '',
+    authorAvatarUrl: titleSection.authorAvatarUrl || SAMPLE_AVATAR_URL,
+    publishTime: titleSection.publishTime || '',
+    coverUrl,
+    blocks: toArticleBlocks(contentSection),
+    imageUrls: createArticlePreviewList(coverUrl, images)
   };
 }
 
-/**
- * 返回推荐列表所需的轻量数据。
- * 刻意不返回 content，减少列表页渲染和传输负担。
- */
-function getRecommendedArticles() {
-  return ARTICLES.map(toRecommendedArticle);
+// 统一封装文章云函数调用，避免页面层感知返回结构。
+function callArticleCloudFunction(data) {
+  return wx.cloud.callFunction({
+    name: 'article',
+    data
+  }).then((result) => {
+    const cloudResult = result && result.result ? result.result : {};
+
+    if (!cloudResult.success) {
+      throw new Error(cloudResult.error || 'Failed to load articles');
+    }
+
+    return cloudResult.data;
+  });
 }
 
-/**
- * 根据文章 id 返回详情数据。
- * @param {string} articleId
- * @returns {{id: string, title: string, content: string, coverUrl: string} | null}
- */
+function getRecommendedArticles() {
+  return callArticleCloudFunction({
+    action: 'list'
+  }).then((articles) => {
+    const safeArticles = Array.isArray(articles) ? articles : [];
+    return safeArticles.map(toRecommendedArticle);
+  });
+}
+
 function getArticleById(articleId) {
   const normalizedArticleId = normalizeArticleId(articleId);
 
   if (!normalizedArticleId) {
-    return null;
+    return Promise.resolve(null);
   }
 
-  const article = ARTICLES.find((item) => item.id === normalizedArticleId);
+  return callArticleCloudFunction({
+    action: 'detail',
+    articleId: normalizedArticleId
+  }).then((article) => {
+    if (!article) {
+      return null;
+    }
 
-  if (!article) {
-    return null;
-  }
-
-  return toArticleDetail(article);
+    return toArticleDetail(article);
+  });
 }
 
 module.exports = {
+  normalizeArticleId,
+  createArticlePreviewList,
+  toRecommendedArticle,
+  toArticleBlocks,
+  toArticleDetail,
   getRecommendedArticles,
   getArticleById
 };
