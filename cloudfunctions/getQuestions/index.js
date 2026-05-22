@@ -8,8 +8,8 @@ const db = cloud.database()
  * 校验并归一化 count 参数（抽题数量）
  * - 不传 → 默认5
  * - 非正整数（含0、负数、浮点数、非数字、Infinity） → 重置为5
- * - 正整数 < 3 → 返回 null（调用方应返回 INVALID_COUNT 错误）
- * - 正整数 >= 3 → 保持原值
+ * - 正整数 < 2 → 返回 null（调用方应返回 INVALID_COUNT 错误）
+ * - 正整数 >= 2 → 保持原值
  * @param {*} count - 传入的抽题数量参数
  * @returns {number|null} 归一化后的数量，null 表示应报错
  */
@@ -22,8 +22,8 @@ function sanitizeCount(count) {
   if (typeof count !== 'number' || !Number.isFinite(count) || !Number.isInteger(count) || count <= 0) {
     return 5
   }
-  // 正整数但小于3，返回 null 表示需要报错 INVALID_COUNT
-  if (count < 3) {
+  // 正整数但小于2，返回 null 表示需要报错 INVALID_COUNT
+  if (count < 2) {
     return null
   }
   return count
@@ -251,7 +251,7 @@ async function getQuestions(event) {
       success: false,
       data: null,
       warnings: [],
-      error: { code: 'INVALID_COUNT', message: 'count必须为大于等于3的正整数' }
+      error: { code: 'INVALID_COUNT', message: 'count必须为大于等于2的正整数' }
     }
   }
 

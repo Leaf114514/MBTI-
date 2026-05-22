@@ -38,7 +38,7 @@
       <view class="header-title-row">
         <text class="story-title">{{storyTitle}}</text>
         <view class="round-count-badge">
-          <text>续写:{{continueCount}}/5</text>
+          <text>页数:{{currentRoundIndex + 1}}/{{storyRounds.length}}</text>
         </view>
         <view class="header-badge {{historyConfirming ? 'shaking' : ''}}" bindtap="goHistory">
           <text>{{historyConfirming ? '确认' : '历史'}}</text>

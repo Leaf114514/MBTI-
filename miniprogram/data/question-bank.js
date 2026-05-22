@@ -469,11 +469,13 @@ function shuffle(array) {
  * @param {number} count 抽取题目数量，默认5
  * @returns {Array} 抽取的题目数组，每题固定3个选项
  */
-function getRandomQuestions(count = 5) {
+function getRandomQuestions(count = 5, excludeIds) {
   const total = QUESTIONS.length
   const actualCount = Math.min(count, total)
-  const shuffled = shuffle(QUESTIONS)
-  const selected = shuffled.slice(0, actualCount)
+  const excludeSet = excludeIds && excludeIds.length > 0 ? new Set(excludeIds) : null
+  const pool = excludeSet ? QUESTIONS.filter(q => !excludeSet.has(q.id)) : QUESTIONS
+  const shuffled = shuffle(pool)
+  const selected = shuffled.slice(0, Math.min(actualCount, pool.length))
 
   return selected.map(q => {
     let options

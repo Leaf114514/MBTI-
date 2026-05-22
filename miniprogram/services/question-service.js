@@ -23,8 +23,8 @@ function sanitizeCount(count) {
     return 5
   }
 
-  // 正整数但小于3，按决策规范应报错而非重置
-  if (count < 3) {
+  // 正整数但小于2，按决策规范应报错而非重置
+  if (count < 2) {
     return null
   }
 
@@ -101,7 +101,7 @@ class QuestionService {
       return {
         error: {
           code: 'INVALID_COUNT',
-          message: 'count必须为大于等于3的正整数'
+          message: 'count必须为大于等于2的正整数'
         }
       }
     }

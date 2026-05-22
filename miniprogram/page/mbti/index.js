@@ -1,6 +1,6 @@
 
 // 引用题库
-const questionBank = require('../../data/question-bank')
+const questionService = require('../../services/question-service')
 const storyService = require('../../services/story-service')
 
 // MBTI 头部——第一列滚轮选项
@@ -129,8 +129,14 @@ Page({
   },
 
   /** 进入续写答题模式（2 道题） */
-  _enterContinueMode({ sessionId, currentRound }) {
-    const questions = questionBank.getRandomQuestions(2)
+  async _enterContinueMode({ sessionId, currentRound }) {
+    const result = await questionService.getRandomQuestions({ count: 2 })
+    if (!result.success || !result.data || !result.data.questions) {
+      // 加载失败，回到选择阶段
+      this.setData({ phase: 'select' })
+      return
+    }
+    const questions = this._mapCloudQuestions(result.data.questions)
     this.setData({
       phase: 'quiz',
       isContinueMode: true,
@@ -264,7 +270,7 @@ Page({
   /**
    * 开始答题 —— 选择器掉落 → 题目落下 → 进度条/按钮淡入
    */
-  onStartQuiz() {
+  async onStartQuiz() {
     const { selectedMbti, selectedGender, selectLeaving } = this.data
     if (selectLeaving) return
     if (!selectedMbti) {
@@ -275,6 +281,14 @@ Page({
       this._shakeButton('start', '请先选择性别')
       return
     }
+
+    // 先从云函数获取题目
+    const result = await questionService.getRandomQuestions({ count: QUESTION_COUNT })
+    if (!result.success || !result.data || !result.data.questions) {
+      this._shakeButton('start', '题目加载失败，请重试')
+      return
+    }
+    const questions = this._mapCloudQuestions(result.data.questions)
 
     // 三个元素各自随机掉落时长 300~600ms
     const dur1 = (300 + Math.random() * 300).toFixed(0) + 'ms'
@@ -297,8 +311,6 @@ Page({
       startBtnDur: 'animation-duration:' + dur3,
     })
 
-    // 预生成题目
-    const questions = questionBank.getRandomQuestions(QUESTION_COUNT)
     this._pendingQuiz = {
       questions,
       currentIndex: 0,
@@ -510,6 +522,7 @@ Page({
     delete app.globalData.pendingContinueRequest
     delete app.globalData.pendingContinueSubmit
     delete app.globalData.prevStoryRounds
+    this._usedQuestionIds = []
     this.setData({
       phase: 'select',
       selectedMbti: '',
@@ -541,5 +554,17 @@ Page({
         [prefix + 'BtnShaking']: false,
       })
     }, 1500)
+  },
+
+  /** 将云函数返回的题目格式转换为页面所需格式 */
+  _mapCloudQuestions(cloudQuestions) {
+    return cloudQuestions.map(q => ({
+      id: q._id || q.id,
+      question: q.question,
+      options: (q.options || []).map(o => ({
+        key: o.id,
+        text: o.text
+      }))
+    }))
   },
 })
