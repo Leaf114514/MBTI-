@@ -1,6 +1,7 @@
 const articleRepository = require('../../data/article-repository');
 const { parseArticleIdFromOptions } = require('../common/article-route');
 
+// 将文章发布时间格式化为详情页展示所需的年月日格式。
 function formatPublishTime(publishTime) {
   if (!publishTime) {
     return '';
@@ -25,24 +26,32 @@ Page({
     formattedPublishTime: ''
   },
 
-  onLoad(options) {
-    const articleId = parseArticleIdFromOptions(options);
-    const article = articleRepository.getArticleById(articleId);
+  async onLoad(options) {
+    try {
+      const articleId = parseArticleIdFromOptions(options);
+      const article = await articleRepository.getArticleById(articleId);
 
-    if (!article) {
+      if (!article) {
+        wx.hideLoading();
+        this.showArticleNotFoundToast();
+        return;
+      }
+
+      wx.setNavigationBarTitle({
+        title: article.title
+      });
+
+      this.setData({
+        article,
+        formattedPublishTime: formatPublishTime(article.publishTime)
+      });
+    } catch (error) {
       wx.hideLoading();
-      this.showArticleNotFoundToast();
-      return;
+      wx.showToast({
+        title: '文章加载失败',
+        icon: 'none'
+      });
     }
-
-    wx.setNavigationBarTitle({
-      title: article.title
-    });
-
-    this.setData({
-      article,
-      formattedPublishTime: formatPublishTime(article.publishTime)
-    });
   },
 
   onReady() {
