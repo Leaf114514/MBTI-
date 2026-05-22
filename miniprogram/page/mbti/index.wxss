@@ -390,6 +390,35 @@
   80% { transform: translateX(6rpx); }
 }
 
+/* ===== "查看故事"按钮样式 ===== */
+.btn-story {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.4);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.anim-story-btn-in {
+  animation: story-btn-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes story-btn-in {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+    background: #f5f5f5;
+  }
+  60% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 /* ===== 页面转场动画 ===== */
 
 /* 选择器卡片 / 按钮掉落出屏幕（select → quiz） */

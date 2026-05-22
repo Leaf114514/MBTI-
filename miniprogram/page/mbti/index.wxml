@@ -133,34 +133,11 @@
     </view>
 
     <view
-      class="btn-primary quiz-btn submit-btn {{answerCount < questions.length ? 'btn-warn' : ''}} {{submitBtnShaking ? 'anim-shake' : ''}}"
-      bindtap="onSubmit"
+      class="btn-primary quiz-btn submit-btn {{storyGenerated ? 'btn-story ' + storyBtnAnim : ''}} {{!storyGenerated && answerCount < questions.length ? 'btn-warn' : ''}} {{submitBtnShaking ? 'anim-shake' : ''}}"
+      bindtap="{{storyGenerated ? 'onViewStory' : 'onSubmit'}}"
       wx:if="{{currentIndex === questions.length - 1}}"
     >
-      <text>{{submitBtnWarn ? submitBtnWarn : (isSubmitting ? '提交中...' : '提交答案')}}</text>
-    </view>
-  </view>
-</view>
-
-<!-- ===== 故事结果阶段 ===== -->
-<view class="result-section" wx:if="{{phase === 'result'}}">
-  <view class="result-card">
-    <text class="result-title">{{storyTitle}}</text>
-    <view class="result-meta">
-      <text class="result-word-count">{{storyWordCount}} 字</text>
-    </view>
-    <view class="result-divider"></view>
-    <scroll-view class="result-scroll" scroll-y>
-      <text class="result-content" space="emsp">{{storyContent}}</text>
-    </scroll-view>
-  </view>
-
-  <view class="result-actions">
-    <view class="btn-primary result-btn" bindtap="onContinueStory" wx:if="{{canContinue}}">
-      <text>续写故事</text>
-    </view>
-    <view class="btn-secondary result-btn" bindtap="onNewStory">
-      <text>开始新故事</text>
+      <text>{{storyGenerated ? storyTitle : (isContinueMode ? (isSubmitting ? '提交中...' : '提交续写') : (submitBtnWarn ? submitBtnWarn : (isSubmitting ? '提交中...' : '提交答案')))}}</text>
     </view>
   </view>
 </view>

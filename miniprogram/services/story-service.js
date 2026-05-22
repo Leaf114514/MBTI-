@@ -305,7 +305,7 @@ class StoryService {
     // 缓存未命中，从云数据库读取
     try {
       const db = wx.cloud.database()
-      const queryResult = await db.collection('story_sessions').doc(sessionId).get()
+      const queryResult = await db.collection('stories').doc(sessionId).get()
       return {
         success: true,
         data: queryResult.data,

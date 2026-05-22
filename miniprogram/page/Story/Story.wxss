@@ -265,6 +265,11 @@ page {
   position: relative;
 }
 
+/* swiper 占满屏幕 */
+.story-swiper {
+  height: 100vh;
+}
+
 /* scroll-view 接管滚动 */
 .story-scroll {
   height: 100vh;
@@ -464,4 +469,23 @@ page {
   background-color: var(--color-primary);
   border-radius: 3rpx;
   min-height: 12rpx;
+}
+
+/* ===== 页码指示器 ===== */
+.round-indicator {
+  position: fixed;
+  bottom: 120rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8rpx 24rpx;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 20rpx;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.round-indicator text {
+  font-size: var(--font-size-micro);
+  color: #FFFFFF;
+  white-space: nowrap;
 }

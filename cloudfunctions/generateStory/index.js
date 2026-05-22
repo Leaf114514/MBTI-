@@ -362,7 +362,7 @@ async function handleFirstRound(openid, mbti, gender, answers) {
   // ---- 6. 写入云数据库 ----
   const now = new Date().toISOString()
   try {
-    const addResult = await db.collection('story_sessions').add({
+    const addResult = await db.collection('stories').add({
       data: {
         openid,
         mbti: mbtiResult.value,
@@ -430,7 +430,7 @@ async function handleContinueRound(openid, sessionId, answers) {
   // ---- 2. 读取会话 ----
   let session
   try {
-    const queryResult = await db.collection('story_sessions').doc(sessionId).get()
+    const queryResult = await db.collection('stories').doc(sessionId).get()
     session = queryResult.data
   } catch (e) {
     console.error('[generateStory] 读取会话失败:', e)
@@ -503,7 +503,7 @@ async function handleContinueRound(openid, sessionId, answers) {
 
   try {
     // 使用原子操作追加 history 和 rounds，避免并发覆盖
-    await db.collection('story_sessions').doc(sessionId).update({
+    await db.collection('stories').doc(sessionId).update({
       data: {
         history: _.push([
           { role: 'user', content: continueUserPrompt },
