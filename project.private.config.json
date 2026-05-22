@@ -1,5 +1,5 @@
 {
-  "projectname": "4%E6%9C%8825%E5%89%8D%E7%AB%AF",
+  "projectname": "%E6%95%85%E4%BA%8B%E9%A1%B5",
   "setting": {
     "urlCheck": false,
     "coverView": true,
@@ -23,8 +23,8 @@
     "miniprogram": {
       "list": [
         {
-          "name": "page/mbti/index",
-          "pathName": "page/mbti/index",
+          "name": "page/Story/Story",
+          "pathName": "page/Story/Story",
           "query": "",
           "scene": null,
           "launchMode": "default"
