@@ -18,11 +18,20 @@ Page({
     this.loadRecommendedArticles();
   },
 
-  // 聚合列表加载逻辑，避免生命周期和业务代码耦合。
-  loadRecommendedArticles() {
-    this.setData({
-      recommendedArticles: articleRepository.getRecommendedArticles()
-    });
+  // 聚合列表加载逻辑，统一从仓储层读取文章推荐数据。
+  async loadRecommendedArticles() {
+    try {
+      const recommendedArticles = await articleRepository.getRecommendedArticles();
+
+      this.setData({
+        recommendedArticles
+      });
+    } catch (error) {
+      wx.showToast({
+        title: '文章加载失败',
+        icon: 'none'
+      });
+    }
   },
 
   // 处理子组件抛出的点击事件，并负责页面跳转。

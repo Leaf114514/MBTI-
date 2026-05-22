@@ -1,6 +1,0 @@
-{
-  "usingComponents": {
-    "mp-loading": "weui-miniprogram/loading/loading"
-  },
-  "navigationBarTitleText": "loadmore"
-}

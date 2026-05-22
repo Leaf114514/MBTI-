@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "Bash(python -c ' *)",
+      "Bash(python -c \"print\\('hello'\\)\")",
+      "Bash(xxd)"
+      "WebFetch(domain:docs.anthropic.com)",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "WebFetch(domain:docs.z.ai)",
+      "Read(//c/Users/31215/**)"
+    ]
+  }
+}
