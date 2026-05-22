@@ -38,7 +38,7 @@
       <view class="header-title-row">
         <text class="story-title">{{storyTitle}}</text>
         <view class="round-count-badge">
-          <text>续写:{{continueCount}}/5</text>
+          <text>页数:{{currentRoundIndex + 1}}/{{storyRounds.length}}</text>
         </view>
         <view class="header-badge {{historyConfirming ? 'shaking' : ''}}" bindtap="goHistory">
           <text>{{historyConfirming ? '确认' : '历史'}}</text>
@@ -52,51 +52,63 @@
       <view class="scroll-progress-fill" style="height: {{scrollProgress * 100}}%;"></view>
     </view>
 
-    <!-- 滚动区域：scroll-view 接管滚动，隐藏原生滚动条 -->
-    <scroll-view
-      scroll-y
-      enhanced
-      show-scrollbar="{{false}}"
-      class="story-scroll"
-      bindscroll="onScroll"
+    <!-- swiper 分页：每轮故事独立一页 -->
+    <swiper
+      class="story-swiper"
+      current="{{currentRoundIndex}}"
+      bindchange="onRoundChange"
     >
-      <view style="height: {{navBarHeight}}px;"></view>
+      <swiper-item wx:for="{{storyRounds}}" wx:key="index">
+        <scroll-view
+          scroll-y
+          enhanced
+          show-scrollbar="{{false}}"
+          class="story-scroll"
+          bindscroll="onScroll"
+        >
+          <view style="height: {{navBarHeight}}px;"></view>
 
-      <!-- 故事正文卡片 -->
-      <view class="story-body">
-        <block wx:for="{{storySegments}}" wx:key="index">
-          <!-- 正文段落 -->
-          <view class="story-text {{item.beforeAnnotation ? 'before-annotation' : ''}}" wx:if="{{item.type === 'text'}}">
-            <text>{{item.content}}</text>
-          </view>
-          <!-- 性格分析气泡（默认折叠，无字样） -->
-          <view class="annotation-wrapper" wx:if="{{item.type === 'annotation'}}" bindtap="toggleAnnotation" data-index="{{index}}">
-            <view class="annotation-divider-row">
-              <view class="divider-line"></view>
-              <view class="annotation-bubble">
-                <view class="bubble-triangle {{item.expanded ? 'up' : 'down'}}"></view>
+          <view class="story-body">
+            <block wx:for="{{item.segments}}" wx:for-item="seg" wx:key="segIdx" wx:for-index="segIdx">
+              <view class="story-text {{seg.beforeAnnotation ? 'before-annotation' : ''}}" wx:if="{{seg.type === 'text'}}">
+                <text>{{seg.content}}</text>
               </view>
-              <view class="divider-line"></view>
-            </view>
-            <view class="annotation-expand-wrapper {{item.expanded ? 'expanded' : ''}}">
-              <view class="annotation-expand-content">
-                <text>{{item.content}}</text>
+              <view class="annotation-wrapper" wx:if="{{seg.type === 'annotation'}}"
+                bindtap="toggleAnnotation"
+                data-round-index="{{index}}"
+                data-seg-index="{{segIdx}}">
+                <view class="annotation-divider-row">
+                  <view class="divider-line"></view>
+                  <view class="annotation-bubble">
+                    <view class="bubble-triangle {{seg.expanded ? 'up' : 'down'}}"></view>
+                  </view>
+                  <view class="divider-line"></view>
+                </view>
+                <view class="annotation-expand-wrapper {{seg.expanded ? 'expanded' : ''}}">
+                  <view class="annotation-expand-content">
+                    <text>{{seg.content}}</text>
+                  </view>
+                </view>
               </view>
-            </view>
+            </block>
           </view>
-        </block>
-      </view>
 
-      <!-- 底部留白，避免内容被操作栏遮挡 -->
-      <view style="height: {{progressBottom + 20}}px;"></view>
-    </scroll-view>
+          <view style="height: {{progressBottom + 20}}px;"></view>
+        </scroll-view>
+      </swiper-item>
+    </swiper>
+
+    <!-- 页码指示器 -->
+    <view class="round-indicator" wx:if="{{storyRounds.length > 1}}">
+      <text>第 {{currentRoundIndex + 1}} 页 / 共 {{storyRounds.length}} 页</text>
+    </view>
 
     <!-- 底部操作栏 -->
     <view class="action-bar">
       <view class="action-button btn-outline {{backConfirming ? 'shaking' : ''}}" bindtap="goBack">
         <text>{{backConfirming ? '确认返回？' : '返回'}}</text>
       </view>
-      <view class="action-button btn-solid {{continueConfirming ? 'shaking' : ''}}" bindtap="goContinue">
+      <view class="action-button btn-solid {{continueConfirming ? 'shaking' : ''}}" bindtap="goContinue" wx:if="{{canContinue}}">
         <text>{{continueConfirming ? '为此篇续写？' : '续写'}}</text>
       </view>
     </view>

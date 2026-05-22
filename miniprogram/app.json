@@ -12,7 +12,6 @@
     "page/Story/Story",
     "page/continue/continue",
     "page/history/history"
-    "page/profile/index"
   ],
   "window": {
     "navigationBarTitleText": "登录",

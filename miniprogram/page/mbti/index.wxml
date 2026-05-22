@@ -133,11 +133,11 @@
     </view>
 
     <view
-      class="btn-primary quiz-btn submit-btn {{answerCount < questions.length ? 'btn-warn' : ''}} {{submitBtnShaking ? 'anim-shake' : ''}}"
-      bindtap="onSubmit"
+      class="btn-primary quiz-btn submit-btn {{storyGenerated ? 'btn-story ' + storyBtnAnim : ''}} {{!storyGenerated && answerCount < questions.length ? 'btn-warn' : ''}} {{submitBtnShaking ? 'anim-shake' : ''}}"
+      bindtap="{{storyGenerated ? 'onViewStory' : 'onSubmit'}}"
       wx:if="{{currentIndex === questions.length - 1}}"
     >
-      <text>{{submitBtnWarn ? submitBtnWarn : (isSubmitting ? '提交中...' : '提交答案')}}</text>
+      <text>{{storyGenerated ? storyTitle : (isContinueMode ? (isSubmitting ? '提交中...' : '提交续写') : (submitBtnWarn ? submitBtnWarn : (isSubmitting ? '提交中...' : '提交答案')))}}</text>
     </view>
   </view>
 </view>

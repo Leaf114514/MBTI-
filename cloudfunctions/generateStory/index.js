@@ -241,30 +241,42 @@ function makeSuccess(data, warnings = []) {
  */
 async function callDeepSeek(messages) {
   const apiKey = process.env.DEEPSEEK_API_KEY
+  console.log('[generateStory] API Key 状态:', apiKey ? '已设置(长度' + apiKey.length + ')' : '未设置')
   if (!apiKey) {
     throw new Error('API_KEY_MISSING')
   }
 
-  const response = await got.post(DEEPSEEK_API_URL, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`
-    },
-    json: {
-      model: DEEPSEEK_MODEL,
-      messages,
-      temperature: DEEPSEEK_TEMPERATURE,
-      max_tokens: DEEPSEEK_MAX_TOKENS
-      // 深度思考模式参数按 DeepSeek V4 Flash 官方文档配置
-    },
-    timeout: { request: 50000 },
-    retry: { limit: 0 }
-  })
+  let response
+  try {
+    response = await got.post(DEEPSEEK_API_URL, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      json: {
+        model: DEEPSEEK_MODEL,
+        messages,
+        temperature: DEEPSEEK_TEMPERATURE,
+        max_tokens: DEEPSEEK_MAX_TOKENS
+      },
+      responseType: 'json',
+      timeout: { request: 50000 },
+      retry: { limit: 0 }
+    })
+  } catch (apiErr) {
+    console.error('[generateStory] API 请求失败:', apiErr.statusCode, apiErr.message)
+    if (apiErr.body) {
+      console.error('[generateStory] API 返回体:', JSON.stringify(apiErr.body).substring(0, 500))
+    }
+    throw apiErr
+  }
 
   const data = response.body
+  console.log('[generateStory] API 返回状态:', response.statusCode)
   const content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content
 
   if (!content || content.trim() === '') {
+    console.error('[generateStory] API 返回内容为空, 完整响应:', JSON.stringify(data).substring(0, 500))
     throw new Error('EMPTY_RESPONSE')
   }
 
@@ -350,7 +362,7 @@ async function handleFirstRound(openid, mbti, gender, answers) {
   // ---- 6. 写入云数据库 ----
   const now = new Date().toISOString()
   try {
-    const addResult = await db.collection('story_sessions').add({
+    const addResult = await db.collection('stories').add({
       data: {
         openid,
         mbti: mbtiResult.value,
@@ -418,7 +430,7 @@ async function handleContinueRound(openid, sessionId, answers) {
   // ---- 2. 读取会话 ----
   let session
   try {
-    const queryResult = await db.collection('story_sessions').doc(sessionId).get()
+    const queryResult = await db.collection('stories').doc(sessionId).get()
     session = queryResult.data
   } catch (e) {
     console.error('[generateStory] 读取会话失败:', e)
@@ -491,7 +503,7 @@ async function handleContinueRound(openid, sessionId, answers) {
 
   try {
     // 使用原子操作追加 history 和 rounds，避免并发覆盖
-    await db.collection('story_sessions').doc(sessionId).update({
+    await db.collection('stories').doc(sessionId).update({
       data: {
         history: _.push([
           { role: 'user', content: continueUserPrompt },

@@ -1,6 +1,7 @@
 
 // 引用题库
-const questionBank = require('../../data/question-bank')
+const questionService = require('../../services/question-service')
+const storyService = require('../../services/story-service')
 
 // MBTI 头部——第一列滚轮选项
 const MBTI_HEAD = ['IN', 'IS', 'EN', 'ES']
@@ -61,6 +62,10 @@ Page({
     cancelConfirmPending: false,
     isSubmitting: false,
 
+    // ——— 故事已生成标记（返回时按钮变"查看故事"） ———
+    storyGenerated: false,
+    storyBtnAnim: '',
+
     // ——— 按钮提示状态 ———
     startBtnWarn: '',
     startBtnShaking: false,
@@ -83,9 +88,79 @@ Page({
     // ——— 续写模式（预留） ———
     isContinueMode: false,
     currentRound: 0,
+
+    // ——— 故事结果 ———
+    storyTitle: '',
+    storyContent: '',
+    sessionId: '',
+    storyWordCount: 0,
+    canContinue: false,
   },
 
   onLoad() {},
+
+  onShow() {
+    if (this.data.isSubmitting) {
+      this.setData({ isSubmitting: false })
+    }
+
+    const app = getApp()
+
+    // 优先：续写模式（从 Story 页点击"续写"返回）
+    const continueReq = app.globalData.pendingContinueRequest
+    if (continueReq) {
+      delete app.globalData.pendingContinueRequest
+      this._enterContinueMode(continueReq)
+      return
+    }
+
+    // 其次：故事已生成（按钮变"查看故事"）
+    const sessionId = app.globalData.lastStorySessionId
+    if (sessionId && this.data.phase === 'quiz') {
+      this.setData({
+        storyGenerated: true,
+        sessionId,
+        storyTitle: app.globalData.lastStoryTitle || '你的 MBTI 故事',
+      })
+      setTimeout(() => {
+        this.setData({ storyBtnAnim: 'anim-story-btn-in' })
+      }, 50)
+    }
+  },
+
+  /** 进入续写答题模式（2 道题） */
+  async _enterContinueMode({ sessionId, currentRound }) {
+    const result = await questionService.getRandomQuestions({ count: 2 })
+    if (!result.success || !result.data || !result.data.questions) {
+      // 加载失败，回到选择阶段
+      this.setData({ phase: 'select' })
+      return
+    }
+    const questions = this._mapCloudQuestions(result.data.questions)
+    this.setData({
+      phase: 'quiz',
+      isContinueMode: true,
+      currentRound: currentRound || 1,
+      sessionId,
+      storyGenerated: false,
+      storyBtnAnim: '',
+      questions,
+      currentIndex: 0,
+      answers: {},
+      answerCount: 0,
+      progress: '1/2',
+      progressPercent: 50,
+      answeredPercent: '0%',
+      cancelConfirmPending: false,
+      isSubmitting: false,
+      questionAnim: 'anim-drop-in',
+      progressAnim: 'anim-hidden',
+      actionsAnim: 'anim-hidden',
+    })
+    setTimeout(() => { this.setData({ progressAnim: 'anim-fade-in' }) }, 200)
+    setTimeout(() => { this.setData({ actionsAnim: 'anim-fade-in' }) }, 350)
+    setTimeout(() => { this.setData({ questionAnim: '', progressAnim: '', actionsAnim: '' }) }, 700)
+  },
 
   // =============================================
   //   MBTI 选择器
@@ -195,7 +270,7 @@ Page({
   /**
    * 开始答题 —— 选择器掉落 → 题目落下 → 进度条/按钮淡入
    */
-  onStartQuiz() {
+  async onStartQuiz() {
     const { selectedMbti, selectedGender, selectLeaving } = this.data
     if (selectLeaving) return
     if (!selectedMbti) {
@@ -206,6 +281,14 @@ Page({
       this._shakeButton('start', '请先选择性别')
       return
     }
+
+    // 先从云函数获取题目
+    const result = await questionService.getRandomQuestions({ count: QUESTION_COUNT })
+    if (!result.success || !result.data || !result.data.questions) {
+      this._shakeButton('start', '题目加载失败，请重试')
+      return
+    }
+    const questions = this._mapCloudQuestions(result.data.questions)
 
     // 三个元素各自随机掉落时长 300~600ms
     const dur1 = (300 + Math.random() * 300).toFixed(0) + 'ms'
@@ -228,8 +311,6 @@ Page({
       startBtnDur: 'animation-duration:' + dur3,
     })
 
-    // 预生成题目
-    const questions = questionBank.getRandomQuestions(QUESTION_COUNT)
     this._pendingQuiz = {
       questions,
       currentIndex: 0,
@@ -314,7 +395,7 @@ Page({
     const updates = {
       answers: newAnswers,
       answerCount: newCount,
-      answeredPercent: Math.round((newCount / QUESTION_COUNT) * 100) + '%',
+      answeredPercent: Math.round((newCount / this.data.questions.length) * 100) + '%',
     }
     if (cancelConfirmPending) updates.cancelConfirmPending = false
     this.setData(updates)
@@ -325,15 +406,15 @@ Page({
     const { currentIndex, questions, questionAnim } = this.data
     if (currentIndex >= questions.length - 1 || questionAnim) return
 
-    // 当前题向左滑出
     this.setData({ questionAnim: 'anim-flip-out-left' })
 
     setTimeout(() => {
       const newIdx = currentIndex + 1
+      const total = questions.length
       this.setData({
         currentIndex: newIdx,
-        progress: (newIdx + 1) + '/' + QUESTION_COUNT,
-        progressPercent: ((newIdx + 1) / QUESTION_COUNT) * 100,
+        progress: (newIdx + 1) + '/' + total,
+        progressPercent: ((newIdx + 1) / total) * 100,
         cancelConfirmPending: false,
         questionAnim: 'anim-flip-in-right',
       })
@@ -343,17 +424,18 @@ Page({
 
   /** 上一题（左翻页动画） */
   onPrevQuestion() {
-    const { currentIndex, questionAnim } = this.data
+    const { currentIndex, questions, questionAnim } = this.data
     if (currentIndex <= 0 || questionAnim) return
 
     this.setData({ questionAnim: 'anim-flip-out-right' })
 
     setTimeout(() => {
       const newIdx = currentIndex - 1
+      const total = questions.length
       this.setData({
         currentIndex: newIdx,
-        progress: (newIdx + 1) + '/' + QUESTION_COUNT,
-        progressPercent: ((newIdx + 1) / QUESTION_COUNT) * 100,
+        progress: (newIdx + 1) + '/' + total,
+        progressPercent: ((newIdx + 1) / total) * 100,
         cancelConfirmPending: false,
         questionAnim: 'anim-flip-in-left',
       })
@@ -368,8 +450,49 @@ Page({
       this._shakeButton('submit', '请答完所有题目')
       return
     }
-    const { answers, selectedMbti, selectedGender } = this.data
-    console.log('提交答案:', { answers, mbti: selectedMbti, gender: selectedGender })
+    if (this.data.isSubmitting) return
+
+    const { answers, selectedMbti, selectedGender, isContinueMode, sessionId } = this.data
+
+    // 将本地答题数据转换为云函数期望的格式
+    const formattedAnswers = questions.map(q => ({
+      question: q.question,
+      options: q.options.map(o => ({ id: o.key, text: o.text })),
+      selected: answers[q.id]
+    }))
+
+    this.setData({ isSubmitting: true, submitBtnWarn: '' })
+
+    const app = getApp()
+
+    if (isContinueMode) {
+      // 续写模式：只需 sessionId + 2 道题的答案
+      app.globalData.pendingContinueSubmit = {
+        sessionId,
+        answers: formattedAnswers
+      }
+      wx.navigateTo({
+        url: '/page/Story/Story?mode=continueGenerate',
+        fail: () => {
+          this.setData({ isSubmitting: false })
+          this._shakeButton('submit', '页面跳转失败')
+        }
+      })
+    } else {
+      // 首次生成模式
+      app.globalData.pendingStoryRequest = {
+        mbti: selectedMbti,
+        gender: selectedGender,
+        answers: formattedAnswers
+      }
+      wx.navigateTo({
+        url: '/page/Story/Story?mode=generate',
+        fail: () => {
+          this.setData({ isSubmitting: false })
+          this._shakeButton('submit', '页面跳转失败')
+        }
+      })
+    }
   },
 
   // =============================================
@@ -378,6 +501,43 @@ Page({
 
   onViewHistory() {},
   noop() {},
+
+  /** 查看已生成的故事 */
+  onViewStory() {
+    if (!this.data.sessionId) return
+    wx.navigateTo({
+      url: `/page/Story/Story?sessionId=${this.data.sessionId}`
+    })
+  },
+
+  /** 续写故事 */
+  onContinueStory() {},
+
+  /** 开始新故事 — 重置到选择阶段 */
+  onNewStory() {
+    storyService.resetSession()
+    const app = getApp()
+    delete app.globalData.lastStorySessionId
+    delete app.globalData.lastStoryTitle
+    delete app.globalData.pendingContinueRequest
+    delete app.globalData.pendingContinueSubmit
+    delete app.globalData.prevStoryRounds
+    this._usedQuestionIds = []
+    this.setData({
+      phase: 'select',
+      selectedMbti: '',
+      selectedGender: '',
+      storyTitle: '',
+      storyContent: '',
+      sessionId: '',
+      storyWordCount: 0,
+      canContinue: false,
+      storyGenerated: false,
+      storyBtnAnim: '',
+      isContinueMode: false,
+      currentRound: 0,
+    })
+  },
 
   _shakeButton(prefix, message) {
     this.setData({
@@ -394,5 +554,17 @@ Page({
         [prefix + 'BtnShaking']: false,
       })
     }, 1500)
+  },
+
+  /** 将云函数返回的题目格式转换为页面所需格式 */
+  _mapCloudQuestions(cloudQuestions) {
+    return cloudQuestions.map(q => ({
+      id: q._id || q.id,
+      question: q.question,
+      options: (q.options || []).map(o => ({
+        key: o.id,
+        text: o.text
+      }))
+    }))
   },
 })
