@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.anthropic.com)",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "WebFetch(domain:docs.z.ai)",
+      "Read(//c/Users/31215/**)"
+    ]
+  }
+}
