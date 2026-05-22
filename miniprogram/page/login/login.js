@@ -114,6 +114,10 @@ Page({
         userInfo: result.user,
         isNewUser: result.isNewUser
       })
+
+      const app = getApp()
+      app.globalData.hasLogin = true
+      app.globalData.openid = result.user.openid || null
       this._setBtn(result.isNewUser ? '已创建新用户' : '欢迎回来', true)
 
       console.log('Login success:', result)

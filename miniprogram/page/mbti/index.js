@@ -1,6 +1,7 @@
 
 // 引用题库
 const questionBank = require('../../data/question-bank')
+const storyService = require('../../services/story-service')
 
 // MBTI 头部——第一列滚轮选项
 const MBTI_HEAD = ['IN', 'IS', 'EN', 'ES']
@@ -83,6 +84,13 @@ Page({
     // ——— 续写模式（预留） ———
     isContinueMode: false,
     currentRound: 0,
+
+    // ——— 故事结果 ———
+    storyTitle: '',
+    storyContent: '',
+    sessionId: '',
+    storyWordCount: 0,
+    canContinue: false,
   },
 
   onLoad() {},
@@ -362,14 +370,48 @@ Page({
   },
 
   /** 提交答案 */
-  onSubmit() {
+  async onSubmit() {
     const { answerCount, questions } = this.data
     if (answerCount < questions.length) {
       this._shakeButton('submit', '请答完所有题目')
       return
     }
+    if (this.data.isSubmitting) return
+
     const { answers, selectedMbti, selectedGender } = this.data
-    console.log('提交答案:', { answers, mbti: selectedMbti, gender: selectedGender })
+
+    // 将本地答题数据转换为云函数期望的格式
+    const formattedAnswers = questions.map(q => ({
+      question: q.question,
+      options: q.options.map(o => ({ id: o.key, text: o.text })),
+      selected: answers[q.id]
+    }))
+
+    this.setData({ isSubmitting: true, submitBtnWarn: '' })
+
+    const result = await storyService.submitFirstRound({
+      mbti: selectedMbti,
+      gender: selectedGender,
+      answers: formattedAnswers
+    })
+
+    this.setData({ isSubmitting: false })
+
+    if (!result.success) {
+      const msg = (result.error && result.error.message) || '生成失败，请重试'
+      this._shakeButton('submit', msg)
+      return
+    }
+
+    const { sessionId, title, content, wordCount, meta } = result.data
+    this.setData({
+      phase: 'result',
+      storyTitle: title,
+      storyContent: content,
+      sessionId,
+      storyWordCount: wordCount,
+      canContinue: meta && meta.canContinue
+    })
   },
 
   // =============================================
@@ -378,6 +420,24 @@ Page({
 
   onViewHistory() {},
   noop() {},
+
+  /** 续写故事 */
+  onContinueStory() {},
+
+  /** 开始新故事 — 重置到选择阶段 */
+  onNewStory() {
+    storyService.resetSession()
+    this.setData({
+      phase: 'select',
+      selectedMbti: '',
+      selectedGender: '',
+      storyTitle: '',
+      storyContent: '',
+      sessionId: '',
+      storyWordCount: 0,
+      canContinue: false,
+    })
+  },
 
   _shakeButton(prefix, message) {
     this.setData({

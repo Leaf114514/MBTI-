@@ -18,6 +18,13 @@ Page({
     this.loadRecommendedArticles();
   },
 
+  onShow() {
+    const app = getApp()
+    if (!app.globalData.hasLogin) {
+      wx.navigateTo({ url: '/page/login/login' })
+    }
+  },
+
   // 聚合列表加载逻辑，统一从仓储层读取文章推荐数据。
   async loadRecommendedArticles() {
     try {

@@ -491,3 +491,68 @@
   from { transform: translateX(-100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
+
+/* ===== 故事结果阶段 ===== */
+.result-section {
+  padding: 0 var(--spacing-lg);
+  padding-bottom: 200rpx;
+}
+
+.result-card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-card);
+}
+
+.result-title {
+  display: block;
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  text-align: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.result-meta {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.result-word-count {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-tertiary);
+}
+
+.result-divider {
+  height: 2rpx;
+  background-color: var(--color-divider);
+  margin-bottom: var(--spacing-lg);
+}
+
+.result-scroll {
+  max-height: 55vh;
+}
+
+.result-content {
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-relaxed);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.result-actions {
+  position: fixed;
+  bottom: 100rpx;
+  left: var(--spacing-lg);
+  right: var(--spacing-lg);
+  z-index: 100;
+  display: flex;
+  gap: 20rpx;
+}
+
+.result-btn {
+  flex: 1;
+}
