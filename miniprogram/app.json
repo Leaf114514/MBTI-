@@ -11,7 +11,7 @@
     "page/extend/index",
     "page/Story/Story",
     "page/continue/continue",
-    "page/history/history"
+    "page/history/history",
     "page/profile/index"
   ],
   "window": {
