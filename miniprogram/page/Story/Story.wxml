@@ -29,10 +29,7 @@
     <view class="fixed-header" style="padding-top: {{statusBarHeight}}px;">
       <view class="header-top-row">
         <view class="home-btn" bindtap="goHome">
-          <view class="house-icon">
-            <view class="house-roof"></view>
-            <view class="house-wall"></view>
-          </view>
+          <image class="home-icon" src="/image/主页.svg" mode="aspectFit" />
         </view>
       </view>
       <view class="header-title-row">
