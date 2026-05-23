@@ -1,4 +1,4 @@
-<view class="container">
+<view class="container {{pageAnim}}">
   <view class="page-content">
     <article-panel
       title="{{sectionTitle}}"

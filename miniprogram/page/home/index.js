@@ -19,6 +19,10 @@ Page({
   },
 
   onShow() {
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 0 })
+    }
+    this._playPageAnim()
     const app = getApp()
     if (!app.globalData.hasLogin) {
       wx.navigateTo({ url: '/page/login/login' })
@@ -42,6 +46,15 @@ Page({
   },
 
   // 处理子组件抛出的点击事件，并负责页面跳转。
+  _playPageAnim() {
+    const app = getApp()
+    const dir = app.globalData.tabSwitchDirection
+    if (!dir) return
+    app.globalData.tabSwitchDirection = null
+    this.setData({ pageAnim: dir === 'right' ? 'page-slide-in-right' : 'page-slide-in-left' })
+    setTimeout(() => { this.setData({ pageAnim: '' }) }, 320)
+  },
+
   onSelectArticle(event) {
     const articleId = event && event.detail && event.detail.id;
     const detailUrl = buildArticleDetailUrl(articleId);

@@ -100,6 +100,10 @@ Page({
   onLoad() {},
 
   onShow() {
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 1 })
+    }
+    this._playPageAnim()
     if (this.data.isSubmitting) {
       this.setData({ isSubmitting: false })
     }
@@ -126,6 +130,15 @@ Page({
         this.setData({ storyBtnAnim: 'anim-story-btn-in' })
       }, 50)
     }
+  },
+
+  _playPageAnim() {
+    const app = getApp()
+    const dir = app.globalData.tabSwitchDirection
+    if (!dir) return
+    app.globalData.tabSwitchDirection = null
+    this.setData({ pageAnim: dir === 'right' ? 'page-slide-in-right' : 'page-slide-in-left' })
+    setTimeout(() => { this.setData({ pageAnim: '' }) }, 320)
   },
 
   /** 进入续写答题模式（2 道题） */
@@ -240,10 +253,11 @@ Page({
     }
   },
 
-  onGenderPickerChange(e) {
+  onSelectGenderOption(e) {
+    const index = Number(e.currentTarget.dataset.index)
     this.setData({
-      genderPickerValue: e.detail.value,
-      currentGenderDisplay: GENDERS[e.detail.value[0]],
+      genderPickerValue: [index],
+      currentGenderDisplay: GENDERS[index],
     })
   },
 

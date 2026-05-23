@@ -99,7 +99,7 @@
 }
 
 .picker-expand.anim-in {
-  animation: expand-in 0.4s var(--ease-spring) both;
+  animation: expand-in 0.26s var(--ease-out) both;
 }
 
 .picker-expand.anim-out {
@@ -143,6 +143,38 @@
 .gender-picker-view {
   width: 100%;
   height: 200rpx;
+}
+
+/* ===== 性别选项按钮 ===== */
+.gender-options {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.gender-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80rpx;
+  background-color: var(--color-bg-input);
+  border: 2rpx solid transparent;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-body);
+  color: var(--color-text-secondary);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.gender-option.selected {
+  background-color: rgba(231, 76, 60, 0.1);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.gender-option:active {
+  transform: scale(0.96);
 }
 
 .picker-indicator {
@@ -218,7 +250,7 @@
 
 .start-btn {
   position: fixed;
-  bottom: 100rpx;
+  bottom: calc(130rpx + env(safe-area-inset-bottom));
   left: var(--spacing-lg);
   right: var(--spacing-lg);
   z-index: 100;
@@ -342,7 +374,7 @@
 /* 底部操作 */
 .quiz-actions {
   position: fixed;
-  bottom: 100rpx;
+  bottom: calc(100rpx + env(safe-area-inset-bottom));
   left: var(--spacing-lg);
   right: var(--spacing-lg);
   z-index: 100;
@@ -574,7 +606,7 @@
 
 .result-actions {
   position: fixed;
-  bottom: 100rpx;
+  bottom: calc(100rpx + env(safe-area-inset-bottom));
   left: var(--spacing-lg);
   right: var(--spacing-lg);
   z-index: 100;
