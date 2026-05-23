@@ -1,4 +1,13 @@
 <view class="container {{pageAnim}}">
+  <!-- 掉落图形开关 -->
+  <view class="toggle-btn {{toggleShaking ? 'toggle-shake' : ''}}" bindtap="onToggleShapes">
+    <text class="toggle-label">{{toggleLabel}}</text>
+  </view>
+
+  <view class="shapes-container {{shapesHidden ? 'shapes-hidden' : ''}}">
+    <view wx:for="{{shapes}}" wx:key="index" class="shape shape-{{item.type}}" style="{{item.inlineStyle}}"></view>
+  </view>
+
   <view class="profile-content">
 
     <!-- MBTI 选择卡片 -->
@@ -16,6 +25,7 @@
             indicator-class="picker-indicator"
             value="{{mbtiPickerValue}}"
             bindchange="onMbtiPickerChange"
+            immediate-change
           >
             <picker-view-column>
               <view wx:for="{{MBTI_HEAD}}" wx:key="*this" class="picker-item">{{item}}</view>

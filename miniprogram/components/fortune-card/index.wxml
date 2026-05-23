@@ -1,4 +1,7 @@
 <view class="fortune-card">
+  <!-- 顶部装饰线 -->
+  <view class="fortune-deco-top"></view>
+
   <!-- 日期行 -->
   <view class="fortune-date">
     <text class="fortune-date-text">{{dateStr}}</text>
@@ -7,7 +10,7 @@
 
   <!-- 已选类型 -->
   <block wx:if="{{!showPrompt}}">
-    <!-- MBTI 徽章 -->
+    <!-- MBTI 徽章（浮雕信笺风） -->
     <view class="fortune-type" bindtap="onTypeTap">
       <text class="fortune-type-text">{{mbtiType}}</text>
     </view>
@@ -41,6 +44,9 @@
         </view>
       </view>
 
+      <!-- 花纹分隔线 -->
+      <view class="fortune-divider">✦</view>
+
       <!-- 分享按钮 -->
       <view class="fortune-share" bindtap="onShare">
         <text>分享给朋友</text>
@@ -62,4 +68,7 @@
   <view class="fortune-loading" wx:if="{{loading}}">
     <text>加载中...</text>
   </view>
+
+  <!-- 底部装饰线 -->
+  <view class="fortune-deco-bottom"></view>
 </view>

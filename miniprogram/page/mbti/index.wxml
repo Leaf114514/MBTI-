@@ -1,4 +1,7 @@
-<view>
+<view class="page-root">
+<view class="shapes-container {{shapesHidden ? 'shapes-hidden' : ''}}">
+  <view wx:for="{{shapes}}" wx:key="index" class="shape shape-{{item.type}}" style="{{item.inlineStyle}}"></view>
+</view>
 <view class="{{pageAnim}}">
  <!-- 标题 -->
 <view class="header-section">
@@ -32,6 +35,7 @@
           indicator-class="picker-indicator"
           value="{{mbtiPickerValue}}"
           bindchange="onMbtiPickerChange"
+          immediate-change
         >
           <picker-view-column>
             <view wx:for="{{MBTI_HEAD}}" wx:key="*this" class="picker-item">{{item}}</view>

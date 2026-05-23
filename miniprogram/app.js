@@ -47,5 +47,6 @@ App({
     themeColor: '#e74c3c',
     hasLogin: false,
     openid: null,
+    shapesEnabled: wx.getStorageSync('shapesEnabled') !== false,
   }
 })

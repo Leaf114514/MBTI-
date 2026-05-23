@@ -113,6 +113,8 @@
  /* 在这里引入了各种可以调用的wxss参数，内容预复制小叶子的预设计，有略微修改 */
 /* ===== 颜色系统 ===== */
 page {
+  background: linear-gradient(180deg, #FFFBFB 0%, #FFF5F5 100%);
+
   /* 主色 */
   --color-primary: #FF6B6B;
   --color-primary-light: #FF8E8E;
@@ -130,7 +132,7 @@ page {
   --color-text-inverse: #FFFFFF;
 
   /* 背景色 */
-  --color-bg-page: #F8F9FA;
+  --color-bg-page: transparent;
   --color-bg-card: #FFFFFF;
   --color-bg-input: #F1F3F5;
 
@@ -187,4 +189,56 @@ page {
   --duration-slow: 400ms;
   --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ===== 掉落几何图形（通用） ===== */
+.shapes-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+  transition: opacity 0.3s ease;
+}
+
+.shapes-hidden {
+  opacity: 0;
+}
+
+.shape {
+  position: absolute;
+  top: -60rpx;
+}
+
+.shape-square {
+  border-radius: 4rpx;
+}
+
+.shape-circle {
+  border-radius: 50%;
+}
+
+.shape-diamond {
+  border-radius: 4rpx;
+  transform: rotate(45deg);
+}
+
+@keyframes shape-fall {
+  0% {
+    transform: translateY(-60rpx) rotate(0deg);
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(540deg);
+    opacity: 0;
+  }
 }

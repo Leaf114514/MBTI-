@@ -1,5 +1,6 @@
 const MBTI_HEAD = ['IN', 'IS', 'EN', 'ES']
 const MBTI_TAIL = ['TJ', 'TP', 'FJ', 'FP']
+const fallingShapes = require('../../behaviors/falling-shapes')
 
 const MBTI_DESC = {
   INTJ: '建筑师 · 独立、有远见的战略思考者',
@@ -23,6 +24,7 @@ const MBTI_DESC = {
 const ANIM_OUT_DURATION = 260
 
 Page({
+  behaviors: [fallingShapes],
   data: {
     MBTI_HEAD,
     MBTI_TAIL,
@@ -32,10 +34,14 @@ Page({
     selectedMbti: '',
     currentMbtiDisplay: MBTI_HEAD[0] + MBTI_TAIL[0],
     mbtiDesc: '',
+    toggleLabel: 'O',
+    toggleShaking: false,
   },
 
   onLoad() {
     this._loadMbti()
+    const enabled = getApp().globalData.shapesEnabled !== false
+    this.setData({ toggleLabel: enabled ? 'O' : '\\' })
   },
 
   onShow() {
@@ -133,5 +139,21 @@ Page({
 
   onGoStory() {
     wx.switchTab({ url: '/page/mbti/index' })
+  },
+
+  onToggleShapes() {
+    const app = getApp()
+    const current = app.globalData.shapesEnabled !== false
+    const next = !current
+    app.globalData.shapesEnabled = next
+    wx.setStorageSync('shapesEnabled', next)
+    this.setData({
+      toggleShaking: true,
+      toggleLabel: next ? 'O' : '\\',
+      shapesHidden: !next,
+    })
+    setTimeout(() => {
+      this.setData({ toggleShaking: false })
+    }, 500)
   },
 })

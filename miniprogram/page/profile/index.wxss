@@ -5,12 +5,48 @@
   background-color: var(--color-bg-page);
   padding: var(--spacing-lg);
   padding-bottom: calc(130rpx + env(safe-area-inset-bottom));
+  position: relative;
+  overflow: hidden;
+}
+
+/* 掉落图形开关气泡 */
+.toggle-btn {
+  position: absolute;
+  top: 24rpx;
+  left: 24rpx;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.35);
+  z-index: 10;
+}
+
+.toggle-label {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+@keyframes toggle-shake {
+  0%, 100% { transform: translateX(0); }
+  15%, 55%, 85% { transform: translateX(-4rpx); }
+  35%, 75% { transform: translateX(4rpx); }
+}
+
+.toggle-shake {
+  animation: toggle-shake 0.4s ease-in-out;
 }
 
 .profile-content {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+  padding-top: 56rpx;
 }
 
 /* ===== 卡片通用 ===== */

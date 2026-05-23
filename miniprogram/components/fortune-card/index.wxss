@@ -1,12 +1,51 @@
 @import "../../common/index.wxss";
 
+/* ===== 信笺风签语卡片 ===== */
 .fortune-card {
+  width: 85%;
+  margin: 0 auto;
   background-color: var(--color-bg-card);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 47rpx,
+    rgba(0, 0, 0, 0.035) 47rpx,
+    rgba(0, 0, 0, 0.035) 48rpx
+  );
   border-radius: var(--radius-lg);
+  border: 2rpx solid rgba(255, 107, 107, 0.3);
   box-shadow: var(--shadow-card);
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
   position: relative;
   overflow: hidden;
+}
+
+/* 红色左边距线 */
+.fortune-card::before {
+  content: '';
+  position: absolute;
+  left: 60rpx;
+  top: 0;
+  bottom: 0;
+  width: 2rpx;
+  background-color: rgba(255, 107, 107, 0.18);
+  z-index: 1;
+}
+
+/* 顶部装饰双线（红色调） */
+.fortune-deco-top {
+  margin-bottom: var(--spacing-lg);
+  height: 4rpx;
+  border-top: 1rpx solid rgba(255, 107, 107, 0.2);
+  border-bottom: 1rpx solid rgba(255, 107, 107, 0.2);
+}
+
+/* 底部装饰双线（红色调） */
+.fortune-deco-bottom {
+  margin-top: var(--spacing-md);
+  height: 4rpx;
+  border-top: 1rpx solid rgba(255, 107, 107, 0.2);
+  border-bottom: 1rpx solid rgba(255, 107, 107, 0.2);
 }
 
 /* 日期 */
@@ -14,34 +53,36 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
 }
 
 .fortune-date-text {
   font-size: var(--font-size-caption);
   color: var(--color-text-tertiary);
-  letter-spacing: 2rpx;
+  letter-spacing: 4rpx;
 }
 
 .fortune-weekday {
   font-size: var(--font-size-caption);
   color: var(--color-text-tertiary);
+  letter-spacing: 2rpx;
 }
 
-/* MBTI 徽章 */
+/* MBTI 徽章 — 红色信笺风 */
 .fortune-type {
   display: inline-flex;
   padding: var(--spacing-xs) var(--spacing-lg);
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  background: rgba(255, 107, 107, 0.06);
+  border: 1rpx solid rgba(255, 107, 107, 0.2);
   border-radius: var(--radius-full);
   margin-bottom: var(--spacing-lg);
 }
 
 .fortune-type-text {
   font-size: var(--font-size-body);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-inverse);
-  letter-spacing: 4rpx;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+  letter-spacing: 6rpx;
 }
 
 /* 签语内容 */
@@ -56,7 +97,7 @@
 .fortune-quote-right {
   font-size: var(--font-size-title);
   color: var(--color-primary);
-  opacity: 0.4;
+  opacity: 0.35;
   flex-shrink: 0;
   line-height: 1;
 }
@@ -87,7 +128,7 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
   flex-wrap: wrap;
 }
 
@@ -98,10 +139,11 @@
 }
 
 .lucky-dot {
-  width: 24rpx;
-  height: 24rpx;
+  width: 20rpx;
+  height: 20rpx;
   border-radius: 50%;
   flex-shrink: 0;
+  border: 1rpx solid rgba(0, 0, 0, 0.06);
 }
 
 .lucky-name {
@@ -118,27 +160,55 @@
 .keyword-tag {
   display: inline-block;
   padding: 4rpx 16rpx;
-  background-color: rgba(78, 205, 196, 0.1);
-  color: var(--color-accent-teal);
+  background-color: rgba(255, 107, 107, 0.06);
+  color: var(--color-primary);
   font-size: var(--font-size-micro);
   border-radius: var(--radius-full);
+  border: 1rpx solid rgba(255, 107, 107, 0.12);
 }
 
-/* 分享按钮 */
+/* 花纹分隔线 */
+.fortune-divider {
+  display: flex;
+  align-items: center;
+  margin: var(--spacing-md) 0;
+  color: var(--color-primary);
+  font-size: 18rpx;
+  opacity: 0.35;
+}
+
+.fortune-divider::before,
+.fortune-divider::after {
+  content: '';
+  flex: 1;
+  height: 1rpx;
+  background: linear-gradient(to right, transparent, rgba(255, 107, 107, 0.2), transparent);
+}
+
+.fortune-divider::before {
+  margin-right: var(--spacing-sm);
+}
+
+.fortune-divider::after {
+  margin-left: var(--spacing-sm);
+}
+
+/* 分享按钮 — 红色调 */
 .fortune-share {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 64rpx;
-  border: 1rpx solid var(--color-primary);
+  border: 1rpx solid rgba(255, 107, 107, 0.3);
   border-radius: var(--radius-md);
   color: var(--color-primary);
   font-size: var(--font-size-caption);
+  letter-spacing: 2rpx;
 }
 
 .fortune-share:active {
   opacity: 0.7;
-  background-color: rgba(255, 107, 107, 0.05);
+  background-color: rgba(255, 107, 107, 0.04);
 }
 
 /* 未选提示 */
@@ -157,14 +227,17 @@
 
 .prompt-btn {
   padding: var(--spacing-sm) var(--spacing-xl);
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-  color: var(--color-text-inverse);
+  background: rgba(255, 107, 107, 0.06);
+  border: 1rpx solid rgba(255, 107, 107, 0.25);
+  color: var(--color-primary);
   font-size: var(--font-size-body);
   border-radius: var(--radius-full);
+  letter-spacing: 2rpx;
 }
 
 .prompt-btn:active {
   opacity: 0.9;
+  background-color: rgba(255, 107, 107, 0.1);
 }
 
 /* Loading */

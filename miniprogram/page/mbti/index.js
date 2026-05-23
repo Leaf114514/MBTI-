@@ -2,6 +2,7 @@
 // 引用题库
 const questionService = require('../../services/question-service')
 const storyService = require('../../services/story-service')
+const fallingShapes = require('../../behaviors/falling-shapes')
 
 // MBTI 头部——第一列滚轮选项
 const MBTI_HEAD = ['IN', 'IS', 'EN', 'ES']
@@ -22,6 +23,7 @@ const QUESTION_COUNT = 5
 const FLIP_DURATION = 250
 
 Page({
+  behaviors: [fallingShapes],
   data: {
     // ——— 页面阶段 ———
     phase: 'select', // 'select' 选择阶段 | 'quiz' 答题阶段

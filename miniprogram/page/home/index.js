@@ -1,10 +1,12 @@
 const compatibilityData = require('../../data/compatibility-data')
+const fallingShapes = require('../../behaviors/falling-shapes')
 
 const MBTI_HEAD = ['IN', 'IS', 'EN', 'ES']
 const MBTI_TAIL = ['TJ', 'TP', 'FJ', 'FP']
 const ANIM_OUT_DURATION = 260
 
 Page({
+  behaviors: [fallingShapes],
   data: {
     pageAnim: '',
     userMbti: '',

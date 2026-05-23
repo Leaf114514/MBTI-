@@ -6,6 +6,8 @@
   padding: var(--spacing-lg);
   padding-bottom: calc(130rpx + env(safe-area-inset-bottom));
   background: var(--color-bg-page);
+  position: relative;
+  overflow: hidden;
 }
 
 .page-content {
@@ -20,6 +22,7 @@
 .calc-card {
   background-color: var(--color-bg-card);
   border-radius: var(--radius-lg);
+  border: 2rpx solid rgba(255, 107, 107, 0.3);
   box-shadow: var(--shadow-card);
   padding: var(--spacing-xl);
 }
@@ -64,40 +67,13 @@
   border: 1rpx solid var(--color-primary);
 }
 
-/* 心形 */
-.heart-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-top: 20rpx;
+/* 连线 */
+.pair-line {
+  width: 40rpx;
+  height: 4rpx;
+  background-color: rgba(255, 107, 107, 0.6);
   flex-shrink: 0;
-  width: 60rpx;
-}
-
-.heart {
-  width: 28rpx;
-  height: 28rpx;
-  background-color: var(--color-primary);
-  transform: rotate(45deg);
-  position: relative;
-}
-
-.heart::before,
-.heart::after {
-  content: '';
-  width: 28rpx;
-  height: 28rpx;
-  background-color: var(--color-primary);
-  border-radius: 50%;
-  position: absolute;
-}
-
-.heart::before {
-  left: -14rpx;
-}
-
-.heart::after {
-  top: -14rpx;
+  margin-top: 40rpx;
 }
 
 /* 展开区域（复用答题页动画） */

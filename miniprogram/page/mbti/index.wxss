@@ -1,6 +1,11 @@
 @import "../../common/index.wxss";
 
-
+/* ===== 页面根容器 ===== */
+.page-root {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
 
 /* ===== 页面标题区域 ===== */
 .header-section {
