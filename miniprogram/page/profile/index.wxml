@@ -1,5 +1,53 @@
 <view class="container {{pageAnim}}">
-  <view class="placeholder">
-    <text>个人中心内容</text>
+  <view class="profile-content">
+
+    <!-- MBTI 选择卡片 -->
+    <view class="profile-card">
+      <text class="card-title">我的 MBTI</text>
+      <view class="mbti-selector" bindtap="onToggleMbtiPicker">
+        <text class="mbti-display {{selectedMbti ? 'has-value' : ''}}">{{isMbtiSelecting ? currentMbtiDisplay : (selectedMbti || '点击选择你的类型')}}</text>
+      </view>
+
+      <view class="picker-expand {{isMbtiHiding ? 'anim-out' : 'anim-in'}}"
+        wx:if="{{isMbtiSelecting || isMbtiHiding}}" catchtap="noop">
+        <view class="picker-wheels">
+          <picker-view
+            class="mbti-picker-view"
+            indicator-class="picker-indicator"
+            value="{{mbtiPickerValue}}"
+            bindchange="onMbtiPickerChange"
+          >
+            <picker-view-column>
+              <view wx:for="{{MBTI_HEAD}}" wx:key="*this" class="picker-item">{{item}}</view>
+            </picker-view-column>
+            <picker-view-column>
+              <view wx:for="{{MBTI_TAIL}}" wx:key="*this" class="picker-item">{{item}}</view>
+            </picker-view-column>
+          </picker-view>
+        </view>
+        <view class="picker-confirm-btn" catchtap="onConfirmMbti">
+          <text>确认</text>
+        </view>
+      </view>
+
+      <!-- 类型描述 -->
+      <view class="mbti-desc" wx:if="{{selectedMbti && !isMbtiSelecting && !isMbtiHiding}}">
+        <text class="desc-text">{{mbtiDesc}}</text>
+      </view>
+    </view>
+
+    <!-- 快捷入口 -->
+    <view class="profile-card">
+      <text class="card-title">快捷入口</text>
+      <view class="menu-item" bindtap="onGoHistory">
+        <text class="menu-text">历史故事</text>
+        <text class="menu-arrow">></text>
+      </view>
+      <view class="menu-item" bindtap="onGoStory">
+        <text class="menu-text">开始新故事</text>
+        <text class="menu-arrow">></text>
+      </view>
+    </view>
+
   </view>
 </view>

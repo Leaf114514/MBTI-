@@ -231,6 +231,7 @@ Page({
         isMbtiSelecting: false,
         isMbtiHiding: false,
       })
+      wx.setStorageSync('selectedMbti', result)
     }, ANIM_OUT_DURATION)
   },
 
@@ -568,6 +569,7 @@ Page({
   /** 开始新故事 — 重置到选择阶段 */
   onNewStory() {
     storyService.resetSession()
+    wx.removeStorageSync('selectedMbti')
     const app = getApp()
     delete app.globalData.lastStorySessionId
     delete app.globalData.lastStoryTitle

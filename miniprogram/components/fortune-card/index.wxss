@@ -1,0 +1,176 @@
+@import "../../common/index.wxss";
+
+.fortune-card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--spacing-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 日期 */
+.fortune-date {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.fortune-date-text {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-tertiary);
+  letter-spacing: 2rpx;
+}
+
+.fortune-weekday {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-tertiary);
+}
+
+/* MBTI 徽章 */
+.fortune-type {
+  display: inline-flex;
+  padding: var(--spacing-xs) var(--spacing-lg);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  border-radius: var(--radius-full);
+  margin-bottom: var(--spacing-lg);
+}
+
+.fortune-type-text {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-inverse);
+  letter-spacing: 4rpx;
+}
+
+/* 签语内容 */
+.fortune-message-wrap {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-lg);
+  line-height: var(--line-height-relaxed);
+}
+
+.fortune-quote-left,
+.fortune-quote-right {
+  font-size: var(--font-size-title);
+  color: var(--color-primary);
+  opacity: 0.4;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.fortune-quote-left {
+  margin-right: var(--spacing-xs);
+  margin-top: 6rpx;
+}
+
+.fortune-quote-right {
+  margin-left: var(--spacing-xs);
+  align-self: flex-end;
+}
+
+.fortune-message {
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-relaxed);
+  flex: 1;
+}
+
+/* 幸运色 + 关键词 */
+.fortune-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.fortune-lucky {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.lucky-dot {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.lucky-name {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-secondary);
+}
+
+.fortune-keywords {
+  display: flex;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.keyword-tag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  background-color: rgba(78, 205, 196, 0.1);
+  color: var(--color-accent-teal);
+  font-size: var(--font-size-micro);
+  border-radius: var(--radius-full);
+}
+
+/* 分享按钮 */
+.fortune-share {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64rpx;
+  border: 1rpx solid var(--color-primary);
+  border-radius: var(--radius-md);
+  color: var(--color-primary);
+  font-size: var(--font-size-caption);
+}
+
+.fortune-share:active {
+  opacity: 0.7;
+  background-color: rgba(255, 107, 107, 0.05);
+}
+
+/* 未选提示 */
+.fortune-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-xl) 0;
+  gap: var(--spacing-lg);
+}
+
+.prompt-text {
+  font-size: var(--font-size-body);
+  color: var(--color-text-tertiary);
+}
+
+.prompt-btn {
+  padding: var(--spacing-sm) var(--spacing-xl);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-body);
+  border-radius: var(--radius-full);
+}
+
+.prompt-btn:active {
+  opacity: 0.9;
+}
+
+/* Loading */
+.fortune-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.7);
+  font-size: var(--font-size-caption);
+  color: var(--color-text-tertiary);
+}
