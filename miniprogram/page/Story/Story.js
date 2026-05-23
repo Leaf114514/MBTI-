@@ -433,7 +433,7 @@ Page({
         currentRound: this.data.continueCount,
       }
       app.globalData.prevStoryRounds = this.data.storyRounds
-      wx.navigateBack()
+      wx.switchTab({ url: '/page/mbti/index' })
     })
   },
 
