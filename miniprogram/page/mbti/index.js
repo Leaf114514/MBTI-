@@ -232,6 +232,11 @@ Page({
         isMbtiHiding: false,
       })
       wx.setStorageSync('selectedMbti', result)
+      wx.cloud.callFunction({
+        name: 'updateMbti',
+        data: { mbti: result },
+        fail: () => {}
+      })
     }, ANIM_OUT_DURATION)
   },
 

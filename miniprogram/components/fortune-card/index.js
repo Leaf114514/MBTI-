@@ -5,6 +5,7 @@ Component({
 
   data: {
     loading: false,
+    loadError: false,
     dateStr: '',
     weekday: '',
     message: '',
@@ -17,9 +18,10 @@ Component({
     mbtiType(val) {
       this._updateDate()
       if (val) {
+        this.setData({ showPrompt: false, loadError: false })
         this._loadFortune(val)
       } else {
-        this.setData({ showPrompt: true, message: '', luckyColor: null, keywords: [] })
+        this.setData({ showPrompt: true, loadError: false, message: '', luckyColor: null, keywords: [] })
       }
     }
   },
@@ -46,7 +48,7 @@ Component({
       this._lastType = type
       this._lastDay = new Date().getDate()
 
-      this.setData({ loading: true })
+      this.setData({ loading: true, showPrompt: false })
       wx.cloud.callFunction({
         name: 'getDailyFortune',
         data: { type },
@@ -57,14 +59,15 @@ Component({
               message: res.result.data.message,
               luckyColor: res.result.data.luckyColor,
               keywords: res.result.data.keywords || [],
+              loadError: false,
               loading: false,
             })
           } else {
-            this.setData({ loading: false })
+            this.setData({ loadError: true, loading: false })
           }
         },
         fail: () => {
-          this.setData({ loading: false })
+          this.setData({ loadError: true, loading: false })
         }
       })
     },
@@ -79,6 +82,14 @@ Component({
 
     onShare() {
       this.triggerEvent('shareTap')
+    },
+
+    onRetry() {
+      this._lastType = null
+      this._lastDay = null
+      if (this.data.mbtiType) {
+        this._loadFortune(this.data.mbtiType)
+      }
     }
   }
 })

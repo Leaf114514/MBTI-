@@ -46,12 +46,33 @@ Page({
   _loadUserMbti() {
     try {
       const mbti = wx.getStorageSync('selectedMbti') || ''
-      if (mbti !== this.data.userMbti) {
-        this.setData({ userMbti: mbti })
+      if (mbti) {
+        if (mbti !== this.data.userMbti) {
+          this.setData({ userMbti: mbti })
+        }
+      } else {
+        this._loadMbtiFromCloud()
       }
     } catch (e) {
       console.warn('[Home] 读取 MBTI storage 失败', e)
+      this._loadMbtiFromCloud()
     }
+  },
+
+  _loadMbtiFromCloud() {
+    wx.cloud.callFunction({
+      name: 'getUserProfile',
+      success: (res) => {
+        if (res.result && res.result.success && res.result.data && res.result.data.mbti) {
+          const mbti = res.result.data.mbti
+          wx.setStorageSync('selectedMbti', mbti)
+          if (mbti !== this.data.userMbti) {
+            this.setData({ userMbti: mbti })
+          }
+        }
+      },
+      fail: () => {}
+    })
   },
 
   _playPageAnim() {

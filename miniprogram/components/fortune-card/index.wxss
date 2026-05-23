@@ -78,6 +78,10 @@
   flex: 1;
 }
 
+.fortune-error-text {
+  color: var(--color-text-tertiary);
+}
+
 /* 幸运色 + 关键词 */
 .fortune-meta {
   display: flex;

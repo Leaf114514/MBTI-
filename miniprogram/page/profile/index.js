@@ -105,7 +105,25 @@ Page({
         mbtiDesc: MBTI_DESC[result] || '',
       })
       wx.setStorageSync('selectedMbti', result)
+      this._syncMbtiToCloud(result)
     }, ANIM_OUT_DURATION)
+  },
+
+  _syncMbtiToCloud(mbti) {
+    wx.cloud.callFunction({
+      name: 'updateMbti',
+      data: { mbti },
+      success: (res) => {
+        if (res.result && res.result.success) {
+          console.log('[Profile] MBTI 已同步到云端')
+        } else {
+          console.warn('[Profile] MBTI 云端同步失败:', res.result && res.result.error)
+        }
+      },
+      fail: (err) => {
+        console.warn('[Profile] MBTI 云端同步失败:', err)
+      }
+    })
   },
 
   // 快捷入口
