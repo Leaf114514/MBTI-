@@ -513,7 +513,9 @@ Page({
   //   其他
   // =============================================
 
-  onViewHistory() {},
+  onViewHistory() {
+    wx.navigateTo({ url: '/page/history/history' })
+  },
   noop() {},
 
   /** 查看已生成的故事 */
