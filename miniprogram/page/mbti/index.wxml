@@ -120,23 +120,20 @@
 
 <!-- 答题底部操作 -->
 <view class="quiz-actions {{pageAnim}} {{actionsAnim}}" wx:if="{{phase === 'quiz' || quizLeaving}}">
-  <!-- 第一题：取消答题（两次确认） -->
-  <view class="btn-secondary quiz-btn {{cancelConfirmPending ? 'btn-danger' : ''}}"
-    bindtap="onCancelQuiz" wx:if="{{currentIndex === 0}}">
-    <text>{{cancelConfirmPending ? '确认取消答题' : '取消答题'}}</text>
-  </view>
-  <!-- 非第一题：上一题 -->
-  <view class="btn-secondary quiz-btn" bindtap="onPrevQuestion" wx:if="{{currentIndex > 0}}">
-    <text>上一题</text>
+  <!-- 左侧按钮：故事已生成时显示"再来一篇"，否则按位置显示取消/上一题 -->
+  <view class="btn-secondary quiz-btn {{!storyGenerated && cancelConfirmPending ? 'btn-danger' : ''}}"
+    bindtap="onLeftBtnTap"
+    wx:if="{{storyGenerated || currentIndex > 0}}">
+    <text>{{storyGenerated ? '再来一篇' : (currentIndex === 0 ? (cancelConfirmPending ? '确认取消答题' : '取消答题') : '上一题')}}</text>
   </view>
 
-  <view class="btn-primary quiz-btn" bindtap="onNextQuestion" wx:if="{{currentIndex < questions.length - 1}}">
+  <view class="btn-primary quiz-btn" bindtap="onNextQuestion" wx:if="{{currentIndex < questions.length - 1 && !storyGenerated}}">
     <text>下一题</text>
   </view>
 
   <view
     class="btn-primary quiz-btn submit-btn {{storyGenerated ? 'btn-story ' + storyBtnAnim : ''}} {{!storyGenerated && answerCount < questions.length ? 'btn-warn' : ''}} {{submitBtnShaking ? 'anim-shake' : ''}}"
-    bindtap="{{storyGenerated ? 'onViewStory' : 'onSubmit'}}"
+    bindtap="onRightBtnTap"
     wx:if="{{currentIndex === questions.length - 1}}"
   >
     <text>{{storyGenerated ? storyTitle : (isContinueMode ? (isSubmitting ? '提交中...' : '提交续写') : (submitBtnWarn ? submitBtnWarn : (isSubmitting ? '提交中...' : '提交答案')))}}</text>

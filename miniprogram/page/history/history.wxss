@@ -1,1 +1,257 @@
-/* page/history/history.wxss */
+@import "../../common/index.wxss";
+
+.page-container {
+  min-height: 100vh;
+  background-color: var(--color-bg-page);
+  padding: var(--spacing-lg);
+  padding-bottom: calc(130rpx + env(safe-area-inset-bottom));
+}
+
+/* ===== 加载 & 空态 ===== */
+.loading-state,
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+}
+
+.loading-text,
+.empty-text {
+  font-size: var(--font-size-body);
+  color: var(--color-text-tertiary);
+}
+
+/* ===== 故事列表 ===== */
+.story-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* ===== 卡片基础 ===== */
+.story-card {
+  display: flex;
+  align-items: stretch;
+  position: relative;
+  border-radius: var(--radius-lg);
+  border: 1rpx solid var(--color-primary);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.story-card:active {
+  transform: scale(0.98);
+}
+
+/* ===== MBTI 专属渐变（左高浓度 → 右低浓度） ===== */
+
+/* Analyst — 紫色系 */
+.mbti-INTJ { background: linear-gradient(to right, rgba(107,91,149,0.14), rgba(107,91,149,0.01)); }
+.mbti-INTP { background: linear-gradient(to right, rgba(155,89,182,0.14), rgba(155,89,182,0.01)); }
+.mbti-ENTJ { background: linear-gradient(to right, rgba(142,68,173,0.14), rgba(142,68,173,0.01)); }
+.mbti-ENTP { background: linear-gradient(to right, rgba(175,122,197,0.14), rgba(175,122,197,0.01)); }
+
+/* Diplomat — 绿色系 */
+.mbti-INFJ { background: linear-gradient(to right, rgba(26,188,156,0.14), rgba(26,188,156,0.01)); }
+.mbti-INFP { background: linear-gradient(to right, rgba(46,204,113,0.14), rgba(46,204,113,0.01)); }
+.mbti-ENFJ { background: linear-gradient(to right, rgba(39,174,96,0.14), rgba(39,174,96,0.01)); }
+.mbti-ENFP { background: linear-gradient(to right, rgba(88,214,141,0.14), rgba(88,214,141,0.01)); }
+
+/* Sentinel — 蓝色系 */
+.mbti-ISTJ { background: linear-gradient(to right, rgba(44,62,80,0.14), rgba(44,62,80,0.01)); }
+.mbti-ISFJ { background: linear-gradient(to right, rgba(52,152,219,0.14), rgba(52,152,219,0.01)); }
+.mbti-ESTJ { background: linear-gradient(to right, rgba(41,128,185,0.14), rgba(41,128,185,0.01)); }
+.mbti-ESFJ { background: linear-gradient(to right, rgba(93,173,226,0.14), rgba(93,173,226,0.01)); }
+
+/* Explorer — 橙黄系 */
+.mbti-ISTP { background: linear-gradient(to right, rgba(230,126,34,0.14), rgba(230,126,34,0.01)); }
+.mbti-ISFP { background: linear-gradient(to right, rgba(243,156,18,0.14), rgba(243,156,18,0.01)); }
+.mbti-ESTP { background: linear-gradient(to right, rgba(211,84,0,0.14), rgba(211,84,0,0.01)); }
+.mbti-ESFP { background: linear-gradient(to right, rgba(241,196,15,0.14), rgba(241,196,15,0.01)); }
+
+/* ===== 半圆缺口（票根撕口） ===== */
+.notch {
+  position: absolute;
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: 50%;
+  background-color: var(--color-bg-page);
+  border: 1rpx solid var(--color-primary);
+  z-index: 2;
+  left: -14rpx;
+}
+
+/* 遮盖缺口外侧半圆（卡片外部），只保留内侧描边 */
+.notch-top {
+  top: -14rpx;
+}
+
+.notch-top::after {
+  content: '';
+  position: absolute;
+  left: -1rpx;
+  right: -1rpx;
+  top: -1rpx;
+  height: 15rpx;
+  background-color: var(--color-bg-page);
+}
+
+.notch-bottom {
+  bottom: -14rpx;
+}
+
+.notch-bottom::after {
+  content: '';
+  position: absolute;
+  left: -1rpx;
+  right: -1rpx;
+  bottom: -1rpx;
+  height: 15rpx;
+  background-color: var(--color-bg-page);
+}
+
+/* ===== 主内容区 ===== */
+.ticket-main {
+  flex: 1;
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* MBTI 水印 */
+.ticket-watermark {
+  position: absolute;
+  right: 24rpx;
+  bottom: -8rpx;
+  font-size: 120rpx;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  opacity: 0.03;
+  pointer-events: none;
+  line-height: 1;
+}
+
+/* 装饰圆弧 */
+.ticket-arc {
+  position: absolute;
+  right: -50rpx;
+  bottom: -50rpx;
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  opacity: 0.04;
+  pointer-events: none;
+}
+
+.ticket-title {
+  font-size: 44rpx;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: var(--spacing-sm);
+}
+
+.ticket-number {
+  font-size: 24rpx;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin-left: var(--spacing-xs);
+}
+
+.ticket-divider {
+  height: 4rpx;
+  background: linear-gradient(90deg, var(--color-primary), transparent);
+  border-radius: 2rpx;
+  margin-bottom: var(--spacing-sm);
+}
+
+.ticket-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ticket-meta {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.ticket-meta-item {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-tertiary);
+}
+
+.ticket-meta-dot {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-tertiary);
+  margin: 0 4rpx;
+}
+
+.ticket-wordcount {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+  margin-left: var(--spacing-sm);
+}
+
+/* ===== 副券（进度 + 日期） ===== */
+.ticket-stub {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  padding: var(--spacing-lg) var(--spacing-sm);
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.06);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+}
+
+/* 左侧撕口线（红色虚线） */
+.ticket-stub::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 30rpx;
+  bottom: 30rpx;
+  width: 0;
+  border-left: 2rpx dashed var(--color-primary);
+}
+
+.stub-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.progress-dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  border: 1rpx solid var(--color-primary);
+}
+
+.dot-filled {
+  background-color: var(--color-primary);
+}
+
+.dot-empty {
+  background-color: transparent;
+}
+
+.ticket-time {
+  font-size: var(--font-size-micro);
+  color: var(--color-text-secondary);
+  writing-mode: vertical-rl;
+  letter-spacing: 2rpx;
+}

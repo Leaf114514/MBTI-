@@ -373,7 +373,7 @@ async function getQuestions(event) {
 
     return {
       _id: q._id,
-      question: q.question,
+      question: q.text,
       category: q.category || null,
       options
     }

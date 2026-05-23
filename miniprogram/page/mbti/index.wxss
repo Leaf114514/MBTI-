@@ -238,14 +238,16 @@
   justify-content: center;
   height: 80rpx;
   padding: 0 var(--spacing-lg);
-  background-color: var(--color-bg-input);
-  color: var(--color-text-secondary);
+  background-color: var(--color-bg-card);
+  border: 2rpx solid var(--color-primary);
+  color: var(--color-primary);
   font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
   border-radius: var(--radius-md);
 }
 
 .btn-secondary:active {
-  background-color: var(--color-border);
+  background-color: rgba(231, 76, 60, 0.1);
 }
 
 .start-btn {
@@ -374,7 +376,7 @@
 /* 底部操作 */
 .quiz-actions {
   position: fixed;
-  bottom: calc(100rpx + env(safe-area-inset-bottom));
+  bottom: calc(130rpx + env(safe-area-inset-bottom));
   left: var(--spacing-lg);
   right: var(--spacing-lg);
   z-index: 100;

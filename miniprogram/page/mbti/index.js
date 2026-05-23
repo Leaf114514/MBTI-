@@ -150,6 +150,14 @@ Page({
       return
     }
     const questions = this._mapCloudQuestions(result.data.questions)
+
+    const badQ = questions.find(q => !q.question || typeof q.question !== 'string' || q.question.trim() === '')
+    if (badQ) {
+      console.error('[MBTI] 续写题目数据异常。原始:', JSON.stringify(result.data.questions).substring(0, 500))
+      this.setData({ phase: 'select' })
+      return
+    }
+
     this.setData({
       phase: 'quiz',
       isContinueMode: true,
@@ -304,6 +312,14 @@ Page({
     }
     const questions = this._mapCloudQuestions(result.data.questions)
 
+    // 校验题目数据完整性
+    const badQ = questions.find(q => !q.question || typeof q.question !== 'string' || q.question.trim() === '')
+    if (badQ) {
+      console.error('[MBTI] 题目数据异常，缺少 question 字段。原始云函数返回:', JSON.stringify(result.data.questions).substring(0, 500))
+      this._shakeButton('start', '题目数据异常，请联系开发者')
+      return
+    }
+
     // 三个元素各自随机掉落时长 300~600ms
     const dur1 = (300 + Math.random() * 300).toFixed(0) + 'ms'
     const dur2 = (300 + Math.random() * 300).toFixed(0) + 'ms'
@@ -396,6 +412,26 @@ Page({
   // =============================================
   //   答题逻辑
   // =============================================
+
+  /** 左侧按钮统一入口 */
+  onLeftBtnTap() {
+    if (this.data.storyGenerated) {
+      this.onNewStory()
+    } else if (this.data.currentIndex === 0) {
+      this.onCancelQuiz()
+    } else {
+      this.onPrevQuestion()
+    }
+  },
+
+  /** 右侧主按钮统一入口 */
+  onRightBtnTap() {
+    if (this.data.storyGenerated) {
+      this.onViewStory()
+    } else {
+      this.onSubmit()
+    }
+  },
 
   onSelectOption(e) {
     const { questionId, optionKey } = e.currentTarget.dataset

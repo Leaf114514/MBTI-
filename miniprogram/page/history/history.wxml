@@ -1,2 +1,56 @@
-<!--page/history/history.wxml-->
-<text>page/history/history.wxml</text>
+<view class="page-container">
+  <view wx:if="{{loading}}" class="loading-state">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <view wx:elif="{{empty}}" class="empty-state">
+    <text class="empty-text">还没有故事，快去创作吧</text>
+  </view>
+
+  <view wx:else class="story-list">
+    <view
+      wx:for="{{stories}}"
+      wx:key="_id"
+      class="story-card mbti-{{item.mbti}}"
+      data-id="{{item._id}}"
+      bindtap="onStoryTap"
+    >
+      <!-- 主内容区 -->
+      <view class="ticket-main">
+        <!-- MBTI 水印 -->
+        <text class="ticket-watermark">{{item.mbti}}</text>
+        <!-- 装饰圆弧 -->
+        <view class="ticket-arc"></view>
+
+        <text class="ticket-title">{{item.title || '未命名故事'}}<text class="ticket-number">#{{stories.length - index}}</text></text>
+        <view class="ticket-divider"></view>
+        <view class="ticket-bottom-row">
+          <view class="ticket-meta">
+            <text class="ticket-meta-item">第{{item.currentRound || 1}}轮</text>
+            <text class="ticket-meta-dot">·</text>
+            <text class="ticket-meta-item">{{item.mbti}}</text>
+            <text class="ticket-meta-dot">·</text>
+            <text class="ticket-meta-item">{{item.gender}}</text>
+          </view>
+          <text class="ticket-wordcount">{{item.totalWordCount > 0 ? item.totalWordCount + '字' : ''}}</text>
+        </view>
+      </view>
+
+      <!-- 副券：进度 + 日期 -->
+      <view class="ticket-stub">
+        <view class="notch notch-top"></view>
+        <view class="notch notch-bottom"></view>
+        <view class="stub-progress">
+          <view
+            wx:for="{{item.maxRounds || 4}}"
+            wx:for-item="dot"
+            wx:for-index="dotIdx"
+            wx:key="dotIdx"
+            class="progress-dot {{dotIdx < (item.currentRound || 1) ? 'dot-filled' : 'dot-empty'}}"
+          ></view>
+        </view>
+        <text class="ticket-time">{{item.displayTime}}</text>
+      </view>
+    </view>
+  </view>
+</view>
