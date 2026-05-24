@@ -3,25 +3,28 @@ const fallingShapes = require('../../behaviors/falling-shapes')
 
 const MBTI_HEAD = ['IN', 'IS', 'EN', 'ES']
 const MBTI_TAIL = ['TJ', 'TP', 'FJ', 'FP']
-const ANIM_OUT_DURATION = 260
 
 Page({
   behaviors: [fallingShapes],
   data: {
     pageAnim: '',
     userMbti: '',
+    calcExpanded: false,
+
+    // 翻牌控制
+    cardFlipMode: 0,
+    cardRevealed: false,
+
+    backSparks: [],
 
     // 配对选择器
     MBTI_HEAD,
     MBTI_TAIL,
     leftType: '',
     rightType: '',
-    leftPickerValue: [0, 0],
-    rightPickerValue: [0, 0],
-    leftSelecting: false,
-    rightSelecting: false,
-    leftHiding: false,
-    rightHiding: false,
+    pickerActive: '',
+    tempHead: '',
+    tempTail: '',
 
     // 配对结果
     resultScores: null,
@@ -31,6 +34,7 @@ Page({
 
   onLoad() {
     this._loadUserMbti()
+    this._genSparks()
   },
 
   onShow() {
@@ -43,6 +47,7 @@ Page({
       wx.navigateTo({ url: '/page/login/login' })
     }
     this._loadUserMbti()
+    this._checkCardFlip()
   },
 
   _loadUserMbti() {
@@ -77,6 +82,46 @@ Page({
     })
   },
 
+  _checkCardFlip() {
+    if (!this.data.userMbti) {
+      this.setData({ cardRevealed: true })
+      return
+    }
+    if (this.data.cardFlipMode === 0) {
+      this.setData({ cardRevealed: false })
+    } else {
+      const today = new Date().toDateString()
+      const lastReveal = wx.getStorageSync('lastCardReveal') || ''
+      if (lastReveal === today) {
+        this.setData({ cardRevealed: true })
+      } else {
+        this.setData({ cardRevealed: false })
+      }
+    }
+  },
+
+  revealCard() {
+    this.setData({ cardRevealed: true })
+    if (this.data.cardFlipMode === 1) {
+      wx.setStorageSync('lastCardReveal', new Date().toDateString())
+    }
+  },
+
+  _genSparks() {
+    const syms = ['✦', '✧', '◇', '⋄', '✶', '∗', '˙']
+    const sparks = []
+    for (let i = 0; i < 12; i++) {
+      sparks.push({
+        top: (8 + Math.random() * 80) + '%',
+        left: (5 + Math.random() * 85) + '%',
+        size: (16 + Math.random() * 24) + 'rpx',
+        rot: Math.floor(Math.random() * 360) + 'deg',
+        sym: syms[Math.floor(Math.random() * syms.length)],
+      })
+    }
+    this.setData({ backSparks: sparks })
+  },
+
   _playPageAnim() {
     const app = getApp()
     const dir = app.globalData.tabSwitchDirection
@@ -84,6 +129,14 @@ Page({
     app.globalData.tabSwitchDirection = null
     this.setData({ pageAnim: dir === 'right' ? 'page-slide-in-right' : 'page-slide-in-left' })
     setTimeout(() => { this.setData({ pageAnim: '' }) }, 320)
+  },
+
+  // =============================================
+  //   折叠抽屉
+  // =============================================
+
+  toggleCalc() {
+    this.setData({ calcExpanded: !this.data.calcExpanded })
   },
 
   // =============================================
@@ -107,77 +160,41 @@ Page({
   },
 
   // =============================================
-  //   配对选择器 - 左侧
+  //   配对选择器 - 两步内联
   // =============================================
 
-  onToggleLeftPicker() {
-    const { leftSelecting, leftHiding, rightSelecting } = this.data
-    if (leftHiding) return
-    if (leftSelecting) {
-      this.setData({ leftHiding: true })
-      setTimeout(() => {
-        this.setData({ leftSelecting: false, leftHiding: false })
-      }, ANIM_OUT_DURATION)
-    } else {
-      const updates = { leftSelecting: true }
-      if (rightSelecting) {
-        updates.rightSelecting = false
-        updates.rightHiding = false
-      }
-      this.setData(updates)
+  openPicker(e) {
+    const side = e.currentTarget.dataset.side
+    if (this.data.pickerActive === side) {
+      this.setData({ pickerActive: '', tempHead: '', tempTail: '' })
+      return
     }
+    const currentType = side === 'left' ? this.data.leftType : this.data.rightType
+    this.setData({
+      pickerActive: side,
+      tempHead: currentType ? currentType.slice(0, 2) : '',
+      tempTail: currentType ? currentType.slice(2) : '',
+    })
   },
 
-  onLeftPickerChange(e) {
-    const [h, t] = e.detail.value
-    this.setData({ leftPickerValue: e.detail.value })
+  pickHead(e) {
+    this.setData({ tempHead: e.currentTarget.dataset.val })
   },
 
-  onConfirmLeft() {
-    const { leftPickerValue } = this.data
-    const result = MBTI_HEAD[leftPickerValue[0]] + MBTI_TAIL[leftPickerValue[1]]
-    this.setData({ leftHiding: true })
-    setTimeout(() => {
-      this.setData({ leftType: result, leftSelecting: false, leftHiding: false })
-      this._tryCalcResult()
-    }, ANIM_OUT_DURATION)
+  pickTail(e) {
+    this.setData({ tempTail: e.currentTarget.dataset.val })
   },
 
-  // =============================================
-  //   配对选择器 - 右侧
-  // =============================================
-
-  onToggleRightPicker() {
-    const { rightSelecting, rightHiding, leftSelecting } = this.data
-    if (rightHiding) return
-    if (rightSelecting) {
-      this.setData({ rightHiding: true })
-      setTimeout(() => {
-        this.setData({ rightSelecting: false, rightHiding: false })
-      }, ANIM_OUT_DURATION)
+  confirmInlinePicker() {
+    if (!this.data.tempHead || !this.data.tempTail) return
+    const { pickerActive, tempHead, tempTail } = this.data
+    const result = tempHead + tempTail
+    if (pickerActive === 'left') {
+      this.setData({ leftType: result, pickerActive: '', tempHead: '', tempTail: '' })
     } else {
-      const updates = { rightSelecting: true }
-      if (leftSelecting) {
-        updates.leftSelecting = false
-        updates.leftHiding = false
-      }
-      this.setData(updates)
+      this.setData({ rightType: result, pickerActive: '', tempHead: '', tempTail: '' })
     }
-  },
-
-  onRightPickerChange(e) {
-    const [h, t] = e.detail.value
-    this.setData({ rightPickerValue: e.detail.value })
-  },
-
-  onConfirmRight() {
-    const { rightPickerValue } = this.data
-    const result = MBTI_HEAD[rightPickerValue[0]] + MBTI_TAIL[rightPickerValue[1]]
-    this.setData({ rightHiding: true })
-    setTimeout(() => {
-      this.setData({ rightType: result, rightSelecting: false, rightHiding: false })
-      this._tryCalcResult()
-    }, ANIM_OUT_DURATION)
+    this._tryCalcResult()
   },
 
   // =============================================
@@ -218,8 +235,6 @@ Page({
     this.setData({
       leftType: '',
       rightType: '',
-      leftPickerValue: [0, 0],
-      rightPickerValue: [0, 0],
       resultScores: null,
       aiComment: '',
       commentLoading: false,

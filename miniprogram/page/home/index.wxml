@@ -3,99 +3,129 @@
     <view wx:for="{{shapes}}" wx:key="index" class="shape shape-{{item.type}}" style="{{item.inlineStyle}}"></view>
   </view>
   <view class="page-content">
-    <!-- 每日签语卡片 -->
-    <fortune-card
-      mbtiType="{{userMbti}}"
-      bind:typeTap="onFortuneTypeTap"
-      bind:shareTap="onShareFortune"
-    />
-
-    <view class="section-gap"></view>
-
-    <!-- MBTI 配对计算器 -->
-    <view class="calc-card">
-      <text class="calc-title">MBTI 配对计算器</text>
-
-      <!-- 选择器行 -->
-      <view class="selector-row">
-        <!-- 左侧类型 -->
-        <view class="type-slot" bindtap="onToggleLeftPicker">
-          <text class="type-slot-text {{leftType ? 'has-value' : ''}}">{{leftType || '选择'}}</text>
-          <view class="picker-expand {{leftHiding ? 'anim-out' : 'anim-in'}}" wx:if="{{leftSelecting || leftHiding}}" catchtap="noop">
-            <view class="picker-wheels">
-              <picker-view class="calc-picker-view" indicator-class="picker-indicator" value="{{leftPickerValue}}" bindchange="onLeftPickerChange" immediate-change>
-                <picker-view-column>
-                  <view wx:for="{{MBTI_HEAD}}" wx:key="*this" class="picker-item">{{item}}</view>
-                </picker-view-column>
-                <picker-view-column>
-                  <view wx:for="{{MBTI_TAIL}}" wx:key="*this" class="picker-item">{{item}}</view>
-                </picker-view-column>
-              </picker-view>
+    <!-- 每日签语卡片区域 -->
+    <view class="fortune-section">
+      <!-- 有 MBTI：翻牌容器 -->
+      <view class="card-flip-wrap" wx:if="{{userMbti}}">
+        <view class="card-flipper {{cardRevealed ? 'flipped' : ''}}">
+          <!-- 卡背 -->
+          <view class="card-face card-back-face" bindtap="revealCard">
+            <!-- 顶部半圆 -->
+            <view class="back-arch back-arch-top">
+              <view class="arch-ring"></view>
             </view>
-            <view class="picker-confirm-btn" catchtap="onConfirmLeft">
-              <text>确认</text>
+            <!-- 随机棱星 -->
+            <view class="back-spark" wx:for="{{backSparks}}" wx:key="index"
+              style="top:{{item.top}};left:{{item.left}};font-size:{{item.size}};transform:rotate({{item.rot}});">
+              {{item.sym}}
             </view>
+            <!-- 中央水印 -->
+            <text class="back-mandala">{{userMbti}}</text>
+            <!-- 底部半圆 -->
+            <view class="back-arch back-arch-bottom">
+              <view class="arch-ring"></view>
+            </view>
+            <text class="back-hint">轻触翻牌</text>
           </view>
-        </view>
-
-        <!-- 连线 -->
-        <view class="pair-line"></view>
-
-        <!-- 右侧类型 -->
-        <view class="type-slot" bindtap="onToggleRightPicker">
-          <text class="type-slot-text {{rightType ? 'has-value' : ''}}">{{rightType || '选择'}}</text>
-          <view class="picker-expand {{rightHiding ? 'anim-out' : 'anim-in'}}" wx:if="{{rightSelecting || rightHiding}}" catchtap="noop">
-            <view class="picker-wheels">
-              <picker-view class="calc-picker-view" indicator-class="picker-indicator" value="{{rightPickerValue}}" bindchange="onRightPickerChange" immediate-change>
-                <picker-view-column>
-                  <view wx:for="{{MBTI_HEAD}}" wx:key="*this" class="picker-item">{{item}}</view>
-                </picker-view-column>
-                <picker-view-column>
-                  <view wx:for="{{MBTI_TAIL}}" wx:key="*this" class="picker-item">{{item}}</view>
-                </picker-view-column>
-              </picker-view>
-            </view>
-            <view class="picker-confirm-btn" catchtap="onConfirmRight">
-              <text>确认</text>
-            </view>
+          <!-- 卡正面 -->
+          <view class="card-face card-front-face">
+            <fortune-card
+              style="height: 100%"
+              mbtiType="{{userMbti}}"
+              cardRevealed="{{cardRevealed}}"
+              bind:typeTap="onFortuneTypeTap"
+              bind:shareTap="onShareFortune"
+            />
           </view>
         </view>
       </view>
+      <!-- 无 MBTI：直接显示 -->
+      <fortune-card
+        wx:else
+        style="height: 100%"
+        mbtiType="{{userMbti}}"
+        bind:typeTap="onFortuneTypeTap"
+        bind:shareTap="onShareFortune"
+      />
+    </view>
 
-      <!-- 结果卡片 -->
-      <view class="result-card" wx:if="{{resultScores}}">
-        <view class="score-row">
-          <text class="score-label">友情</text>
-          <view class="score-bar">
-            <view class="score-fill friendship" style="width: {{resultScores.friendship}}%"></view>
-          </view>
-          <text class="score-num">{{resultScores.friendship}}</text>
-        </view>
-        <view class="score-row">
-          <text class="score-label">恋爱</text>
-          <view class="score-bar">
-            <view class="score-fill romance" style="width: {{resultScores.romance}}%"></view>
-          </view>
-          <text class="score-num">{{resultScores.romance}}</text>
-        </view>
-        <view class="score-row">
-          <text class="score-label">工作</text>
-          <view class="score-bar">
-            <view class="score-fill work" style="width: {{resultScores.work}}%"></view>
-          </view>
-          <text class="score-num">{{resultScores.work}}</text>
-        </view>
-
-        <!-- AI 评语 -->
-        <view class="comment-area">
-          <text class="comment-text" wx:if="{{!commentLoading && aiComment}}">{{aiComment}}</text>
-          <text class="comment-loading" wx:elif="{{commentLoading}}">AI 正在分析...</text>
-        </view>
+    <!-- MBTI 配对计算器 - 浮动气泡 -->
+    <view class="calc-drawer {{calcExpanded ? 'expanded' : ''}}">
+      <view class="calc-trigger" bindtap="toggleCalc">
+        <text class="calc-trigger-text">MBTI 配对计算器 {{calcExpanded ? '▲' : '▼'}}</text>
       </view>
+      <view class="calc-body" wx:if="{{calcExpanded}}">
+        <view class="calc-card">
+          <!-- 选择器行 -->
+          <view class="selector-row">
+            <view class="type-slot" bindtap="openPicker" data-side="left">
+              <text class="type-slot-text {{leftType ? 'has-value' : ''}}">{{leftType || '选择'}}</text>
+            </view>
 
-      <!-- 换一组 -->
-      <view class="try-another" bindtap="onTryAnother" wx:if="{{resultScores}}">
-        <text>换一组</text>
+            <view class="pair-line"></view>
+
+            <view class="type-slot" bindtap="openPicker" data-side="right">
+              <text class="type-slot-text {{rightType ? 'has-value' : ''}}">{{rightType || '选择'}}</text>
+            </view>
+          </view>
+
+          <!-- 两步内联选择 -->
+          <view class="inline-picker" wx:if="{{pickerActive}}">
+            <view class="picker-row picker-row-head">
+              <view wx:for="{{MBTI_HEAD}}" wx:key="*this"
+                class="picker-btn picker-btn-head {{tempHead === item ? 'active' : ''}}"
+                bindtap="pickHead" data-val="{{item}}">
+                <text>{{item}}</text>
+              </view>
+            </view>
+            <view class="picker-row picker-row-tail">
+              <view wx:for="{{MBTI_TAIL}}" wx:key="*this"
+                class="picker-btn picker-btn-tail {{tempTail === item ? 'active' : ''}}"
+                bindtap="pickTail" data-val="{{item}}">
+                <text>{{item}}</text>
+              </view>
+            </view>
+            <view class="picker-confirm" bindtap="confirmInlinePicker">
+              <text>确认</text>
+            </view>
+          </view>
+
+          <!-- 结果卡片 -->
+          <view class="result-card" wx:if="{{resultScores}}">
+            <view class="score-row">
+              <text class="score-label">友情</text>
+              <view class="score-bar">
+                <view class="score-fill friendship" style="width: {{resultScores.friendship}}%"></view>
+              </view>
+              <text class="score-num">{{resultScores.friendship}}</text>
+            </view>
+            <view class="score-row">
+              <text class="score-label">恋爱</text>
+              <view class="score-bar">
+                <view class="score-fill romance" style="width: {{resultScores.romance}}%"></view>
+              </view>
+              <text class="score-num">{{resultScores.romance}}</text>
+            </view>
+            <view class="score-row">
+              <text class="score-label">工作</text>
+              <view class="score-bar">
+                <view class="score-fill work" style="width: {{resultScores.work}}%"></view>
+              </view>
+              <text class="score-num">{{resultScores.work}}</text>
+            </view>
+
+            <!-- AI 评语 -->
+            <view class="comment-area">
+              <text class="comment-text" wx:if="{{!commentLoading && aiComment}}">{{aiComment}}</text>
+              <text class="comment-loading" wx:elif="{{commentLoading}}">AI 正在分析...</text>
+            </view>
+          </view>
+
+          <!-- 换一组 -->
+          <view class="try-another" bindtap="onTryAnother" wx:if="{{resultScores}}">
+            <text>换一组</text>
+          </view>
+        </view>
       </view>
     </view>
   </view>

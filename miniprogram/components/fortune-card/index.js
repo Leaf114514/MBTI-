@@ -1,15 +1,17 @@
 Component({
   properties: {
-    mbtiType: { type: String, value: '' }
+    mbtiType: { type: String, value: '' },
+    cardRevealed: { type: Boolean, value: true }
   },
 
   data: {
     loading: false,
     loadError: false,
-    dateStr: '',
-    weekday: '',
+    dateNum: '',
     message: '',
     luckyColor: null,
+    accentColor: '#FF6B6B',
+    accentRgb: '255,107,107',
     keywords: [],
     showPrompt: true,
   },
@@ -23,6 +25,17 @@ Component({
       } else {
         this.setData({ showPrompt: true, loadError: false, message: '', luckyColor: null, keywords: [] })
       }
+    },
+
+    cardRevealed(val) {
+      if (val) {
+        // 翻牌动画完成后（1040ms）再开始颜色渐变
+        setTimeout(() => {
+          this._applyAccentTransition()
+        }, 1040)
+      } else {
+        this._resetToWine()
+      }
     }
   },
 
@@ -35,11 +48,32 @@ Component({
   methods: {
     _updateDate() {
       const now = new Date()
-      const pad = n => (n < 10 ? '0' + n : '' + n)
-      const weekdays = ['日', '一', '二', '三', '四', '五', '六']
+      const day = now.getDate()
+      const month = now.getMonth() + 1
       this.setData({
-        dateStr: now.getFullYear() + '.' + pad(now.getMonth() + 1) + '.' + pad(now.getDate()),
-        weekday: '星期' + weekdays[now.getDay()]
+        dateNum: month + '·' + day
+      })
+    },
+
+    _hexToRgb(hex) {
+      const r = parseInt(hex.slice(1, 3), 16)
+      const g = parseInt(hex.slice(3, 5), 16)
+      const b = parseInt(hex.slice(5, 7), 16)
+      return r + ',' + g + ',' + b
+    },
+
+    _resetToWine() {
+      this.setData({
+        accentColor: '#4A1942',
+        accentRgb: '74,25,66'
+      })
+    },
+
+    _applyAccentTransition() {
+      const hex = this.data.luckyColor && this.data.luckyColor.hex ? this.data.luckyColor.hex : '#FF6B6B'
+      this.setData({
+        accentColor: hex,
+        accentRgb: this._hexToRgb(hex)
       })
     },
 
@@ -54,10 +88,13 @@ Component({
         data: { type },
         success: (res) => {
           if (res.result && res.result.success) {
+            const hex = (res.result.data.luckyColor && res.result.data.luckyColor.hex) || '#FF6B6B'
             this.setData({
               showPrompt: false,
               message: res.result.data.message,
               luckyColor: res.result.data.luckyColor,
+              accentColor: this.data.cardRevealed ? hex : '#4A1942',
+              accentRgb: this.data.cardRevealed ? this._hexToRgb(hex) : '74,25,66',
               keywords: res.result.data.keywords || [],
               loadError: false,
               loading: false,
