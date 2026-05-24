@@ -2,6 +2,7 @@
 // 引用题库
 const questionService = require('../../services/question-service')
 const storyService = require('../../services/story-service')
+const fallingShapes = require('../../behaviors/falling-shapes')
 
 // MBTI 头部——第一列滚轮选项
 const MBTI_HEAD = ['IN', 'IS', 'EN', 'ES']
@@ -22,6 +23,7 @@ const QUESTION_COUNT = 5
 const FLIP_DURATION = 250
 
 Page({
+  behaviors: [fallingShapes],
   data: {
     // ——— 页面阶段 ———
     phase: 'select', // 'select' 选择阶段 | 'quiz' 答题阶段
@@ -100,6 +102,10 @@ Page({
   onLoad() {},
 
   onShow() {
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 1 })
+    }
+    this._playPageAnim()
     if (this.data.isSubmitting) {
       this.setData({ isSubmitting: false })
     }
@@ -128,6 +134,15 @@ Page({
     }
   },
 
+  _playPageAnim() {
+    const app = getApp()
+    const dir = app.globalData.tabSwitchDirection
+    if (!dir) return
+    app.globalData.tabSwitchDirection = null
+    this.setData({ pageAnim: dir === 'right' ? 'page-slide-in-right' : 'page-slide-in-left' })
+    setTimeout(() => { this.setData({ pageAnim: '' }) }, 320)
+  },
+
   /** 进入续写答题模式（2 道题） */
   async _enterContinueMode({ sessionId, currentRound }) {
     const result = await questionService.getRandomQuestions({ count: 2 })
@@ -137,6 +152,14 @@ Page({
       return
     }
     const questions = this._mapCloudQuestions(result.data.questions)
+
+    const badQ = questions.find(q => !q.question || typeof q.question !== 'string' || q.question.trim() === '')
+    if (badQ) {
+      console.error('[MBTI] 续写题目数据异常。原始:', JSON.stringify(result.data.questions).substring(0, 500))
+      this.setData({ phase: 'select' })
+      return
+    }
+
     this.setData({
       phase: 'quiz',
       isContinueMode: true,
@@ -210,6 +233,12 @@ Page({
         isMbtiSelecting: false,
         isMbtiHiding: false,
       })
+      wx.setStorageSync('selectedMbti', result)
+      wx.cloud.callFunction({
+        name: 'updateMbti',
+        data: { mbti: result },
+        fail: () => {}
+      })
     }, ANIM_OUT_DURATION)
   },
 
@@ -240,10 +269,11 @@ Page({
     }
   },
 
-  onGenderPickerChange(e) {
+  onSelectGenderOption(e) {
+    const index = Number(e.currentTarget.dataset.index)
     this.setData({
-      genderPickerValue: e.detail.value,
-      currentGenderDisplay: GENDERS[e.detail.value[0]],
+      genderPickerValue: [index],
+      currentGenderDisplay: GENDERS[index],
     })
   },
 
@@ -289,6 +319,14 @@ Page({
       return
     }
     const questions = this._mapCloudQuestions(result.data.questions)
+
+    // 校验题目数据完整性
+    const badQ = questions.find(q => !q.question || typeof q.question !== 'string' || q.question.trim() === '')
+    if (badQ) {
+      console.error('[MBTI] 题目数据异常，缺少 question 字段。原始云函数返回:', JSON.stringify(result.data.questions).substring(0, 500))
+      this._shakeButton('start', '题目数据异常，请联系开发者')
+      return
+    }
 
     // 三个元素各自随机掉落时长 300~600ms
     const dur1 = (300 + Math.random() * 300).toFixed(0) + 'ms'
@@ -382,6 +420,26 @@ Page({
   // =============================================
   //   答题逻辑
   // =============================================
+
+  /** 左侧按钮统一入口 */
+  onLeftBtnTap() {
+    if (this.data.storyGenerated) {
+      this.onNewStory()
+    } else if (this.data.currentIndex === 0) {
+      this.onCancelQuiz()
+    } else {
+      this.onPrevQuestion()
+    }
+  },
+
+  /** 右侧主按钮统一入口 */
+  onRightBtnTap() {
+    if (this.data.storyGenerated) {
+      this.onViewStory()
+    } else {
+      this.onSubmit()
+    }
+  },
 
   onSelectOption(e) {
     const { questionId, optionKey } = e.currentTarget.dataset
@@ -499,7 +557,9 @@ Page({
   //   其他
   // =============================================
 
-  onViewHistory() {},
+  onViewHistory() {
+    wx.navigateTo({ url: '/page/history/history' })
+  },
   noop() {},
 
   /** 查看已生成的故事 */
@@ -516,6 +576,7 @@ Page({
   /** 开始新故事 — 重置到选择阶段 */
   onNewStory() {
     storyService.resetSession()
+    wx.removeStorageSync('selectedMbti')
     const app = getApp()
     delete app.globalData.lastStorySessionId
     delete app.globalData.lastStoryTitle

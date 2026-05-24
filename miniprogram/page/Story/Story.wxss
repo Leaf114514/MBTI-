@@ -166,36 +166,17 @@ page {
   opacity: 0.6;
 }
 
+.home-icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+
 /* 第二行：标题 + 徽章水平对齐 */
 .header-title-row {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   padding: 0 var(--spacing-md) var(--spacing-sm);
-}
-
-/* CSS 绘制房子图标 */
-.house-icon {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rpx;
-}
-
-.house-roof {
-  width: 0;
-  height: 0;
-  border-left: 10rpx solid transparent;
-  border-right: 10rpx solid transparent;
-  border-bottom: 9rpx solid var(--color-primary);
-}
-
-.house-wall {
-  width: 14rpx;
-  height: 9rpx;
-  border-left: 1rpx solid var(--color-primary);
-  border-right: 1rpx solid var(--color-primary);
-  border-bottom: 1rpx solid var(--color-primary);
 }
 
 /* ===== 标题 ===== */

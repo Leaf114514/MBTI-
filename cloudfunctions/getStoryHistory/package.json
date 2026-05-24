@@ -1,0 +1,12 @@
+{
+  "name": "getStoryHistory",
+  "version": "1.0.0",
+  "description": "获取用户历史故事列表",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  },
+  "config": {
+    "timeout": 10
+  }
+}

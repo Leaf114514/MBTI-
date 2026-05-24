@@ -1,12 +1,194 @@
+@import "../../common/index.wxss";
+
 .container {
+  min-height: 100vh;
+  background-color: var(--color-bg-page);
+  padding: var(--spacing-lg);
+  padding-bottom: calc(130rpx + env(safe-area-inset-bottom));
+  position: relative;
+  overflow: hidden;
+}
+
+/* 掉落图形开关气泡 */
+.toggle-btn {
+  position: absolute;
+  top: 24rpx;
+  left: 24rpx;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  background-color: #ffffff;
+  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.35);
+  z-index: 10;
 }
 
-.placeholder {
-  font-size: 32rpx;
-  color: #999999;
+.toggle-label {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+@keyframes toggle-shake {
+  0%, 100% { transform: translateX(0); }
+  15%, 55%, 85% { transform: translateX(-4rpx); }
+  35%, 75% { transform: translateX(4rpx); }
+}
+
+.toggle-shake {
+  animation: toggle-shake 0.4s ease-in-out;
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding-top: 56rpx;
+}
+
+/* ===== 卡片通用 ===== */
+.profile-card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--spacing-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-title {
+  display: block;
+  font-size: var(--font-size-subtitle);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+/* ===== MBTI 选择器 ===== */
+.mbti-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 96rpx;
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-md);
+}
+
+.mbti-selector:active {
+  background-color: var(--color-border);
+}
+
+.mbti-display {
+  font-size: var(--font-size-body);
+  color: var(--color-text-tertiary);
+  letter-spacing: 2rpx;
+}
+
+.mbti-display.has-value {
+  font-size: var(--font-size-subtitle);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  letter-spacing: 6rpx;
+}
+
+/* 展开区域 */
+.picker-expand {
+  overflow: hidden;
+  margin-top: var(--spacing-md);
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-md);
+}
+
+.picker-expand.anim-in {
+  animation: expand-in 0.26s var(--ease-out) both;
+}
+
+.picker-expand.anim-out {
+  animation: expand-out 0.26s var(--ease-out) both;
+}
+
+@keyframes expand-in {
+  from { max-height: 0; opacity: 0; }
+  to { max-height: 500rpx; opacity: 1; }
+}
+
+@keyframes expand-out {
+  from { max-height: 500rpx; opacity: 1; }
+  to { max-height: 0; opacity: 0; }
+}
+
+.picker-wheels {
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-input);
+}
+
+.mbti-picker-view {
+  width: 100%;
+  height: 300rpx;
+}
+
+.picker-indicator {
+  height: 80rpx;
+}
+
+.picker-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80rpx;
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+}
+
+.picker-confirm-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 72rpx;
+  margin: var(--spacing-sm);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-sm);
+}
+
+/* 类型描述 */
+.mbti-desc {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-md);
+}
+
+.desc-text {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-normal);
+}
+
+/* ===== 快捷入口 ===== */
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) 0;
+  border-bottom: 1rpx solid var(--color-divider);
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-text {
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+}
+
+.menu-arrow {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-tertiary);
 }

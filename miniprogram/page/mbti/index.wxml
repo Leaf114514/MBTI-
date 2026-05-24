@@ -1,4 +1,8 @@
-<view>
+<view class="page-root">
+<view class="shapes-container {{shapesHidden ? 'shapes-hidden' : ''}}">
+  <view wx:for="{{shapes}}" wx:key="index" class="shape shape-{{item.type}}" style="{{item.inlineStyle}}"></view>
+</view>
+<view class="{{pageAnim}}">
  <!-- 标题 -->
 <view class="header-section">
   <view class="title-row">
@@ -31,6 +35,7 @@
           indicator-class="picker-indicator"
           value="{{mbtiPickerValue}}"
           bindchange="onMbtiPickerChange"
+          immediate-change
         >
           <picker-view-column>
             <view wx:for="{{MBTI_HEAD}}" wx:key="*this" class="picker-item">{{item}}</view>
@@ -56,28 +61,18 @@
     </view>
     <view class="picker-expand {{isGenderHiding ? 'anim-out' : 'anim-in'}}"
       wx:if="{{isGenderSelecting || isGenderHiding}}" catchtap="noop">
-      <view class="picker-wheels">
-        <picker-view
-          class="gender-picker-view"
-          indicator-class="picker-indicator"
-          value="{{genderPickerValue}}"
-          bindchange="onGenderPickerChange"
-        >
-          <picker-view-column>
-            <view wx:for="{{GENDERS}}" wx:key="*this" class="picker-item">{{item}}</view>
-          </picker-view-column>
-        </picker-view>
+      <view class="gender-options">
+        <view class="gender-option {{genderPickerValue[0] === 0 ? 'selected' : ''}}" catchtap="onSelectGenderOption" data-index="0">
+          <text>男</text>
+        </view>
+        <view class="gender-option {{genderPickerValue[0] === 1 ? 'selected' : ''}}" catchtap="onSelectGenderOption" data-index="1">
+          <text>女</text>
+        </view>
       </view>
       <view class="picker-confirm-btn" catchtap="onConfirmGender">
         <text>确认</text>
       </view>
     </view>
-  </view>
-
-  <!-- 开始答题按钮 -->
-  <view class="btn-primary start-btn {{startBtnAnim}} {{(!selectedMbti || !selectedGender) ? 'btn-warn' : ''}} {{startBtnShaking ? 'anim-shake' : ''}}"
-    style="{{startBtnDur}}" bindtap="onStartQuiz">
-    <text>{{startBtnWarn ? startBtnWarn : '开始答题'}}</text>
   </view>
 </view>
 
@@ -115,30 +110,37 @@
       </view>
     </view>
   </view>
+</view>
+</view>
 
-  <!-- 底部操作 -->
-  <view class="quiz-actions {{actionsAnim}}">
-    <!-- 第一题：取消答题（两次确认） -->
-    <view class="btn-secondary quiz-btn {{cancelConfirmPending ? 'btn-danger' : ''}}"
-      bindtap="onCancelQuiz" wx:if="{{currentIndex === 0}}">
-      <text>{{cancelConfirmPending ? '确认取消答题' : '取消答题'}}</text>
-    </view>
-    <!-- 非第一题：上一题 -->
-    <view class="btn-secondary quiz-btn" bindtap="onPrevQuestion" wx:if="{{currentIndex > 0}}">
-      <text>上一题</text>
-    </view>
+<!-- ===== 固定定位按钮（放在动画容器外部） ===== -->
 
-    <view class="btn-primary quiz-btn" bindtap="onNextQuestion" wx:if="{{currentIndex < questions.length - 1}}">
-      <text>下一题</text>
-    </view>
+<!-- 开始答题按钮 -->
+<view class="btn-primary start-btn {{pageAnim}} {{startBtnAnim}} {{(!selectedMbti || !selectedGender) ? 'btn-warn' : ''}} {{startBtnShaking ? 'anim-shake' : ''}}"
+  wx:if="{{phase === 'select' || selectLeaving}}"
+  style="{{startBtnDur}}" bindtap="onStartQuiz">
+  <text>{{startBtnWarn ? startBtnWarn : '开始答题'}}</text>
+</view>
 
-    <view
-      class="btn-primary quiz-btn submit-btn {{storyGenerated ? 'btn-story ' + storyBtnAnim : ''}} {{!storyGenerated && answerCount < questions.length ? 'btn-warn' : ''}} {{submitBtnShaking ? 'anim-shake' : ''}}"
-      bindtap="{{storyGenerated ? 'onViewStory' : 'onSubmit'}}"
-      wx:if="{{currentIndex === questions.length - 1}}"
-    >
-      <text>{{storyGenerated ? storyTitle : (isContinueMode ? (isSubmitting ? '提交中...' : '提交续写') : (submitBtnWarn ? submitBtnWarn : (isSubmitting ? '提交中...' : '提交答案')))}}</text>
-    </view>
+<!-- 答题底部操作 -->
+<view class="quiz-actions {{pageAnim}} {{actionsAnim}}" wx:if="{{phase === 'quiz' || quizLeaving}}">
+  <!-- 左侧按钮：故事已生成时显示"再来一篇"，否则按位置显示取消/上一题 -->
+  <view class="btn-secondary quiz-btn {{!storyGenerated && cancelConfirmPending ? 'btn-danger' : ''}}"
+    bindtap="onLeftBtnTap"
+    wx:if="{{storyGenerated || currentIndex > 0}}">
+    <text>{{storyGenerated ? '再来一篇' : (currentIndex === 0 ? (cancelConfirmPending ? '确认取消答题' : '取消答题') : '上一题')}}</text>
+  </view>
+
+  <view class="btn-primary quiz-btn" bindtap="onNextQuestion" wx:if="{{currentIndex < questions.length - 1 && !storyGenerated}}">
+    <text>下一题</text>
+  </view>
+
+  <view
+    class="btn-primary quiz-btn submit-btn {{storyGenerated ? 'btn-story ' + storyBtnAnim : ''}} {{!storyGenerated && answerCount < questions.length ? 'btn-warn' : ''}} {{submitBtnShaking ? 'anim-shake' : ''}}"
+    bindtap="onRightBtnTap"
+    wx:if="{{currentIndex === questions.length - 1}}"
+  >
+    <text>{{storyGenerated ? storyTitle : (isContinueMode ? (isSubmitting ? '提交中...' : '提交续写') : (submitBtnWarn ? submitBtnWarn : (isSubmitting ? '提交中...' : '提交答案')))}}</text>
   </view>
 </view>
 

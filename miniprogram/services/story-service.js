@@ -272,9 +272,10 @@ class StoryService {
         answers
       })
 
-      // 成功则更新缓存
+      // 续写成功后清除缓存，确保 getSession 从数据库读取完整多轮数据
       if (result.success && result.data && result.data.sessionId) {
-        this._cacheResult(result.data.sessionId, result)
+        const key = this._getCacheKey(result.data.sessionId)
+        this._cache.delete(key)
       }
 
       return result
