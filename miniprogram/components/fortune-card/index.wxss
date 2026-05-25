@@ -2,7 +2,8 @@
 
 /* ===== 塔罗神谕卡 ===== */
 .fortune-card {
-  --accent: #FF6B6B;
+  --accent: #4A1942;
+  --ar: 74,25,66;
   width: 85%;
   height: 100%;
   margin: 0 auto;

@@ -10,8 +10,8 @@ Component({
     dateNum: '',
     message: '',
     luckyColor: null,
-    accentColor: '#FF6B6B',
-    accentRgb: '255,107,107',
+    accentColor: '#4A1942',
+    accentRgb: '74,25,66',
     keywords: [],
     showPrompt: true,
   },
@@ -29,7 +29,6 @@ Component({
 
     cardRevealed(val) {
       if (val) {
-        // 翻牌动画完成后（1040ms）再开始颜色渐变
         setTimeout(() => {
           this._applyAccentTransition()
         }, 1040)
