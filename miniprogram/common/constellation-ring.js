@@ -11,10 +11,10 @@
 // ──────────────────────────────────────────────
 
 /** 星座出现概率（0~1），0 = 永不出现，1 = 每次必出 */
-var CONSTELLATION_CHANCE = 0.4
+const CONSTELLATION_CHANCE = 0.4
 
 /** 星座图案边长（rpx），图案会缩放到这个正方形区域内 */
-var CONSTELLATION_SIZE = 260
+const CONSTELLATION_SIZE = 260
 
 // ──────────────────────────────────────────────
 //  12 星座连线数据
@@ -23,7 +23,7 @@ var CONSTELLATION_SIZE = 260
 //    lines: [i, j]   — 连线索引对
 // ──────────────────────────────────────────────
 
-var PATTERNS = [
+const PATTERNS = [
   {
     name: '白羊', symbol: '♈',
     stars: [
@@ -198,12 +198,12 @@ var PATTERNS = [
  * @returns {{ x, y, w, a }}  线段：左端坐标、长度、旋转角度
  */
 function _calcLine(x1, y1, x2, y2, ox, oy, s) {
-  var ax = x1 * s / 100 + ox
-  var ay = y1 * s / 100 + oy
-  var bx = x2 * s / 100 + ox
-  var by = y2 * s / 100 + oy
-  var dx = bx - ax
-  var dy = by - ay
+  const ax = x1 * s / 100 + ox
+  const ay = y1 * s / 100 + oy
+  const bx = x2 * s / 100 + ox
+  const by = y2 * s / 100 + oy
+  const dx = bx - ax
+  const dy = by - ay
   return {
     x: ax,
     y: ay,
@@ -237,19 +237,19 @@ function maybeGenConstellation(cardW, cardH) {
   cardH = cardH || 720
 
   // 随机选取一个星座图案
-  var idx = Math.floor(Math.random() * PATTERNS.length)
-  var p = PATTERNS[idx]
-  var size = CONSTELLATION_SIZE
+  const idx = Math.floor(Math.random() * PATTERNS.length)
+  const p = PATTERNS[idx]
+  const size = CONSTELLATION_SIZE
 
   // 随机偏移，保证图案不超出卡片边界（留 20rpx 安全边距）
-  var margin = 20
-  var maxX = Math.max(0, cardW - size - margin * 2)
-  var maxY = Math.max(0, cardH - size - margin * 2)
-  var ox = margin + Math.random() * maxX
-  var oy = margin + Math.random() * maxY
+  const margin = 20
+  const maxX = Math.max(0, cardW - size - margin * 2)
+  const maxY = Math.max(0, cardH - size - margin * 2)
+  const ox = margin + Math.random() * maxX
+  const oy = margin + Math.random() * maxY
 
   // 将归一化坐标转为卡片上的绝对 rpx 坐标
-  var stars = p.stars.map(function (s) {
+  const stars = p.stars.map(function (s) {
     return {
       x: s.x * size / 100 + ox,
       y: s.y * size / 100 + oy,
@@ -258,9 +258,9 @@ function maybeGenConstellation(cardW, cardH) {
   })
 
   // 预计算每条连线的渲染参数（起点、长度、旋转角）
-  var lines = p.lines.map(function (pair) {
-    var s1 = p.stars[pair[0]]
-    var s2 = p.stars[pair[1]]
+  const lines = p.lines.map(function (pair) {
+    const s1 = p.stars[pair[0]]
+    const s2 = p.stars[pair[1]]
     return _calcLine(s1.x, s1.y, s2.x, s2.y, ox, oy, size)
   })
 

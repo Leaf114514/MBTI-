@@ -8,11 +8,11 @@
 //  4 种装饰风格，随机出现一种
 // ──────────────────────────────────────────────
 
-var STYLES = [
-  { sym: '✦' },   // 星芒
-  { sym: '◆' },   // 菱形
-  { sym: '❋' },   // 花朵
-  { sym: '■' },   // 方块
+const STYLES = [
+  { sym: '✿' },   // 花朵
+  { sym: '✧' },   // 四芒星
+  { sym: '❖' },   // 六瓣花
+  { sym: '✦' },   // 四角星
 ]
 
 /**
@@ -20,11 +20,10 @@ var STYLES = [
  * @returns {Object}  { sym } 装饰符号
  */
 function getCornerDecor() {
-  var idx = Math.floor(Math.random() * STYLES.length)
+  const idx = Math.floor(Math.random() * STYLES.length)
   return { sym: STYLES[idx].sym }
 }
 
 module.exports = {
-  STYLES: STYLES,
   getCornerDecor: getCornerDecor,
 }

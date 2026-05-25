@@ -9,24 +9,10 @@
 -->
 <template name="corner-decorations">
   <block wx:if="{{cornerDecor}}">
-    <!-- 左上角 -->
-    <view class="corner-deco corner-deco-tl">
-      <view class="corner-frame corner-frame-tl"></view>
-      <text class="corner-sym">{{cornerDecor.sym}}</text>
-    </view>
-    <!-- 右上角 -->
-    <view class="corner-deco corner-deco-tr">
-      <view class="corner-frame corner-frame-tr"></view>
-      <text class="corner-sym">{{cornerDecor.sym}}</text>
-    </view>
-    <!-- 左下角 -->
-    <view class="corner-deco corner-deco-bl">
-      <view class="corner-frame corner-frame-bl"></view>
-      <text class="corner-sym">{{cornerDecor.sym}}</text>
-    </view>
-    <!-- 右下角 -->
-    <view class="corner-deco corner-deco-br">
-      <view class="corner-frame corner-frame-br"></view>
+    <!-- 四角统一装饰：L 形圆弧框 + 中央符号，四角内容相同 -->
+    <view wx:for="{{['tl','tr','bl','br']}}" wx:key="*this"
+      class="corner-deco corner-deco-{{item}}">
+      <view class="corner-frame corner-frame-{{item}}"></view>
       <text class="corner-sym">{{cornerDecor.sym}}</text>
     </view>
   </block>

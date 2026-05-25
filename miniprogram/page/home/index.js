@@ -168,12 +168,29 @@ Page({
 
   // ----------------------------------------------------------
   //  按概率生成卡背星座（最多一个）
+  //  通过 query 获取卡片实际尺寸，避免硬编码默认值在小屏/横屏下越界
   // ----------------------------------------------------------
   _genConstellation() {
-    this.setData({
-      constellation: constellationRing.maybeGenConstellation(),
-      cornerDecor: cornerDecor.getCornerDecor(),
+    const self = this
+    const query = wx.createSelectorQuery()
+    query.select('.card-back-face').boundingClientRect(function (rect) {
+      if (rect && rect.width > 0 && rect.height > 0) {
+        // px → rpx 换算
+        const { windowWidth } = wx.getSystemInfoSync()
+        const ratio = 750 / windowWidth
+        self.setData({
+          constellation: constellationRing.maybeGenConstellation(rect.width * ratio, rect.height * ratio),
+          cornerDecor: cornerDecor.getCornerDecor(),
+        })
+      } else {
+        // 测量失败时使用默认值兜底
+        self.setData({
+          constellation: constellationRing.maybeGenConstellation(),
+          cornerDecor: cornerDecor.getCornerDecor(),
+        })
+      }
     })
+    query.exec()
   },
 
   // ----------------------------------------------------------

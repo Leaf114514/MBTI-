@@ -15,7 +15,7 @@
 .const-line {
   position: absolute;
   height: 1rpx;
-  background-color: rgba(255, 180, 180, 0.18);
+  background-color: rgba(var(--color-back-pink), 0.18);
   transform-origin: 0 50%;
 }
 
@@ -27,7 +27,7 @@
   margin-left: -3rpx;
   margin-top: -3rpx;
   border-radius: 50%;
-  background-color: rgba(255, 200, 200, 0.35);
+  background-color: rgba(var(--color-back-pink-light), 0.35);
 }
 
 /* ----- 星星（主星，更亮更大） ----- */
@@ -36,19 +36,6 @@
   height: 10rpx;
   margin-left: -5rpx;
   margin-top: -5rpx;
-  background-color: rgba(255, 180, 180, 0.6);
-  box-shadow: 0 0 8rpx rgba(255, 160, 160, 0.3);
-}
-
-/* ----- 星座名标签 ----- */
-.const-label {
-  position: absolute;
-  transform: translateX(-50%);
-}
-
-.const-label-text {
-  font-size: 16rpx;
-  color: rgba(255, 180, 180, 0.22);
-  letter-spacing: 2rpx;
-  white-space: nowrap;
+  background-color: rgba(var(--color-back-pink), 0.6);
+  box-shadow: 0 0 8rpx rgba(var(--color-back-pink-deep), 0.3);
 }

@@ -20,12 +20,10 @@
     · onGoSelect → 从牌背跳转选择页面
   ========================================
 -->
+<import src="/common/corner-decorations/decorations.wxml" />
 <view class="fortune-card" style="--accent: {{accentColor}}; --ar: {{accentRgb}};">
-  <!-- ===== 四角装饰纹样（类塔罗牌边框风格） ===== -->
-  <view class="card-corner corner-tl"></view>
-  <view class="card-corner corner-tr"></view>
-  <view class="card-corner corner-bl"></view>
-  <view class="card-corner corner-br"></view>
+  <!-- 四角装饰（与卡背统一使用 corner-decorations 体系） -->
+  <template is="corner-decorations" data="{{cornerDecor}}" />
 
   <!-- ================================================================ -->
   <!-- 牌面正面：已选 MBTI 类型时显示                                      -->

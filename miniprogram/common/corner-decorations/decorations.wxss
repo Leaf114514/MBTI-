@@ -27,35 +27,35 @@
 
 /* 左上：上边 + 左边，左上角圆弧 */
 .corner-frame-tl {
-  border-top: 2rpx solid rgba(255, 180, 180, 0.2);
-  border-left: 2rpx solid rgba(255, 180, 180, 0.2);
+  border-top: 2rpx solid rgba(var(--color-back-pink), 0.2);
+  border-left: 2rpx solid rgba(var(--color-back-pink), 0.2);
   border-top-left-radius: 12rpx;
 }
 
 /* 右上：上边 + 右边，右上角圆弧 */
 .corner-frame-tr {
-  border-top: 2rpx solid rgba(255, 180, 180, 0.2);
-  border-right: 2rpx solid rgba(255, 180, 180, 0.2);
+  border-top: 2rpx solid rgba(var(--color-back-pink), 0.2);
+  border-right: 2rpx solid rgba(var(--color-back-pink), 0.2);
   border-top-right-radius: 12rpx;
 }
 
 /* 左下：下边 + 左边，左下角圆弧 */
 .corner-frame-bl {
-  border-bottom: 2rpx solid rgba(255, 180, 180, 0.2);
-  border-left: 2rpx solid rgba(255, 180, 180, 0.2);
+  border-bottom: 2rpx solid rgba(var(--color-back-pink), 0.2);
+  border-left: 2rpx solid rgba(var(--color-back-pink), 0.2);
   border-bottom-left-radius: 12rpx;
 }
 
 /* 右下：下边 + 右边，右下角圆弧 */
 .corner-frame-br {
-  border-bottom: 2rpx solid rgba(255, 180, 180, 0.2);
-  border-right: 2rpx solid rgba(255, 180, 180, 0.2);
+  border-bottom: 2rpx solid rgba(var(--color-back-pink), 0.2);
+  border-right: 2rpx solid rgba(var(--color-back-pink), 0.2);
   border-bottom-right-radius: 12rpx;
 }
 
 /* 中央装饰符号 */
 .corner-sym {
   font-size: 18rpx;
-  color: rgba(255, 180, 180, 0.3);
+  color: rgba(var(--color-back-pink), 0.3);
   z-index: 1;
 }

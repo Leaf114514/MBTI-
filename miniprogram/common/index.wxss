@@ -189,6 +189,12 @@ page {
   --duration-slow: 400ms;
   --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ===== 卡背装饰色（星座连线/四角边框/星芒等暗红粉调） ===== */
+  /* 使用 raw RGB 分量，方便通过 rgba(var(--xxx), alpha) 灵活控制透明度 */
+  --color-back-pink: 255, 180, 180;       /* 基础粉 — 连线、边框 */
+  --color-back-pink-light: 255, 200, 200; /* 浅粉 — 普通星星 */
+  --color-back-pink-deep: 255, 160, 160;  /* 深粉 — 主星高亮 / 星芒 */
 }
 
 /* ===== 掉落几何图形（通用） ===== */

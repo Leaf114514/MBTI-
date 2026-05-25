@@ -8,6 +8,8 @@
 //    4. 同一类型+同一天内缓存请求，避免重复调用云函数
 // ============================================================
 
+const cornerDecor = require('../../common/corner-decorations/decorations')
+
 Component({
   // ----------------------------------------------------------
   //  Props
@@ -41,6 +43,7 @@ Component({
     accentRgb: '74,25,66',
     keywords: [],
     showPrompt: true,
+    cornerDecor: null,
   },
 
   // ----------------------------------------------------------
@@ -75,9 +78,10 @@ Component({
   },
 
   lifetimes: {
-    // 组件挂载时更新日期显示
+    // 组件挂载时初始化日期 + 随机四角装饰
     attached() {
       this._updateDate()
+      this.setData({ cornerDecor: cornerDecor.getCornerDecor() })
     }
   },
 
