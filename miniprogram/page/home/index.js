@@ -38,6 +38,7 @@ Page({
     // 翻牌控制
     cardFlipMode: 0,       // 0=始终显示 / 1=每日翻牌
     cardRevealed: false,   // 当前是否已翻牌
+    shareVisible: false,   // 分享按钮是否已渐显
 
     // 卡背星芒装饰点（随机生成的位置/符号/旋转）
     backSparks: [],
@@ -160,10 +161,16 @@ Page({
   //  翻牌动作：翻开卡面并记录日期
   // ----------------------------------------------------------
   revealCard() {
-    this.setData({ cardRevealed: true })
+    this.setData({ cardRevealed: true, shareVisible: false })
     if (this.data.cardFlipMode === 1) {
       wx.setStorageSync('lastCardReveal', new Date().toDateString())
     }
+    // 翻牌(1.04s) + 变色(1.5s) + 文本渐显(0.6s) 全部结束后渐显分享按钮
+    if (this._shareTimer) clearTimeout(this._shareTimer)
+    this._shareTimer = setTimeout(() => {
+      this.setData({ shareVisible: true })
+      this._shareTimer = null
+    }, 2800)
   },
 
   // ----------------------------------------------------------

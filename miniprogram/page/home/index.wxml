@@ -15,6 +15,11 @@
     <view wx:for="{{shapes}}" wx:key="index" class="shape shape-{{item.type}}" style="{{item.inlineStyle}}"></view>
   </view>
 
+  <!-- 顶部导航栏区域分享按钮（所有动画结束后渐显） -->
+  <view class="share-btn {{shareVisible ? 'visible' : ''}}" wx:if="{{cardRevealed && userMbti}}" bindtap="onShareFortune">
+    <image class="share-btn-icon" src="/image/分享.svg" />
+  </view>
+
   <view class="page-content">
     <!-- ================================================================== -->
     <!-- 每日签语卡片区域                                                       -->
@@ -58,7 +63,6 @@
               mbtiType="{{userMbti}}"
               cardRevealed="{{cardRevealed}}"
               bind:typeTap="onFortuneTypeTap"
-              bind:shareTap="onShareFortune"
             />
           </view>
         </view>
@@ -70,7 +74,6 @@
         style="height: 100%"
         mbtiType="{{userMbti}}"
         bind:typeTap="onFortuneTypeTap"
-        bind:shareTap="onShareFortune"
       />
     </view>
 

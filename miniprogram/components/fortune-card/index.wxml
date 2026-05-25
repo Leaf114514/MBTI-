@@ -69,17 +69,13 @@
         </view>
       </view>
 
-      <!-- ----- 底部解读区：关键词标签 + 分享按钮 ----- -->
+      <!-- ----- 底部解读区：关键词标签 ----- -->
       <view class="card-bottom">
+        <!-- 菱形装饰分隔线 -->
+        <view class="fortune-divider">✦</view>
         <!-- 关键词标签：横向排列居中 -->
         <view class="card-keywords">
           <text class="keyword-tag" wx:for="{{keywords}}" wx:key="*this">{{item}}</text>
-        </view>
-        <!-- 菱形装饰分隔线 -->
-        <view class="fortune-divider">✦</view>
-        <!-- 分享按钮 -->
-        <view class="fortune-share" bindtap="onShare">
-          <text>分享给朋友</text>
         </view>
       </view>
     </block>

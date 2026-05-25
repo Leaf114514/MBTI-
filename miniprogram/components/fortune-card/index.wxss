@@ -266,13 +266,40 @@
   flex-shrink: 0;
 }
 
+/* 菱形装饰分隔线（电影票风格渐隐） */
+.fortune-divider {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+  color: var(--accent);
+  font-size: 25rpx;
+}
+
+.fortune-divider::before,
+.fortune-divider::after {
+  content: '';
+  flex: 1;
+  height: 4rpx;
+  border-radius: 2rpx;
+}
+
+.fortune-divider::before {
+  margin-right: var(--spacing-sm);
+  background: linear-gradient(90deg, transparent, var(--accent));
+}
+
+.fortune-divider::after {
+  margin-left: var(--spacing-sm);
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+
 /* 关键词居中 */
 .card-keywords {
   display: flex;
   justify-content: center;
   gap: var(--spacing-xs);
   flex-wrap: wrap;
-  margin-bottom: var(--spacing-md);
+  margin-bottom: 10rpx;
 }
 
 .keyword-tag {
@@ -284,45 +311,6 @@
   border-radius: var(--radius-full);
   border: 1rpx solid rgba(var(--ar), 0.18);
   transition: color 1.5s ease, background-color 1.5s ease, border-color 1.5s ease;
-}
-
-.fortune-divider {
-  display: flex;
-  align-items: center;
-  margin: var(--spacing-sm) 0;
-  color: var(--accent);
-  font-size: 18rpx;
-  opacity: 0.3;
-}
-
-.fortune-divider::before,
-.fortune-divider::after {
-  content: '';
-  flex: 1;
-  height: 1rpx;
-  background: linear-gradient(to right, transparent, var(--accent), transparent);
-  opacity: 0.2;
-}
-
-.fortune-divider::before { margin-right: var(--spacing-sm); }
-.fortune-divider::after { margin-left: var(--spacing-sm); }
-
-.fortune-share {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 64rpx;
-  border: 1rpx solid rgba(var(--ar), 0.30);
-  border-radius: var(--radius-md);
-  color: var(--accent);
-  font-size: var(--font-size-caption);
-  letter-spacing: 2rpx;
-  transition: color 1.5s ease, border-color 1.5s ease;
-}
-
-.fortune-share:active {
-  opacity: 0.7;
-  background-color: rgba(var(--ar), 0.04);
 }
 
 /* ===== 牌背 ===== */

@@ -18,9 +18,40 @@
   position: relative;
 }
 
+/* 顶部导航栏区域分享按钮（翻牌+变色+文本渐显全部结束后渐显） */
+.share-btn {
+  position: absolute;
+  top: 4rpx;
+  left: 16rpx;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.35);
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.share-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.share-btn-icon {
+  width: 36rpx;
+  height: 36rpx;
+  filter: brightness(0) invert(1);
+}
+
 /* ===== 签语卡片区域 ===== */
 .fortune-section {
   height: 80%;
+  margin-top: 80rpx;
   display: flex;
   align-items: stretch;
   justify-content: center;
