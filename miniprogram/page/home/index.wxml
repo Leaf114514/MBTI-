@@ -7,6 +7,8 @@
     · MBTI 配对计算器 — 选择双方类型 → AI 评分
   ========================================
 -->
+<import src="/common/constellation-ring.wxml" />
+<import src="/common/corner-decorations/decorations.wxml" />
 <view class="container {{pageAnim}}">
   <!-- ===== 背景掉落几何图形（由 JS 控制显隐，常驻 DOM 避免动画重置） ===== -->
   <view class="shapes-container {{shapesHidden ? 'shapes-hidden' : ''}}">
@@ -35,10 +37,16 @@
             </view>
             <!-- 中央 MBTI 类型水印 -->
             <text class="back-mandala">{{userMbti}}</text>
+            <!-- 水印下方装饰分割线 -->
+            <view class="back-mandala-divider"></view>
             <!-- 底部半圆拱门装饰 -->
             <view class="back-arch back-arch-bottom">
               <view class="arch-ring"></view>
             </view>
+            <!-- 星座绘制（按概率随机出现） -->
+            <template is="constellation-ring" data="{{constellation}}" />
+            <!-- 四角 MBTI 装饰 -->
+            <template is="corner-decorations" data="{{cornerDecor}}" />
             <!-- 操作提示 -->
             <text class="back-hint">轻触翻牌</text>
           </view>

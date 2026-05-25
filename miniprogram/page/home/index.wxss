@@ -1,4 +1,6 @@
 @import "../../common/index.wxss";
+@import "../../common/constellation-ring.wxss";
+@import "../../common/corner-decorations/decorations.wxss";
 
 .container {
   min-height: 100vh;
@@ -109,8 +111,25 @@
 .back-mandala {
   font-size: 88rpx;
   font-weight: var(--font-weight-bold);
-  color: rgba(255, 107, 107, 0.1);
+  color: rgba(255, 107, 107, 0.22);
   letter-spacing: 14rpx;
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+/* 水印下方分割线 */
+.back-mandala-divider {
+  width: 120rpx;
+  height: 1rpx;
+  position: absolute;
+  top: calc(45% + 48rpx);
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, rgba(255, 180, 180, 0.25), transparent);
+  z-index: 2;
 }
 
 /* 随机棱星 */

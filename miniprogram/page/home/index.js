@@ -12,6 +12,8 @@
 // 模块引入
 const compatibilityData = require('../../data/compatibility-data')  // 兼容性评分数据
 const fallingShapes = require('../../behaviors/falling-shapes')     // 背景形状动画 behavior
+const constellationRing = require('../../common/constellation-ring')  // 星座绘制工具
+const cornerDecor = require('../../common/corner-decorations/decorations')  // 四角装饰配置
 
 // MBTI 类型拼接 —— 所有类型 = 头部(2 字母) + 尾部(2 字母)
 const MBTI_HEAD = ['IN', 'IS', 'EN', 'ES']
@@ -65,6 +67,7 @@ Page({
   onLoad() {
     this._loadUserMbti()
     this._genSparks()      // 生成卡背星芒
+    this._genConstellation()  // 按概率生成卡背星座
   },
 
   // ----------------------------------------------------------
@@ -164,12 +167,22 @@ Page({
   },
 
   // ----------------------------------------------------------
+  //  按概率生成卡背星座（最多一个）
+  // ----------------------------------------------------------
+  _genConstellation() {
+    this.setData({
+      constellation: constellationRing.maybeGenConstellation(),
+      cornerDecor: cornerDecor.getCornerDecor(),
+    })
+  },
+
+  // ----------------------------------------------------------
   //  生成卡背星芒：12 个随机位置/符号的装饰点
   // ----------------------------------------------------------
   _genSparks() {
     const syms = ['✦', '✧', '◇', '⋄', '✶', '∗', '˙']
     const sparks = []
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 16; i++) {
       sparks.push({
         top: (8 + Math.random() * 80) + '%',       // 8%~88% 纵向
         left: (5 + Math.random() * 85) + '%',       // 5%~90% 横向
