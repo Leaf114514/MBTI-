@@ -1,2 +1,5 @@
-<!--page/API/index.wxml-->
-<text>page/API/index.wxml</text>
+<!--
+  接口演示页（API）
+  状态：占位页面，尚未实现
+  用途：计划展示小程序 API 调用示例
+-->

@@ -1,33 +1,49 @@
+<!--
+  ========================================
+  首页（home）
+  功能：每日签语展示 + MBTI 配对计算器
+  核心组件：
+    · fortune-card — 塔罗风格签语卡片（翻牌交互）
+    · MBTI 配对计算器 — 选择双方类型 → AI 评分
+  ========================================
+-->
 <view class="container {{pageAnim}}">
+  <!-- ===== 背景掉落几何图形（由 JS 控制显隐，常驻 DOM 避免动画重置） ===== -->
   <view class="shapes-container {{shapesHidden ? 'shapes-hidden' : ''}}">
     <view wx:for="{{shapes}}" wx:key="index" class="shape shape-{{item.type}}" style="{{item.inlineStyle}}"></view>
   </view>
+
   <view class="page-content">
-    <!-- 每日签语卡片区域 -->
+    <!-- ================================================================== -->
+    <!-- 每日签语卡片区域                                                       -->
+    <!-- ================================================================== -->
     <view class="fortune-section">
-      <!-- 有 MBTI：翻牌容器 -->
+      <!-- ----- 已设置 MBTI：卡片翻牌交互 ----- -->
       <view class="card-flip-wrap" wx:if="{{userMbti}}">
+        <!-- 3D 翻牌容器，flipped 类控制 Y 轴旋转 -->
         <view class="card-flipper {{cardRevealed ? 'flipped' : ''}}">
-          <!-- 卡背 -->
+          <!-- 牌背：点击翻牌 -->
           <view class="card-face card-back-face" bindtap="revealCard">
-            <!-- 顶部半圆 -->
+            <!-- 顶部半圆拱门装饰 -->
             <view class="back-arch back-arch-top">
               <view class="arch-ring"></view>
             </view>
-            <!-- 随机棱星 -->
+            <!-- 随机分布的棱形星光（位置/大小/旋转由 JS 生成） -->
             <view class="back-spark" wx:for="{{backSparks}}" wx:key="index"
               style="top:{{item.top}};left:{{item.left}};font-size:{{item.size}};transform:rotate({{item.rot}});">
               {{item.sym}}
             </view>
-            <!-- 中央水印 -->
+            <!-- 中央 MBTI 类型水印 -->
             <text class="back-mandala">{{userMbti}}</text>
-            <!-- 底部半圆 -->
+            <!-- 底部半圆拱门装饰 -->
             <view class="back-arch back-arch-bottom">
               <view class="arch-ring"></view>
             </view>
+            <!-- 操作提示 -->
             <text class="back-hint">轻触翻牌</text>
           </view>
-          <!-- 卡正面 -->
+
+          <!-- 牌面正面：fortune-card 组件 -->
           <view class="card-face card-front-face">
             <fortune-card
               style="height: 100%"
@@ -39,7 +55,8 @@
           </view>
         </view>
       </view>
-      <!-- 无 MBTI：直接显示 -->
+
+      <!-- ----- 未设置 MBTI：直接展示 fortune-card 无翻牌 ----- -->
       <fortune-card
         wx:else
         style="height: 100%"
@@ -49,28 +66,35 @@
       />
     </view>
 
-    <!-- MBTI 配对计算器 - 浮动气泡 -->
+    <!-- ================================================================== -->
+    <!-- MBTI 配对计算器（底部浮动气泡）                                         -->
+    <!-- ================================================================== -->
     <view class="calc-drawer {{calcExpanded ? 'expanded' : ''}}">
+      <!-- 折叠态触发器 -->
       <view class="calc-trigger" bindtap="toggleCalc">
         <text class="calc-trigger-text">MBTI 配对计算器 {{calcExpanded ? '▲' : '▼'}}</text>
       </view>
+
+      <!-- 展开后的计算器主体 -->
       <view class="calc-body" wx:if="{{calcExpanded}}">
         <view class="calc-card">
-          <!-- 选择器行 -->
+          <!-- ----- 双方类型选择行 ----- -->
           <view class="selector-row">
+            <!-- 左侧类型槽 -->
             <view class="type-slot" bindtap="openPicker" data-side="left">
               <text class="type-slot-text {{leftType ? 'has-value' : ''}}">{{leftType || '选择'}}</text>
             </view>
-
+            <!-- 中间连接线 -->
             <view class="pair-line"></view>
-
+            <!-- 右侧类型槽 -->
             <view class="type-slot" bindtap="openPicker" data-side="right">
               <text class="type-slot-text {{rightType ? 'has-value' : ''}}">{{rightType || '选择'}}</text>
             </view>
           </view>
 
-          <!-- 两步内联选择 -->
+          <!-- ----- 两步内联选择器（能量方向 + 认知功能） ----- -->
           <view class="inline-picker" wx:if="{{pickerActive}}">
+            <!-- 第一行：能量方向（E / I） — 珊瑚红系 -->
             <view class="picker-row picker-row-head">
               <view wx:for="{{MBTI_HEAD}}" wx:key="*this"
                 class="picker-btn picker-btn-head {{tempHead === item ? 'active' : ''}}"
@@ -78,6 +102,7 @@
                 <text>{{item}}</text>
               </view>
             </view>
+            <!-- 第二行：认知功能（NT / NF / ST / SF）— 紫色系 -->
             <view class="picker-row picker-row-tail">
               <view wx:for="{{MBTI_TAIL}}" wx:key="*this"
                 class="picker-btn picker-btn-tail {{tempTail === item ? 'active' : ''}}"
@@ -85,13 +110,15 @@
                 <text>{{item}}</text>
               </view>
             </view>
+            <!-- 确认按钮 -->
             <view class="picker-confirm" bindtap="confirmInlinePicker">
               <text>确认</text>
             </view>
           </view>
 
-          <!-- 结果卡片 -->
+          <!-- ----- 结果卡片：三项评分条 + AI 评语 ----- -->
           <view class="result-card" wx:if="{{resultScores}}">
+            <!-- 友情维度 -->
             <view class="score-row">
               <text class="score-label">友情</text>
               <view class="score-bar">
@@ -99,6 +126,7 @@
               </view>
               <text class="score-num">{{resultScores.friendship}}</text>
             </view>
+            <!-- 恋爱维度 -->
             <view class="score-row">
               <text class="score-label">恋爱</text>
               <view class="score-bar">
@@ -106,6 +134,7 @@
               </view>
               <text class="score-num">{{resultScores.romance}}</text>
             </view>
+            <!-- 工作维度 -->
             <view class="score-row">
               <text class="score-label">工作</text>
               <view class="score-bar">
@@ -114,14 +143,14 @@
               <text class="score-num">{{resultScores.work}}</text>
             </view>
 
-            <!-- AI 评语 -->
+            <!-- AI 生成评语（加载中 → 展示结果） -->
             <view class="comment-area">
               <text class="comment-text" wx:if="{{!commentLoading && aiComment}}">{{aiComment}}</text>
               <text class="comment-loading" wx:elif="{{commentLoading}}">匹配计算中</text>
             </view>
           </view>
 
-          <!-- 换一组 -->
+          <!-- 换一组按钮（有结果时显示） -->
           <view class="try-another" bindtap="onTryAnother" wx:if="{{resultScores}}">
             <text>换一组</text>
           </view>

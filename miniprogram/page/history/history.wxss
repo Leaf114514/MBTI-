@@ -2,7 +2,7 @@
 
 .page-container {
   min-height: 100vh;
-  background-color: var(--color-bg-page);
+  background-color: #ffffff;
   padding: var(--spacing-lg);
   padding-bottom: calc(130rpx + env(safe-area-inset-bottom));
 }
@@ -71,22 +71,25 @@
 .mbti-ESFP { background: linear-gradient(to right, rgba(241,196,15,0.14), rgba(241,196,15,0.01)); }
 
 /* ===== 半圆缺口（票根撕口） ===== */
+/* 原理：圆本身底色与页面一致（白色），遮盖卡片自身的矩形边框；
+   ::after 遮住圆的外半弧（卡片外部），只露出内侧半圆弧描边，
+   从而在撕口处形成干净的半圆形缺口效果。 */
 .notch {
   position: absolute;
   width: 28rpx;
   height: 28rpx;
   border-radius: 50%;
-  background-color: var(--color-bg-page);
+  background-color: #ffffff;
   border: 1rpx solid var(--color-primary);
   z-index: 2;
   left: -14rpx;
 }
 
-/* 遮盖缺口外侧半圆（卡片外部），只保留内侧描边 */
 .notch-top {
   top: -14rpx;
 }
 
+/* 遮盖缺口上方半圆（卡片外部），只保留下方内侧弧线 */
 .notch-top::after {
   content: '';
   position: absolute;
@@ -94,13 +97,14 @@
   right: -1rpx;
   top: -1rpx;
   height: 15rpx;
-  background-color: var(--color-bg-page);
+  background-color: #ffffff;
 }
 
 .notch-bottom {
   bottom: -14rpx;
 }
 
+/* 遮盖缺口下方半圆（卡片外部），只保留上方内侧弧线 */
 .notch-bottom::after {
   content: '';
   position: absolute;
@@ -108,7 +112,7 @@
   right: -1rpx;
   bottom: -1rpx;
   height: 15rpx;
-  background-color: var(--color-bg-page);
+  background-color: #ffffff;
 }
 
 /* ===== 主内容区 ===== */

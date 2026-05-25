@@ -120,15 +120,7 @@ page {
 }
 
 .btn-primary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 88rpx;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-  color: var(--color-text-inverse);
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-medium);
-  border-radius: var(--radius-md);
+  height: 88rpx; /* 覆盖 common 基础高度，与该页一致 */
 }
 
 /* ===== 自定义固定导航栏 ===== */

@@ -242,3 +242,97 @@ page {
     opacity: 0;
   }
 }
+
+/* ===== 地图切换按钮（左上角圆形） ===== */
+.toggle-btn {
+  position: absolute;
+  top: 24rpx;
+  left: 24rpx;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.35);
+  z-index: 10;
+}
+
+.toggle-label {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+@keyframes toggle-shake {
+  0%, 100% { transform: translateX(0); }
+  15%, 55%, 85% { transform: translateX(-4rpx); }
+  35%, 75% { transform: translateX(4rpx); }
+}
+
+.toggle-shake {
+  animation: toggle-shake 0.4s ease-in-out;
+}
+
+/* ===== 展开/收起动画 ===== */
+@keyframes expand-in {
+  from { max-height: 0; opacity: 0; }
+  to { max-height: 500rpx; opacity: 1; }
+}
+
+@keyframes expand-out {
+  from { max-height: 500rpx; opacity: 1; }
+  to { max-height: 0; opacity: 0; }
+}
+
+/* ===== 抖动动画 ===== */
+@keyframes btn-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-10rpx); }
+  40% { transform: translateX(10rpx); }
+  60% { transform: translateX(-6rpx); }
+  80% { transform: translateX(6rpx); }
+}
+
+.anim-shake {
+  animation: btn-shake 0.4s ease-out;
+}
+
+/* ===== 主按钮（红色渐变） ===== */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 88rpx;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.btn-primary.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ===== 选择器确认按钮（略矮版本） ===== */
+.picker-confirm-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 72rpx;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-sm);
+}

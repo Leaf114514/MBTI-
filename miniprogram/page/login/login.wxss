@@ -12,92 +12,7 @@
   overflow: hidden;
 }
 
-/* ===== 掉落几何图形 ===== */
-.shapes-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 0;
-  transition: opacity 0.4s ease;
-}
-
-.shapes-hidden {
-  opacity: 0;
-}
-
-.shape {
-  position: absolute;
-  top: -60rpx;
-}
-
-.shape-square {
-  border-radius: 4rpx;
-}
-
-.shape-circle {
-  border-radius: 50%;
-}
-
-.shape-diamond {
-  border-radius: 4rpx;
-  transform: rotate(45deg);
-}
-
-/* 三角形仅用 inline border 渲染，无需额外 CSS */
-
-@keyframes shape-fall {
-  0% {
-    transform: translateY(-60rpx) rotate(0deg);
-    opacity: 0;
-  }
-  5% {
-    opacity: 1;
-  }
-  85% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(110vh) rotate(540deg);
-    opacity: 0;
-  }
-}
-
-/* ===== 左上角切换按钮 ===== */
-.toggle-btn {
-  position: absolute;
-  top: 24rpx;
-  left: 24rpx;
-  width: 64rpx;
-  height: 64rpx;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
-  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.35);
-  z-index: 10;
-}
-
-.toggle-label {
-  font-size: 28rpx;
-  font-weight: 700;
-  color: #FFFFFF;
-  line-height: 1;
-}
-
-@keyframes toggle-shake {
-  0%, 100% { transform: translateX(0); }
-  15%, 55%, 85% { transform: translateX(-4rpx); }
-  35%, 75% { transform: translateX(4rpx); }
-}
-
-.toggle-shake {
-  animation: toggle-shake 0.4s ease-in-out;
-}
+/* shape 掉落图形、toggle-btn 切换按钮 —— 已移至 common/index.wxss */
 
 /* ===== 标题 ===== */
 .login-title {
@@ -180,13 +95,7 @@
   color: #FFFFFF !important;
 }
 
-/* ===== 抖动动画 ===== */
-@keyframes btn-shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 50%, 90% { transform: translateX(-8rpx); }
-  30%, 70% { transform: translateX(8rpx); }
-}
-
+/* 登录按钮专属抖动（幅度比通用版大） */
 .login-btn-shake {
   animation: btn-shake 0.5s ease-in-out;
 }

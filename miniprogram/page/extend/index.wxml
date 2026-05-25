@@ -1,2 +1,5 @@
-<!--page/extend/index.wxml-->
-<text>page/extend/index.wxml</text>
+<!--
+  扩展功能页（extend）
+  状态：占位页面，尚未实现
+  用途：计划展示小程序扩展能力（获取手机号等）调用示例
+-->

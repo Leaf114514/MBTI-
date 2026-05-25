@@ -1,4 +1,21 @@
+<!--
+  ========================================
+  自定义底部 TabBar 组件
+  用途：替代小程序原生 TabBar，支持图标颜色动态切换 + 主题色
+  数据源：
+    · tabList — 所有 tab 项的数组，每项含 pagePath / text / graySrc / colorSrc / active 状态
+    · themeColor — 激活态文字颜色（由 app 级别统一提供）
+  事件：
+    · onTabTap — 点击切换 tab
+  图标切换：通过叠加两张图 + class 控制显隐实现激活/非激活态平滑过渡
+  ========================================
+-->
 <view class="tab-bar">
+  <!--
+    遍历所有 tab 项
+    - item.active 控制 active class 的追加
+    - data-index 将索引传给 onTabTap 事件处理器
+  -->
   <view
     wx:for="{{tabList}}"
     wx:key="pagePath"
@@ -6,10 +23,14 @@
     data-index="{{index}}"
     bindtap="onTabTap"
   >
+    <!-- 图标区：灰底图标与彩色图标上下叠加，通过 opacity 切换 -->
     <view class="icon-wrapper">
+      <!-- 灰度图标（始终显示，非激活态可见） -->
       <image class="tab-icon" src="{{item.graySrc}}" mode="aspectFit" />
+      <!-- 彩色图标：激活时 opacity→1 渐显，非激活时 opacity→0 渐隐 -->
       <image class="tab-icon tab-icon-colored {{item.active ? 'icon-filled' : 'icon-drained'}}" src="{{item.colorSrc}}" mode="aspectFit" />
     </view>
+    <!-- tab 文字：激活态使用主题色，非激活态使用灰色 -->
     <text class="tab-text" style="color: {{item.active ? themeColor : '#999999'}}">{{item.text}}</text>
   </view>
 </view>

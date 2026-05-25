@@ -1,8 +1,19 @@
+<!--
+  ========================================
+  文章推荐面板组件
+  用途：在页面中嵌入文章推荐列表，展示封面 + 标题
+  Props（由父页面传入）：
+    · title    — 面板标题文字
+    · articles — 文章数据数组，每项含 id / coverUrl / title
+  事件（冒泡至父页面）：
+    · onArticleTap — 点击文章卡片，事件 detail 含 data-id
+  ========================================
+-->
 <view class="article-panel">
-  <!-- 文章栏标题由父页面传入 -->
+  <!-- 面板标题 -->
   <text class="panel-title">{{title}}</text>
 
-  <!-- 有数据时渲染推荐文章列表 -->
+  <!-- ===== 有数据时：渲染文章卡片列表 ===== -->
   <view class="article-list" wx:if="{{articles.length}}">
     <view
       class="article-card"
@@ -11,13 +22,14 @@
       data-id="{{item.id}}"
       bindtap="onArticleTap"
     >
-      <!-- 列表态只展示封面和标题，正文在详情页展示 -->
+      <!-- 文章封面（裁剪填充模式） -->
       <image class="article-cover" src="{{item.coverUrl}}" mode="aspectFill" />
+      <!-- 文章标题 -->
       <text class="article-title">{{item.title}}</text>
     </view>
   </view>
 
-  <!-- 无数据时展示空态 -->
+  <!-- ===== 无数据时：展示空状态 ===== -->
   <view class="empty-state" wx:else>
     <text class="empty-text">No articles.</text>
   </view>

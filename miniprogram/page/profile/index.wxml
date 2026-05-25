@@ -1,22 +1,36 @@
+<!--
+  ========================================
+  个人中心页（profile / 我的）
+  功能：MBTI 类型选择 + 类型描述展示 + 快捷入口导航
+  交互：
+    · toggle-btn → 背景掉落图形开关
+    · MBTI 选择器 → 双列滚轮 + 确认按钮
+    · 菜单项 → 跳转历史故事 / 开始新故事
+  ========================================
+-->
 <view class="container {{pageAnim}}">
-  <!-- 掉落图形开关 -->
+  <!-- ===== 背景掉落图形开关按钮 ===== -->
   <view class="toggle-btn {{toggleShaking ? 'toggle-shake' : ''}}" bindtap="onToggleShapes">
     <text class="toggle-label">{{toggleLabel}}</text>
   </view>
 
+  <!-- ===== 背景掉落几何图形（常驻 DOM，class 控制显隐） ===== -->
   <view class="shapes-container {{shapesHidden ? 'shapes-hidden' : ''}}">
     <view wx:for="{{shapes}}" wx:key="index" class="shape shape-{{item.type}}" style="{{item.inlineStyle}}"></view>
   </view>
 
   <view class="profile-content">
 
-    <!-- MBTI 选择卡片 -->
+    <!-- ===== MBTI 选择卡片 ===== -->
     <view class="profile-card">
       <text class="card-title">我的 MBTI</text>
+
+      <!-- 选择器展示区：点击展开滚轮 -->
       <view class="mbti-selector" bindtap="onToggleMbtiPicker">
         <text class="mbti-display {{selectedMbti ? 'has-value' : ''}}">{{isMbtiSelecting ? currentMbtiDisplay : (selectedMbti || '点击选择你的类型')}}</text>
       </view>
 
+      <!-- 展开后的滚轮选择器 -->
       <view class="picker-expand {{isMbtiHiding ? 'anim-out' : 'anim-in'}}"
         wx:if="{{isMbtiSelecting || isMbtiHiding}}" catchtap="noop">
         <view class="picker-wheels">
@@ -27,9 +41,11 @@
             bindchange="onMbtiPickerChange"
             immediate-change
           >
+            <!-- 第1列：能量方向 (E / I) -->
             <picker-view-column>
               <view wx:for="{{MBTI_HEAD}}" wx:key="*this" class="picker-item">{{item}}</view>
             </picker-view-column>
+            <!-- 第2列：认知功能对 (NT / NF / ST / SF) -->
             <picker-view-column>
               <view wx:for="{{MBTI_TAIL}}" wx:key="*this" class="picker-item">{{item}}</view>
             </picker-view-column>
@@ -40,19 +56,21 @@
         </view>
       </view>
 
-      <!-- 类型描述 -->
+      <!-- 类型描述（选择完成后显示） -->
       <view class="mbti-desc" wx:if="{{selectedMbti && !isMbtiSelecting && !isMbtiHiding}}">
         <text class="desc-text">{{mbtiDesc}}</text>
       </view>
     </view>
 
-    <!-- 快捷入口 -->
+    <!-- ===== 快捷入口卡片 ===== -->
     <view class="profile-card">
       <text class="card-title">快捷入口</text>
+      <!-- 历史故事 -->
       <view class="menu-item" bindtap="onGoHistory">
         <text class="menu-text">历史故事</text>
         <text class="menu-arrow">></text>
       </view>
+      <!-- 开始新故事 -->
       <view class="menu-item" bindtap="onGoStory">
         <text class="menu-text">开始新故事</text>
         <text class="menu-arrow">></text>
