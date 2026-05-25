@@ -5,6 +5,34 @@
 .fortune-card {
   --accent: #4A1942;
   --ar: 74,25,66;
+
+  /* 组件级 CSS 变量兜底（page 作用域变量在组件重渲染时可能丢失继承） */
+  --font-weight-bold: 700;
+  --font-weight-medium: 500;
+  --font-weight-regular: 400;
+  --font-size-hero: 48rpx;
+  --font-size-subtitle: 34rpx;
+  --font-size-body: 28rpx;
+  --font-size-caption: 24rpx;
+  --font-size-micro: 20rpx;
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #666666;
+  --color-text-tertiary: #999999;
+  --color-text-inverse: #FFFFFF;
+  --spacing-xs: 8rpx;
+  --spacing-sm: 16rpx;
+  --spacing-md: 24rpx;
+  --spacing-lg: 32rpx;
+  --spacing-xl: 40rpx;
+  --radius-sm: 12rpx;
+  --radius-md: 16rpx;
+  --radius-lg: 24rpx;
+  --radius-xl: 32rpx;
+  --radius-full: 50%;
+  --line-height-tight: 1.3;
+  --line-height-normal: 1.6;
+  --line-height-relaxed: 1.8;
+
   width: 85%;
   height: 100%;
   margin: 0 auto;
@@ -214,6 +242,18 @@
   flex: 1;
   font-weight: var(--font-weight-bold);
   text-align: center;
+}
+
+/* 正文区：翻牌动画 + 颜色过渡全部结束后渐显，完全避开 3D 上下文中的文字渲染 */
+.fortune-message-wrap,
+.card-bottom {
+  opacity: 0;
+  transition: opacity 0.5s ease 0.1s;
+}
+
+.fortune-card.content-visible .fortune-message-wrap,
+.fortune-card.content-visible .card-bottom {
+  opacity: 1;
 }
 
 .fortune-error-text {

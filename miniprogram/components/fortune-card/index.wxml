@@ -21,7 +21,7 @@
   ========================================
 -->
 <import src="/common/corner-decorations/decorations.wxml" />
-<view class="fortune-card" style="--accent: {{accentColor}}; --ar: {{accentRgb}};">
+<view class="fortune-card {{contentVisible ? 'content-visible' : ''}}" style="--accent: {{accentColor}}; --ar: {{accentRgb}};">
   <!-- 四角装饰（与卡背统一使用 corner-decorations 体系） -->
   <template is="corner-decorations" data="{{cornerDecor}}" />
 

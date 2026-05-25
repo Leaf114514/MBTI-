@@ -44,6 +44,7 @@ Component({
     keywords: [],
     showPrompt: true,
     cornerDecor: null,
+    contentVisible: false, // 正文是否可见（翻牌完成 + 颜色过渡结束后才渐显）
   },
 
   // ----------------------------------------------------------
@@ -66,22 +67,34 @@ Component({
 
     cardRevealed(val) {
       if (val) {
+        // 正文先隐藏，翻牌动画（1.04s）结束后 0.5s 渐显
+        this.setData({ contentVisible: false })
+        if (this._contentTimer) clearTimeout(this._contentTimer)
+        this._contentTimer = setTimeout(() => {
+          this.setData({ contentVisible: true })
+          this._contentTimer = null
+        }, 1040)
         // 翻牌 1.04s 后渐变换色（等待翻转动效完成）
         setTimeout(() => {
           this._applyAccentTransition()
         }, 1040)
       } else {
-        // 翻回：立即恢复默认酒红色
+        // 翻回：立即隐藏正文，恢复默认酒红色
+        if (this._contentTimer) { clearTimeout(this._contentTimer); this._contentTimer = null }
+        this.setData({ contentVisible: false })
         this._resetToWine()
       }
     }
   },
 
   lifetimes: {
-    // 组件挂载时初始化日期 + 随机四角装饰
+    // 组件挂载时初始化日期 + 随机四角装饰 + 已翻牌时正文直接可见
     attached() {
       this._updateDate()
-      this.setData({ cornerDecor: cornerDecor.getCornerDecor() })
+      this.setData({
+        cornerDecor: cornerDecor.getCornerDecor(),
+        contentVisible: this.data.cardRevealed,
+      })
     }
   },
 
