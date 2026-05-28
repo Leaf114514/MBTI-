@@ -1,0 +1,19 @@
+<!--
+  ========================================
+  卡背四角装饰模板（corner-decorations）
+  用途：在卡背四角显示统一装饰图案（L 形圆弧框 + 符号）
+  数据绑定：
+    · {{cornerDecor}} — 由 decorations.js 的 getCornerDecor() 随机生成
+        含 sym（四角统一的装饰符号），为 null 时不渲染
+  ========================================
+-->
+<template name="corner-decorations">
+  <block wx:if="{{cornerDecor}}">
+    <!-- 四角统一装饰：L 形圆弧框 + 中央符号，四角内容相同 -->
+    <view wx:for="{{['tl','tr','bl','br']}}" wx:key="*this"
+      class="corner-deco corner-deco-{{item}}">
+      <view class="corner-frame corner-frame-{{item}}"></view>
+      <text class="corner-sym">{{cornerDecor.sym}}</text>
+    </view>
+  </block>
+</template>

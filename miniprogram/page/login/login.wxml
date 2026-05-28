@@ -1,11 +1,23 @@
-<!--pages/login/login.wxml-->
+<!--
+  ========================================
+  登录页（login）
+  功能：微信一键登录入口，含品牌展示 + 动画背景
+  交互：
+    · 切换按钮 → 显示/隐藏背景掉落图形
+    · 登录按钮 → 触发 handleWechatLogin → 获取 openid → 跳转主页
+  状态：
+    · shapesVisible — 背景图形是否可见
+    · btnShaking / toggleShaking — 按钮/切换键抖动反馈
+    · btnDisabled — 登录按钮是否禁用（防重复点击）
+  ========================================
+-->
 <view class="login-page">
-  <!-- 左上角切换按钮 -->
+  <!-- ===== 左上角切换按钮：控制背景图形的显隐 ===== -->
   <view class="toggle-btn {{toggleShaking ? 'toggle-shake' : ''}}" bindtap="toggleShapes">
     <text class="toggle-label">{{toggleLabel}}</text>
   </view>
 
-  <!-- 掉落几何图形 — 始终渲染，用 class 控制显隐避免重置动画 -->
+  <!-- ===== 背景掉落几何图形（始终渲染 DOM，class 控制显隐避免动画重置） ===== -->
   <view class="shapes-container {{shapesVisible ? '' : 'shapes-hidden'}}">
     <view
       wx:for="{{shapes}}"
@@ -15,6 +27,7 @@
     ></view>
   </view>
 
+  <!-- ===== 品牌标题：四字母各带独立光晕描边 ===== -->
   <view class="login-title">
     <view class="title-letters">
       <text class="title-letter" style="-webkit-text-stroke: 1rpx {{letterColors[0]}}; text-shadow: 0 0 12rpx {{letterColors[0]}}, 0 0 24rpx {{letterColors[0]}};">M</text>
@@ -25,10 +38,13 @@
     <text class="title-suffix">洞察</text>
   </view>
 
+  <!-- 标题下方红色分割线 -->
   <view class="title-divider"></view>
 
+  <!-- 轮播标语 -->
   <text class="login-slogan">{{currentSlogan}}</text>
 
+  <!-- ===== 微信登录按钮 ===== -->
   <button
     class="login-btn {{btnShaking ? 'login-btn-shake' : ''}}"
     bindtap="handleWechatLogin"

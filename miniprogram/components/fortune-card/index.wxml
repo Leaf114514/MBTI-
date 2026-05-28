@@ -1,23 +1,48 @@
-<view class="fortune-card">
-  <!-- 顶部装饰线 -->
-  <view class="fortune-deco-top"></view>
+<!--
+  ========================================
+  塔罗风格命运签语卡片组件
+  用途：展示每日 MBTI 神谕签语，含装饰曼陀罗、幸运色、关键词等
+  Props：
+    · mbtiType    — 用户的 MBTI 类型（如 INTJ）
+    · accentColor — 卡片的主题强调色（动态传入 CSS 变量）
+    · accentRgb   — 卡片主题色的 RGB 分量值（用于 rgba() 透明度计算）
+    · showPrompt  — 是否显示"前往选择"提示（未选类型时的牌背）
+    · loading     — 是否处于加载中
+    · loadError   — 是否加载失败
+    · message     — 签语正文
+    · keywords    — 关键词标签数组
+    · dateNum     — 日期编号
+    · luckyColor  — 幸运色对象 { hex, name }
+  事件：
+    · typeTap    → 点击 MBTI 类型区域
+    · shareTap   → 点击分享按钮
+    · onRetry    → 加载失败后重试
+    · onGoSelect → 从牌背跳转选择页面
+  ========================================
+-->
+<import src="/common/corner-decorations/decorations.wxml" />
+<view class="fortune-card {{contentVisible ? 'content-visible' : ''}}" style="--accent: {{accentColor}}; --ar: {{accentRgb}};">
+  <!-- 四角装饰（与卡背统一使用 corner-decorations 体系） -->
+  <template is="corner-decorations" data="{{cornerDecor}}" />
 
-  <!-- 日期行 -->
-  <view class="fortune-date">
-    <text class="fortune-date-text">{{dateStr}}</text>
-    <text class="fortune-weekday">{{weekday}}</text>
-  </view>
-
-  <!-- 已选类型 -->
+  <!-- ================================================================ -->
+  <!-- 牌面正面：已选 MBTI 类型时显示                                      -->
+  <!-- ================================================================ -->
   <block wx:if="{{!showPrompt}}">
-    <!-- MBTI 徽章（浮雕信笺风） -->
-    <view class="fortune-type" bindtap="onTypeTap">
-      <text class="fortune-type-text">{{mbtiType}}</text>
+    <!-- ----- 牌名区：MBTI 类型 + 日期 + 幸运色 ----- -->
+    <view class="card-title-area" bindtap="onTypeTap">
+      <text class="card-name">{{mbtiType}}</text>
+      <text class="card-number">{{dateNum}}</text>
+      <!-- 幸运色（有色值时显示色块 + 名称） -->
+      <view class="card-lucky" wx:if="{{luckyColor}}">
+        <view class="lucky-dot" style="background-color: {{luckyColor.hex}};"></view>
+        <text class="lucky-name">{{luckyColor.name}}</text>
+      </view>
     </view>
 
-    <!-- 加载失败提示 -->
+    <!-- ----- 加载失败：显示错误提示 + 重试按钮 ----- -->
     <block wx:if="{{loadError}}">
-      <view class="fortune-message-wrap">
+      <view class="card-center">
         <text class="fortune-message fortune-error-text">签语加载失败，请稍后重试</text>
       </view>
       <view class="fortune-share" bindtap="onRetry">
@@ -25,50 +50,58 @@
       </view>
     </block>
 
-    <!-- 签语内容 -->
+    <!-- ----- 签语正文：装饰曼陀罗 + 引号包裹的文案 ----- -->
     <block wx:elif="{{message}}">
-      <view class="fortune-message-wrap">
-        <text class="fortune-quote-left">「</text>
-        <text class="fortune-message">{{message}}</text>
-        <text class="fortune-quote-right">」</text>
+      <view class="card-center">
+        <!-- 装饰性曼陀罗花纹（同心圆 + 十字线 + 类型水印） -->
+        <view class="card-mandala">
+          <view class="mandala-outer"></view>
+          <view class="mandala-ring"></view>
+          <view class="mandala-inner"></view>
+          <view class="mandala-cross"></view>
+          <text class="mandala-type">{{mbtiType}}</text>
+        </view>
+        <!-- 正文：左侧「右侧」包裹的签语文案 -->
+        <view class="fortune-message-wrap">
+          <text class="fortune-quote-left">「</text>
+          <text class="fortune-message">{{message}}</text>
+          <text class="fortune-quote-right">」</text>
+        </view>
       </view>
 
-      <!-- 幸运色 + 关键词 -->
-      <view class="fortune-meta">
-        <view class="fortune-lucky" wx:if="{{luckyColor}}">
-          <view class="lucky-dot" style="background-color: {{luckyColor.hex}};"></view>
-          <text class="lucky-name">{{luckyColor.name}}</text>
-        </view>
-        <view class="fortune-keywords">
+      <!-- ----- 底部解读区：关键词标签 ----- -->
+      <view class="card-bottom">
+        <!-- 菱形装饰分隔线 -->
+        <view class="fortune-divider">✦</view>
+        <!-- 关键词标签：横向排列居中 -->
+        <view class="card-keywords">
           <text class="keyword-tag" wx:for="{{keywords}}" wx:key="*this">{{item}}</text>
         </view>
-      </view>
-
-      <!-- 花纹分隔线 -->
-      <view class="fortune-divider">✦</view>
-
-      <!-- 分享按钮 -->
-      <view class="fortune-share" bindtap="onShare">
-        <text>分享给朋友</text>
       </view>
     </block>
   </block>
 
-  <!-- 未选类型 -->
+  <!-- ================================================================ -->
+  <!-- 牌背：未选 MBTI 类型时显示                                           -->
+  <!-- ================================================================ -->
   <block wx:else>
-    <view class="fortune-prompt">
-      <text class="prompt-text">选择你的 MBTI 类型，解锁每日签语</text>
+    <view class="card-back">
+      <!-- 装饰纹样：同心双圆 + 中央问号 -->
+      <view class="card-back-pattern">
+        <view class="back-ring"></view>
+        <view class="back-ring-inner"></view>
+        <text class="back-symbol">?</text>
+      </view>
+      <text class="card-back-text">翻转你的命运之牌</text>
+      <!-- "前往选择"引导按钮 -->
       <view class="prompt-btn" bindtap="onGoSelect">
         <text>前往选择</text>
       </view>
     </view>
   </block>
 
-  <!-- Loading 遮罩 -->
+  <!-- ===== 全屏 Loading 遮罩 ===== -->
   <view class="fortune-loading" wx:if="{{loading}}">
     <text>加载中...</text>
   </view>
-
-  <!-- 底部装饰线 -->
-  <view class="fortune-deco-bottom"></view>
 </view>

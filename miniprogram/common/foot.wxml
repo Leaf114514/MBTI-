@@ -1,4 +1,12 @@
+<!--
+  ========================================
+  通用底部模板（foot）
+  用途：各页面底部统一的导航按钮，点击返回首页
+  被引入方通过 <import> 引入并使用 <template is="foot" />
+  ========================================
+-->
 <template name="foot">
+  <!-- 底部导航：switchTab 方式跳转首页，无 hover 反馈 -->
   <navigator class="page-foot" openType="switchTab" url="/page/home/index" hover-class="none">
     <image class="icon-foot" src="/image/icon_foot.png"></image>
   </navigator>

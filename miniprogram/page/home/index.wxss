@@ -1,4 +1,6 @@
 @import "../../common/index.wxss";
+@import "../../common/constellation-ring.wxss";
+@import "../../common/corner-decorations/decorations.wxss";
 
 .container {
   min-height: 100vh;
@@ -12,19 +14,229 @@
 
 .page-content {
   width: 100%;
+  height: calc(100vh - var(--spacing-lg) * 2 - 130rpx - env(safe-area-inset-bottom));
+  position: relative;
 }
 
-.section-gap {
-  height: var(--spacing-lg);
+/* 顶部导航栏区域分享按钮（翻牌+变色+文本渐显全部结束后渐显） */
+.share-btn {
+  position: absolute;
+  top: 4rpx;
+  left: 16rpx;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.35);
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.share-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.share-btn-icon {
+  width: 36rpx;
+  height: 36rpx;
+  filter: brightness(0) invert(1);
+}
+
+/* ===== 签语卡片区域 ===== */
+.fortune-section {
+  height: 80%;
+  margin-top: 80rpx;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
+/* ===== 翻牌容器 ===== */
+.card-flip-wrap {
+  width: 100%;
+  height: 100%;
+  perspective: 1200rpx;
+}
+
+.card-flipper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 1.04s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-flipper.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* ===== 卡背 ===== */
+.card-back-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, #3D1A2E 0%, #2B1424 40%, #3D1A2E 100%);
+  border: 2rpx solid rgba(255, 107, 107, 0.25);
+  box-shadow: 0 4rpx 32rpx rgba(61, 26, 46, 0.4);
+  overflow: hidden;
+  padding: var(--spacing-xl) 0;
+}
+
+/* 顶/底半圆拱门 */
+.back-arch {
+  width: 240rpx;
+  height: 120rpx;
+  position: relative;
+}
+
+.back-arch-top {
+  border-radius: 240rpx 240rpx 0 0;
+  border: 2rpx solid rgba(255, 107, 107, 0.15);
+  border-bottom: none;
+}
+
+.back-arch-bottom {
+  border-radius: 0 0 240rpx 240rpx;
+  border: 2rpx solid rgba(255, 107, 107, 0.15);
+  border-top: none;
+}
+
+.arch-ring {
+  position: absolute;
+  top: 12rpx;
+  left: 12rpx;
+  right: 12rpx;
+  bottom: 0;
+  border: 1rpx dashed rgba(255, 107, 107, 0.1);
+}
+
+.back-arch-top .arch-ring {
+  border-radius: 216rpx 216rpx 0 0;
+  border-bottom: none;
+}
+
+.back-arch-bottom .arch-ring {
+  top: 0;
+  bottom: 12rpx;
+  border-radius: 0 0 216rpx 216rpx;
+  border-top: none;
+}
+
+/* 中央水印 */
+.back-mandala {
+  font-size: 88rpx;
+  font-weight: var(--font-weight-bold);
+  color: rgba(255, 107, 107, 0.22);
+  letter-spacing: 14rpx;
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+/* 水印下方分割线 */
+.back-mandala-divider {
+  width: 120rpx;
+  height: 1rpx;
+  position: absolute;
+  top: calc(45% + 48rpx);
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, rgba(var(--color-back-pink), 0.25), transparent);
+  z-index: 2;
+}
+
+/* 随机棱星 */
+.back-spark {
+  position: absolute;
+  color: rgba(var(--color-back-pink-deep), 0.18);
+  pointer-events: none;
+}
+
+/* 提示文字 */
+.back-hint {
+  font-size: var(--font-size-body);
+  color: rgba(var(--color-back-pink), 0.35);
+  letter-spacing: 8rpx;
+}
+
+/* ===== 卡正面 ===== */
+.card-front-face {
+  transform: rotateY(180deg);
+}
+
+/* ===== 配对计算器浮动气泡 ===== */
+.calc-drawer {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 85%;
+  z-index: 10;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  border: 2rpx solid rgba(255, 107, 107, 0.3);
+  box-shadow: var(--shadow-card);
+  transition: width 0.3s var(--ease-out);
+}
+
+.calc-drawer.expanded {
+  width: 95%;
+}
+
+.calc-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80rpx;
+}
+
+.calc-trigger-text {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-secondary);
+  letter-spacing: 2rpx;
+}
+
+.calc-trigger:active {
+  background-color: rgba(255, 107, 107, 0.04);
+}
+
+.calc-body {
+  padding: 0 var(--spacing-xl) var(--spacing-xl);
+  animation: drawer-body-in 0.3s var(--ease-out) both;
+}
+
+@keyframes drawer-body-in {
+  from {
+    opacity: 0;
+    transform: translateY(40rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ===== 配对计算器卡片 ===== */
 .calc-card {
-  background-color: var(--color-bg-card);
-  border-radius: var(--radius-lg);
-  border: 2rpx solid rgba(255, 107, 107, 0.3);
-  box-shadow: var(--shadow-card);
-  padding: var(--spacing-xl);
+  background-color: transparent;
 }
 
 .calc-title {
@@ -76,72 +288,77 @@
   margin-top: 40rpx;
 }
 
-/* 展开区域（复用答题页动画） */
-.picker-expand {
-  overflow: hidden;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 88rpx;
-  z-index: 10;
-  background-color: var(--color-bg-card);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
+/* 内联两步选择器 */
+.inline-picker {
+  margin-top: var(--spacing-md);
+  animation: drawer-body-in 0.2s var(--ease-out) both;
 }
 
-.picker-expand.anim-in {
-  animation: expand-in 0.26s var(--ease-out) both;
-}
-
-.picker-expand.anim-out {
-  animation: expand-out 0.26s var(--ease-out) both;
-}
-
-@keyframes expand-in {
-  from { max-height: 0; opacity: 0; }
-  to { max-height: 500rpx; opacity: 1; }
-}
-
-@keyframes expand-out {
-  from { max-height: 500rpx; opacity: 1; }
-  to { max-height: 0; opacity: 0; }
-}
-
-.picker-wheels {
-  border-radius: var(--radius-md);
-  background-color: var(--color-bg-input);
-  margin: var(--spacing-sm);
-}
-
-.calc-picker-view {
-  width: 100%;
-  height: 260rpx;
-}
-
-.picker-indicator {
-  height: 70rpx;
-}
-
-.picker-item {
+.picker-row {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 70rpx;
-  font-size: var(--font-size-body);
-  color: var(--color-text-primary);
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
 }
 
-.picker-confirm-btn {
+.picker-btn {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 64rpx;
-  margin: 0 var(--spacing-sm) var(--spacing-sm);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-caption);
+  letter-spacing: 2rpx;
+  transition: all 0.15s ease;
+}
+
+.picker-btn:active {
+  opacity: 0.7;
+}
+
+/* 第一行 - 能量方向 (珊瑚红系) */
+.picker-btn-head {
+  background-color: rgba(255, 107, 107, 0.06);
+  color: var(--color-text-secondary);
+}
+
+.picker-btn-head.active {
+  background-color: rgba(255, 107, 107, 0.15);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-bold);
+  border: 1rpx solid var(--color-primary);
+}
+
+/* 第二行 - 认知功能 (紫色系) */
+.picker-btn-tail {
+  background-color: rgba(167, 139, 250, 0.06);
+  color: var(--color-text-secondary);
+}
+
+.picker-btn-tail.active {
+  background-color: rgba(167, 139, 250, 0.15);
+  color: var(--color-accent-purple);
+  font-weight: var(--font-weight-bold);
+  border: 1rpx solid var(--color-accent-purple);
+}
+
+/* 确认按钮 */
+.picker-confirm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64rpx;
+  margin-top: var(--spacing-sm);
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
   color: var(--color-text-inverse);
-  font-size: var(--font-size-body);
+  font-size: var(--font-size-caption);
   font-weight: var(--font-weight-medium);
-  border-radius: var(--radius-sm);
+  letter-spacing: 2rpx;
+  border-radius: var(--radius-md);
+}
+
+.picker-confirm:active {
+  opacity: 0.85;
 }
 
 /* ===== 结果区域 ===== */

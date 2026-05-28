@@ -9,45 +9,7 @@
   overflow: hidden;
 }
 
-/* 掉落图形开关气泡 */
-.toggle-btn {
-  position: absolute;
-  top: 24rpx;
-  left: 24rpx;
-  width: 64rpx;
-  height: 64rpx;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
-  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.35);
-  z-index: 10;
-}
-
-.toggle-label {
-  font-size: 28rpx;
-  font-weight: 700;
-  color: #FFFFFF;
-  line-height: 1;
-}
-
-@keyframes toggle-shake {
-  0%, 100% { transform: translateX(0); }
-  15%, 55%, 85% { transform: translateX(-4rpx); }
-  35%, 75% { transform: translateX(4rpx); }
-}
-
-.toggle-shake {
-  animation: toggle-shake 0.4s ease-in-out;
-}
-
-.profile-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  padding-top: 56rpx;
-}
+/* shape 掉落、toggle-btn 切换按钮、expand 动画 —— 已移至 common/index.wxss */
 
 /* ===== 卡片通用 ===== */
 .profile-card {
@@ -94,7 +56,7 @@
   letter-spacing: 6rpx;
 }
 
-/* 展开区域 */
+/* 展开区域 —— expand-in/out keyframes 已移至 common */
 .picker-expand {
   overflow: hidden;
   margin-top: var(--spacing-md);
@@ -108,16 +70,6 @@
 
 .picker-expand.anim-out {
   animation: expand-out 0.26s var(--ease-out) both;
-}
-
-@keyframes expand-in {
-  from { max-height: 0; opacity: 0; }
-  to { max-height: 500rpx; opacity: 1; }
-}
-
-@keyframes expand-out {
-  from { max-height: 500rpx; opacity: 1; }
-  to { max-height: 0; opacity: 0; }
 }
 
 .picker-wheels {
@@ -144,16 +96,8 @@
 }
 
 .picker-confirm-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin: var(--spacing-sm); /* 该页与 mbti 页 margin 不同：profile 用四周，mbti 用 margin-top */
   height: 72rpx;
-  margin: var(--spacing-sm);
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-  color: var(--color-text-inverse);
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-medium);
-  border-radius: var(--radius-sm);
 }
 
 /* 类型描述 */

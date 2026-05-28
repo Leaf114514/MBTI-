@@ -1,0 +1,36 @@
+<!--
+  ========================================
+  星座绘制模板（constellation-ring）
+  用途：卡背装饰，在随机位置绘制一个完整星座
+  数据绑定：
+    · {{constellation}} — 由 constellation-ring.js 的 maybeGenConstellation() 生成
+        为 null 时不渲染任何内容
+        非空时包含：
+          name    — 星座名（如 "天蝎"）
+          symbol  — 星座符号（如 "♏"）
+          stars[] — { x, y, big }  星星坐标（rpx），big 为主星
+          lines[] — { x, y, w, a } 连线：起点坐标、长度、旋转角度
+  被引入方通过 <import> 引入并使用
+  <template is="constellation-ring" data="{{constellation}}" />
+  ========================================
+-->
+<template name="constellation-ring">
+  <!-- constellation 非空时渲染星座 -->
+  <block wx:if="{{constellation}}">
+    <view class="constellation-draw">
+
+      <!-- 连线层：用细长 view 旋转到目标角度来模拟线段 -->
+      <view wx:for="{{constellation.lines}}" wx:key="index"
+        class="const-line"
+        style="left:{{item.x}}rpx;top:{{item.y}}rpx;width:{{item.w}}rpx;transform:rotate({{item.a}}deg);">
+      </view>
+
+      <!-- 星星层：圆点，主星稍大 -->
+      <view wx:for="{{constellation.stars}}" wx:key="index"
+        class="const-star {{item.big ? 'const-star-big' : ''}}"
+        style="left:{{item.x}}rpx;top:{{item.y}}rpx;">
+      </view>
+
+</view>
+  </block>
+</template>

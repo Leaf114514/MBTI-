@@ -5,12 +5,10 @@
     "page/mbti/index",
     "page/article/index",
     "page/profile/index",
-    "page/component/index",
     "page/API/index",
     "page/cloud/index",
     "page/extend/index",
     "page/Story/Story",
-    "page/continue/continue",
     "page/history/history"
   ],
   "window": {

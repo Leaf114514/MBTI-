@@ -1,147 +1,184 @@
+<!--
+  ========================================
+  MBTI 故事之旅页（mbti/index）
+  功能：三步流程 — 选择 MBTI+性别 → 回答 5 个场景题 → 生成故事
+  核心阶段：
+    phase='select' — 选择器阶段（选 MBTI + 性别）
+    phase='quiz'   — 答题阶段（5 道场景选择题）
+    selectLeaving / quizLeaving — 转场动画中的过渡态（保留 DOM 以支持离开动画）
+  续写模式：isContinueMode 为 true 时复用相同流程但文案不同
+  ========================================
+-->
 <view class="page-root">
-<view class="shapes-container {{shapesHidden ? 'shapes-hidden' : ''}}">
-  <view wx:for="{{shapes}}" wx:key="index" class="shape shape-{{item.type}}" style="{{item.inlineStyle}}"></view>
-</view>
-<view class="{{pageAnim}}">
- <!-- 标题 -->
-<view class="header-section">
-  <view class="title-row">
-    <text class="page-title">MBTI 故事之旅</text>
-    <view class="history-entry" bindtap="onViewHistory">
-      <text class="history-text">⏱历史故事</text>
-    </view>
-  </view>
-  <view class="title-divider"></view>
-  <text class="page-subtitle" wx:if="{{!isContinueMode}}">选择你的性格类型，回答5个场景问题，AI为你编织专属故事</text>
-  <text class="page-subtitle" wx:else>续写第 {{currentRound + 1}} 轮 · 新的场景等待你的选择</text>
-</view>
-
-<!-- ===== 选择器阶段（转场期间保留 DOM） ===== -->
-<view class="selector-section" wx:if="{{phase === 'select' || selectLeaving}}">
-
-  <!-- MBTI 选择器 -->
-  <view class="selector-card {{mbtiCardAnim}}" style="{{mbtiCardDur}}" bindtap="onToggleMbtiPicker">
-    <view class="selector-row">
-      <text class="selector-label">你的 MBTI 类型</text>
-      <view class="picker-display {{(selectedMbti || isMbtiSelecting) ? 'has-value' : ''}}">
-        <text>{{isMbtiSelecting ? currentMbtiDisplay : (selectedMbti || '请选择')}}</text>
-      </view>
-    </view>
-    <view class="picker-expand {{isMbtiHiding ? 'anim-out' : 'anim-in'}}"
-      wx:if="{{isMbtiSelecting || isMbtiHiding}}" catchtap="noop">
-      <view class="picker-wheels">
-        <picker-view
-          class="mbti-picker-view"
-          indicator-class="picker-indicator"
-          value="{{mbtiPickerValue}}"
-          bindchange="onMbtiPickerChange"
-          immediate-change
-        >
-          <picker-view-column>
-            <view wx:for="{{MBTI_HEAD}}" wx:key="*this" class="picker-item">{{item}}</view>
-          </picker-view-column>
-          <picker-view-column>
-            <view wx:for="{{MBTI_TAIL}}" wx:key="*this" class="picker-item">{{item}}</view>
-          </picker-view-column>
-        </picker-view>
-      </view>
-      <view class="picker-confirm-btn" catchtap="onConfirmMbti">
-        <text>确认</text>
-      </view>
-    </view>
+  <!-- ===== 背景掉落几何图形（常驻 DOM，class 控制显隐） ===== -->
+  <view class="shapes-container {{shapesHidden ? 'shapes-hidden' : ''}}">
+    <view wx:for="{{shapes}}" wx:key="index" class="shape shape-{{item.type}}" style="{{item.inlineStyle}}"></view>
   </view>
 
-  <!-- 性别选择器 -->
-  <view class="selector-card {{genderCardAnim}}" style="{{genderCardDur}}" bindtap="onToggleGenderPicker">
-    <view class="selector-row">
-      <text class="selector-label">你的性别</text>
-      <view class="picker-display {{(selectedGender || isGenderSelecting) ? 'has-value' : ''}}">
-        <text>{{isGenderSelecting ? currentGenderDisplay : (selectedGender || '请选择')}}</text>
-      </view>
-    </view>
-    <view class="picker-expand {{isGenderHiding ? 'anim-out' : 'anim-in'}}"
-      wx:if="{{isGenderSelecting || isGenderHiding}}" catchtap="noop">
-      <view class="gender-options">
-        <view class="gender-option {{genderPickerValue[0] === 0 ? 'selected' : ''}}" catchtap="onSelectGenderOption" data-index="0">
-          <text>男</text>
-        </view>
-        <view class="gender-option {{genderPickerValue[0] === 1 ? 'selected' : ''}}" catchtap="onSelectGenderOption" data-index="1">
-          <text>女</text>
+  <!-- ===== 页面标题区域（全程可见） ===== -->
+  <view class="{{pageAnim}}">
+    <view class="header-section">
+      <view class="title-row">
+        <text class="page-title">MBTI 故事之旅</text>
+        <!-- 右上角历史入口 -->
+        <view class="history-entry" bindtap="onViewHistory">
+          <text class="history-text">⏱历史故事</text>
         </view>
       </view>
-      <view class="picker-confirm-btn" catchtap="onConfirmGender">
-        <text>确认</text>
+      <view class="title-divider"></view>
+      <!-- 副标题：新建 / 续写模式文案不同 -->
+      <text class="page-subtitle" wx:if="{{!isContinueMode}}">选择你的性格类型，回答5个场景问题，AI为你编织专属故事</text>
+      <text class="page-subtitle" wx:else>续写第 {{currentRound + 1}} 轮 · 新的场景等待你的选择</text>
+    </view>
+
+    <!-- ================================================================ -->
+    <!-- 阶段一：选择器（转场期间保留 DOM 以支持离开动画）                    -->
+    <!-- ================================================================ -->
+    <view class="selector-section" wx:if="{{phase === 'select' || selectLeaving}}">
+
+      <!-- ----- MBTI 选择器 ----- -->
+      <view class="selector-card {{mbtiCardAnim}}" style="{{mbtiCardDur}}" bindtap="onToggleMbtiPicker">
+        <view class="selector-row">
+          <text class="selector-label">你的 MBTI 类型</text>
+          <view class="picker-display {{(selectedMbti || isMbtiSelecting) ? 'has-value' : ''}}">
+            <text>{{isMbtiSelecting ? currentMbtiDisplay : (selectedMbti || '请选择')}}</text>
+          </view>
+        </view>
+        <!-- 展开后的双列滚轮选择器 -->
+        <view class="picker-expand {{isMbtiHiding ? 'anim-out' : 'anim-in'}}"
+          wx:if="{{isMbtiSelecting || isMbtiHiding}}" catchtap="noop">
+          <view class="picker-wheels">
+            <picker-view
+              class="mbti-picker-view"
+              indicator-class="picker-indicator"
+              value="{{mbtiPickerValue}}"
+              bindchange="onMbtiPickerChange"
+              immediate-change
+            >
+              <!-- 第1列：能量方向 (E / I) -->
+              <picker-view-column>
+                <view wx:for="{{MBTI_HEAD}}" wx:key="*this" class="picker-item">{{item}}</view>
+              </picker-view-column>
+              <!-- 第2列：认知功能对 (NT / NF / ST / SF) -->
+              <picker-view-column>
+                <view wx:for="{{MBTI_TAIL}}" wx:key="*this" class="picker-item">{{item}}</view>
+              </picker-view-column>
+            </picker-view>
+          </view>
+          <!-- 确认按钮（阻止事件冒泡） -->
+          <view class="picker-confirm-btn" catchtap="onConfirmMbti">
+            <text>确认</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- ----- 性别选择器 ----- -->
+      <view class="selector-card {{genderCardAnim}}" style="{{genderCardDur}}" bindtap="onToggleGenderPicker">
+        <view class="selector-row">
+          <text class="selector-label">你的性别</text>
+          <view class="picker-display {{(selectedGender || isGenderSelecting) ? 'has-value' : ''}}">
+            <text>{{isGenderSelecting ? currentGenderDisplay : (selectedGender || '请选择')}}</text>
+          </view>
+        </view>
+        <!-- 展开后的选项按钮（男 / 女） -->
+        <view class="picker-expand {{isGenderHiding ? 'anim-out' : 'anim-in'}}"
+          wx:if="{{isGenderSelecting || isGenderHiding}}" catchtap="noop">
+          <view class="gender-options">
+            <view class="gender-option {{genderPickerValue[0] === 0 ? 'selected' : ''}}" catchtap="onSelectGenderOption" data-index="0">
+              <text>男</text>
+            </view>
+            <view class="gender-option {{genderPickerValue[0] === 1 ? 'selected' : ''}}" catchtap="onSelectGenderOption" data-index="1">
+              <text>女</text>
+            </view>
+          </view>
+          <view class="picker-confirm-btn" catchtap="onConfirmGender">
+            <text>确认</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ================================================================ -->
+    <!-- 阶段二：答题（转场期间保留 DOM 以支持离开动画）                      -->
+    <!-- ================================================================ -->
+    <view class="quiz-section" wx:if="{{phase === 'quiz' || quizLeaving}}">
+      <!-- 进度条 -->
+      <view class="progress-bar-container {{progressAnim}}">
+        <view class="progress-info">
+          <text class="progress-text">{{progress}}</text>
+          <text class="progress-percent">{{answeredPercent}} 已答</text>
+        </view>
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{progressPercent}}%"></view>
+        </view>
+      </view>
+
+      <!-- 题目卡片（仅渲染当前题，切换时有翻页动画） -->
+      <view class="question-card {{questionAnim}}" wx:for="{{questions}}" wx:key="id" wx:if="{{index === currentIndex}}">
+        <text class="question-text">{{item.question}}</text>
+
+        <!-- 选项列表 -->
+        <view class="options-list">
+          <view
+            class="option-card {{answers[item.id] === option.key ? 'selected' : ''}}"
+            wx:for="{{item.options}}"
+            wx:for-item="option"
+            wx:for-index="optIdx"
+            wx:key="key"
+            bindtap="onSelectOption"
+            data-question-id="{{item.id}}"
+            data-option-key="{{option.key}}"
+          >
+            <!-- 选项序号（选中时反色） -->
+            <view class="option-key">{{option.key}}</view>
+            <!-- 选项文本 -->
+            <text class="option-text">{{option.text}}</text>
+          </view>
+        </view>
       </view>
     </view>
   </view>
-</view>
 
-<!-- ===== 答题阶段（转场期间保留 DOM） ===== -->
-<view class="quiz-section" wx:if="{{phase === 'quiz' || quizLeaving}}">
-  <!-- 进度条 -->
-  <view class="progress-bar-container {{progressAnim}}">
-    <view class="progress-info">
-      <text class="progress-text">{{progress}}</text>
-      <text class="progress-percent">{{answeredPercent}} 已答</text>
+  <!-- ================================================================ -->
+  <!-- 固定定位按钮区（放在动画容器外部，保持固定于屏幕底部）                 -->
+  <!-- ================================================================ -->
+
+  <!-- ----- 开始答题按钮（选择器阶段可见） ----- -->
+  <view class="btn-primary start-btn {{pageAnim}} {{startBtnAnim}} {{(!selectedMbti || !selectedGender) ? 'btn-warn' : ''}} {{startBtnShaking ? 'anim-shake' : ''}}"
+    wx:if="{{phase === 'select' || selectLeaving}}"
+    style="{{startBtnDur}}" bindtap="onStartQuiz">
+    <!-- 未满足条件时显示警告文案，否则显示"开始答题" -->
+    <text>{{startBtnWarn ? startBtnWarn : '开始答题'}}</text>
+  </view>
+
+  <!-- ----- 答题底部操作栏（答题阶段可见） ----- -->
+  <view class="quiz-actions {{pageAnim}} {{actionsAnim}}" wx:if="{{phase === 'quiz' || quizLeaving}}">
+    <!-- 左侧按钮：上下文决定功能
+         故事已生成 → "再来一篇"
+         当前第1题 → "取消答题"/"确认取消答题"（二次确认）
+         非首题    → "上一题" -->
+    <view class="btn-secondary quiz-btn {{!storyGenerated && cancelConfirmPending ? 'btn-danger' : ''}}"
+      bindtap="onLeftBtnTap"
+      wx:if="{{storyGenerated || currentIndex > 0}}">
+      <text>{{storyGenerated ? '再来一篇' : (currentIndex === 0 ? (cancelConfirmPending ? '确认取消答题' : '取消答题') : '上一题')}}</text>
     </view>
-    <view class="progress-bar">
-      <view class="progress-fill" style="width: {{progressPercent}}%"></view>
+
+    <!-- "下一题"按钮（非最后一题） -->
+    <view class="btn-primary quiz-btn" bindtap="onNextQuestion" wx:if="{{currentIndex < questions.length - 1 && !storyGenerated}}">
+      <text>下一题</text>
+    </view>
+
+    <!-- 提交按钮（最后一题可见）
+         故事已生成 → "查看故事" (紫色渐变，带弹入动画)
+         续写模式   → "提交续写"（带 loading 态）
+         未全答     → 警告文案提示
+         正常提交   → "提交答案"（带 loading 态） -->
+    <view
+      class="btn-primary quiz-btn submit-btn {{storyGenerated ? 'btn-story ' + storyBtnAnim : ''}} {{!storyGenerated && answerCount < questions.length ? 'btn-warn' : ''}} {{submitBtnShaking ? 'anim-shake' : ''}}"
+      bindtap="onRightBtnTap"
+      wx:if="{{currentIndex === questions.length - 1}}"
+    >
+      <text>{{storyGenerated ? storyTitle : (isContinueMode ? (isSubmitting ? '提交中...' : '提交续写') : (submitBtnWarn ? submitBtnWarn : (isSubmitting ? '提交中...' : '提交答案')))}}</text>
     </view>
   </view>
-
-  <!-- 题目卡片（带翻页动画） -->
-  <view class="question-card {{questionAnim}}" wx:for="{{questions}}" wx:key="id" wx:if="{{index === currentIndex}}">
-    <text class="question-text">{{item.question}}</text>
-
-    <!-- 选项列表 -->
-    <view class="options-list">
-      <view
-        class="option-card {{answers[item.id] === option.key ? 'selected' : ''}}"
-        wx:for="{{item.options}}"
-        wx:for-item="option"
-        wx:for-index="optIdx"
-        wx:key="key"
-        bindtap="onSelectOption"
-        data-question-id="{{item.id}}"
-        data-option-key="{{option.key}}"
-      >
-        <view class="option-key">{{option.key}}</view>
-        <text class="option-text">{{option.text}}</text>
-      </view>
-    </view>
-  </view>
-</view>
-</view>
-
-<!-- ===== 固定定位按钮（放在动画容器外部） ===== -->
-
-<!-- 开始答题按钮 -->
-<view class="btn-primary start-btn {{pageAnim}} {{startBtnAnim}} {{(!selectedMbti || !selectedGender) ? 'btn-warn' : ''}} {{startBtnShaking ? 'anim-shake' : ''}}"
-  wx:if="{{phase === 'select' || selectLeaving}}"
-  style="{{startBtnDur}}" bindtap="onStartQuiz">
-  <text>{{startBtnWarn ? startBtnWarn : '开始答题'}}</text>
-</view>
-
-<!-- 答题底部操作 -->
-<view class="quiz-actions {{pageAnim}} {{actionsAnim}}" wx:if="{{phase === 'quiz' || quizLeaving}}">
-  <!-- 左侧按钮：故事已生成时显示"再来一篇"，否则按位置显示取消/上一题 -->
-  <view class="btn-secondary quiz-btn {{!storyGenerated && cancelConfirmPending ? 'btn-danger' : ''}}"
-    bindtap="onLeftBtnTap"
-    wx:if="{{storyGenerated || currentIndex > 0}}">
-    <text>{{storyGenerated ? '再来一篇' : (currentIndex === 0 ? (cancelConfirmPending ? '确认取消答题' : '取消答题') : '上一题')}}</text>
-  </view>
-
-  <view class="btn-primary quiz-btn" bindtap="onNextQuestion" wx:if="{{currentIndex < questions.length - 1 && !storyGenerated}}">
-    <text>下一题</text>
-  </view>
-
-  <view
-    class="btn-primary quiz-btn submit-btn {{storyGenerated ? 'btn-story ' + storyBtnAnim : ''}} {{!storyGenerated && answerCount < questions.length ? 'btn-warn' : ''}} {{submitBtnShaking ? 'anim-shake' : ''}}"
-    bindtap="onRightBtnTap"
-    wx:if="{{currentIndex === questions.length - 1}}"
-  >
-    <text>{{storyGenerated ? storyTitle : (isContinueMode ? (isSubmitting ? '提交中...' : '提交续写') : (submitBtnWarn ? submitBtnWarn : (isSubmitting ? '提交中...' : '提交答案')))}}</text>
-  </view>
-</view>
-
 </view>

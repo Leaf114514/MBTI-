@@ -1,7 +1,20 @@
+<!--
+  ========================================
+  通用头部模板（head）
+  用途：各页面统一的标题头部，包含标题、分隔线、可选描述
+  数据绑定：
+    · {{title}} — 页面标题文字
+    · {{desc}}  — 可选的副标题描述，存在时渲染
+  被引入方通过 <import> 引入并使用 <template is="head" data="{{title, desc}}" />
+  ========================================
+-->
 <template name="head">
   <view class="page-head">
+    <!-- 标题 -->
     <view class="page-head-title">{{title}}</view>
+    <!-- 标题下方装饰线 -->
     <view class="page-head-line"></view>
+    <!-- 可选描述，仅当 desc 非空时显示 -->
     <view wx:if="{{desc}}" class="page-head-desc">{{desc}}</view>
   </view>
 </template>

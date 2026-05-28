@@ -1,2 +1,5 @@
-<!--page/cloud/index.wxml-->
-<text>page/cloud/index.wxml</text>
+<!--
+  云开发示例页（cloud）
+  状态：占位页面，尚未实现
+  用途：计划展示微信云开发能力（数据库、云函数等）调用示例
+-->

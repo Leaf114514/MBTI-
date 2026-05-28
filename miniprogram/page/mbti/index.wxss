@@ -98,7 +98,7 @@
   color: var(--color-text-primary);
 }
 
-/* ===== 展开区域（滚轮 + 确认按钮）高度动画 ===== */
+/* 展开区域（滚轮 + 确认按钮）高度动画 —— expand-in/out keyframes 已移至 common */
 .picker-expand {
   overflow: hidden;
 }
@@ -109,28 +109,6 @@
 
 .picker-expand.anim-out {
   animation: expand-out 0.26s var(--ease-out) both;
-}
-
-@keyframes expand-in {
-  from {
-    max-height: 0;
-    opacity: 0;
-  }
-  to {
-    max-height: 500rpx;
-    opacity: 1;
-  }
-}
-
-@keyframes expand-out {
-  from {
-    max-height: 500rpx;
-    opacity: 1;
-  }
-  to {
-    max-height: 0;
-    opacity: 0;
-  }
 }
 
 /* ===== 滚轮 ===== */
@@ -195,18 +173,10 @@
   color: var(--color-text-primary);
 }
 
-/* ===== 确认按钮 ===== */
+/* ===== 确认按钮 —— 基类已移至 common，仅覆盖该页特有的 margin */
 .picker-confirm-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 72rpx;
   margin-top: var(--spacing-sm);
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-  color: var(--color-text-inverse);
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-medium);
-  border-radius: var(--radius-sm);
+  height: 72rpx;
 }
 
 .picker-confirm-btn:active {
@@ -214,29 +184,6 @@
 }
 
 /* ===== 通用按钮 ===== */
-.btn-primary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 88rpx;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-  color: var(--color-text-inverse);
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-medium);
-  border-radius: var(--radius-md);
-  transition: all var(--duration-fast) var(--ease-out);
-}
-
-.btn-primary:active {
-  transform: scale(0.98);
-  opacity: 0.9;
-}
-
-.btn-primary.disabled {
-  opacity: 0.4;
-  pointer-events: none;
-}
-
 .btn-secondary {
   display: flex;
   align-items: center;
@@ -416,18 +363,7 @@
   opacity: 0.5;
 }
 
-/* 抖动动画 */
-.anim-shake {
-  animation: btn-shake 0.4s ease-out;
-}
-
-@keyframes btn-shake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-10rpx); }
-  40% { transform: translateX(10rpx); }
-  60% { transform: translateX(-6rpx); }
-  80% { transform: translateX(6rpx); }
-}
+/* 抖动动画 —— btn-shake keyframes 和 .anim-shake 已移至 common */
 
 /* ===== "查看故事"按钮样式 ===== */
 .btn-story {

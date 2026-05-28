@@ -1,13 +1,35 @@
+<!--
+  ========================================
+  历史故事页（history）
+  功能：列出用户所有已生成的故事，以电影票形式展示
+  交互：点击卡片 → 跳转故事阅读页
+  状态流转：loading → 加载中 / empty → 空态 / list → 故事列表
+  ========================================
+-->
 <view class="page-container">
+  <!-- ===== 加载中 ===== -->
   <view wx:if="{{loading}}" class="loading-state">
     <text class="loading-text">加载中...</text>
   </view>
 
+  <!-- ===== 空状态：无故事时引导创建 ===== -->
   <view wx:elif="{{empty}}" class="empty-state">
     <text class="empty-text">还没有故事，快去创作吧</text>
   </view>
 
+  <!-- ===== 故事列表 ===== -->
   <view wx:else class="story-list">
+    <!--
+      每张卡片以"电影票"样式呈现：
+      ┌──────────────────────────┐
+      │  ticket-main（主券）     │ notch  ┌───┐
+      │  · 标题 + 编号           │  半圆缺口 │副券│
+      │  · 轮次 · MBTI · 性别   │  ←撕口→ │进度│
+      │  · 字数统计              │         │日期│
+      └──────────────────────────┘         └───┘
+      · <story-card> 的 class 追加 mbti-{{item.mbti}} 实现各类型专属渐变色
+      · data-id 传递给 onStoryTap 事件用于路由跳转
+    -->
     <view
       wx:for="{{stories}}"
       wx:key="_id"
@@ -15,16 +37,20 @@
       data-id="{{item._id}}"
       bindtap="onStoryTap"
     >
-      <!-- 主内容区 -->
+      <!-- ===== 主券区域 ===== -->
       <view class="ticket-main">
-        <!-- MBTI 水印 -->
+        <!-- MBTI 类型大字号水印（低透明度置于底层） -->
         <text class="ticket-watermark">{{item.mbti}}</text>
-        <!-- 装饰圆弧 -->
+        <!-- 右下角装饰圆弧 -->
         <view class="ticket-arc"></view>
 
+        <!-- 标题行：故事名 + 倒序编号 -->
         <text class="ticket-title">{{item.title || '未命名故事'}}<text class="ticket-number">#{{stories.length - index}}</text></text>
+        <!-- 标题下方渐变分割线 -->
         <view class="ticket-divider"></view>
+        <!-- 底部信息行 -->
         <view class="ticket-bottom-row">
+          <!-- 元信息：轮次 · 类型 · 性别 -->
           <view class="ticket-meta">
             <text class="ticket-meta-item">第{{item.currentRound || 1}}轮</text>
             <text class="ticket-meta-dot">·</text>
@@ -32,14 +58,17 @@
             <text class="ticket-meta-dot">·</text>
             <text class="ticket-meta-item">{{item.gender}}</text>
           </view>
+          <!-- 字数统计（右对齐） -->
           <text class="ticket-wordcount">{{item.totalWordCount > 0 ? item.totalWordCount + '字' : ''}}</text>
         </view>
       </view>
 
-      <!-- 副券：进度 + 日期 -->
+      <!-- ===== 副券区域：进度点 + 日期 ===== -->
       <view class="ticket-stub">
+        <!-- 票根撕口：上下两个半圆缺口（模拟撕票打孔效果） -->
         <view class="notch notch-top"></view>
         <view class="notch notch-bottom"></view>
+        <!-- 进度指示：竖直排列的圆点，已填充/未填充 -->
         <view class="stub-progress">
           <view
             wx:for="{{item.maxRounds || 4}}"
@@ -49,6 +78,7 @@
             class="progress-dot {{dotIdx < (item.currentRound || 1) ? 'dot-filled' : 'dot-empty'}}"
           ></view>
         </view>
+        <!-- 日期：竖排文字 -->
         <text class="ticket-time">{{item.displayTime}}</text>
       </view>
     </view>

@@ -1,0 +1,41 @@
+/* ===== 星座绘制模板样式 ===== */
+
+/* 星座绘制容器：覆盖卡片，不影响其他元素 */
+.constellation-draw {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ----- 连线 ----- */
+.const-line {
+  position: absolute;
+  height: 1rpx;
+  background-color: rgba(var(--color-back-pink), 0.18);
+  transform-origin: 0 50%;
+}
+
+/* ----- 星星（普通） ----- */
+.const-star {
+  position: absolute;
+  width: 6rpx;
+  height: 6rpx;
+  margin-left: -3rpx;
+  margin-top: -3rpx;
+  border-radius: 50%;
+  background-color: rgba(var(--color-back-pink-light), 0.35);
+}
+
+/* ----- 星星（主星，更亮更大） ----- */
+.const-star-big {
+  width: 10rpx;
+  height: 10rpx;
+  margin-left: -5rpx;
+  margin-top: -5rpx;
+  background-color: rgba(var(--color-back-pink), 0.6);
+  box-shadow: 0 0 8rpx rgba(var(--color-back-pink-deep), 0.3);
+}
