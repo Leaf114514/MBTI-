@@ -31,6 +31,12 @@ const DEEPSEEK_MAX_TOKENS = 2048
 const CONTENT_SOFT_LIMIT = 2000
 const CONTENT_HARD_LIMIT = 3000
 
+/** 积分消耗：首轮故事 */
+const CREDIT_COST_FIRST_ROUND = 30
+
+/** 积分消耗：续写故事 */
+const CREDIT_COST_CONTINUE_ROUND = 25
+
 // ======================== System Prompt 模板 ========================
 
 /** 首轮和续写共用的 system prompt */
@@ -231,6 +237,35 @@ function makeSuccess(data, warnings = []) {
 // ======================== DeepSeek API 调用 ========================
 
 /**
+ * 扣减用户积分，返回用户记录（含 _id 和 credit）
+ * 积分不足或用户不存在时返回错误对象
+ */
+async function deductCredit(openid, amount) {
+  const userQuery = await db.collection('users').where({ openid }).field({ credit: true }).get()
+  if (!userQuery.data || userQuery.data.length === 0) {
+    return { ok: false, error: makeError('USER_NOT_FOUND', '用户未注册') }
+  }
+  const user = userQuery.data[0]
+  const currentCredit = user.credit !== undefined ? user.credit : 100
+  if (currentCredit < amount) {
+    return { ok: false, error: makeError('INSUFFICIENT_CREDIT', '积分不足') }
+  }
+  await db.collection('users').doc(user._id).update({ data: { credit: _.inc(-amount) } })
+  return { ok: true, userId: user._id, remainingCredit: currentCredit - amount }
+}
+
+/**
+ * 退还积分（API 调用失败时使用）
+ */
+async function refundCredit(userId, amount) {
+  try {
+    await db.collection('users').doc(userId).update({ data: { credit: _.inc(amount) } })
+  } catch (e) {
+    console.error('[generateStory] 积分退还失败:', e)
+  }
+}
+
+/**
  * 调用 DeepSeek API 生成故事内容
  * - 使用 got 库发送 POST 请求
  * - 开启深度思考模式（按 DeepSeek V4 Flash 官方文档配置）
@@ -312,6 +347,10 @@ async function handleFirstRound(openid, mbti, gender, answers) {
   const answersResult = validateAnswers(answers, 5)
   if (!answersResult.valid) return makeError(answersResult.error.code, answersResult.error.message)
 
+  // ---- 1.5 积分扣费 ----
+  const creditResult = await deductCredit(openid, CREDIT_COST_FIRST_ROUND)
+  if (!creditResult.ok) return creditResult.error
+
   // ---- 2. 拼装 Prompt ----
   const userPrompt = `请根据以下性格参数创作故事：\n\n主角MBTI类型：${mbtiResult.value}\n主角性别：${genderResult.value}\n\n场景选择题答案：\n${formatAnswers(answersResult.value, 1)}\n\n请开始创作。`
 
@@ -332,6 +371,7 @@ async function handleFirstRound(openid, mbti, gender, answers) {
     assistantContent = await callDeepSeek(messages)
   } catch (e) {
     console.error('[generateStory] DeepSeek API 调用失败:', e.message)
+    await refundCredit(creditResult.userId, CREDIT_COST_FIRST_ROUND)
     if (e.message === 'API_KEY_MISSING') {
       return makeError('API_CONFIG_ERROR', '服务配置异常')
     }
@@ -456,6 +496,10 @@ async function handleContinueRound(openid, sessionId, answers) {
   const answersResult = validateAnswers(answers, 2)
   if (!answersResult.valid) return makeError(answersResult.error.code, answersResult.error.message)
 
+  // ---- 3.5 积分扣费 ----
+  const creditResult = await deductCredit(openid, CREDIT_COST_CONTINUE_ROUND)
+  if (!creditResult.ok) return creditResult.error
+
   // ---- 4. 拼装消息（全量历史） ----
   const startIndex = calcStartIndex(session.currentRound)
   const continueUserPrompt = `请基于前面的故事继续创作下一页内容。\n\n注意：\n1. 新的一页应当自然衔接上一页的结尾，保持人物性格和情节连贯\n2. 不要重复前面的内容\n3. 保持同样的写作风格和推理注释格式\n4. 不要重新生成标题，标题沿用已有标题\n5. 主角MBTI类型：${session.mbti}，主角性别：${session.gender}\n\n新的场景选择题答案：\n${formatAnswers(answersResult.value, startIndex)}\n\n请继续创作。`
@@ -472,6 +516,7 @@ async function handleContinueRound(openid, sessionId, answers) {
     assistantContent = await callDeepSeek(messages)
   } catch (e) {
     console.error('[generateStory] DeepSeek API 调用失败（续写）:', e.message)
+    await refundCredit(creditResult.userId, CREDIT_COST_CONTINUE_ROUND)
     if (e.message === 'API_KEY_MISSING') {
       return makeError('API_CONFIG_ERROR', '服务配置异常')
     }

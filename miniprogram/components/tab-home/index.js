@@ -15,6 +15,7 @@ const fallingShapes = require('../../behaviors/falling-shapes')     // 背景形
 const constellationRing = require('../../common/constellation-ring')  // 星座绘制工具
 const cornerDecor = require('../../common/corner-decorations/decorations')  // 四角装饰配置
 const { hexToRgb } = require('../../common/color-utils')
+const creditService = require('../../services/credit-service')
 
 // MBTI 类型拼接 —— 所有类型 = 头部(2 字母) + 尾部(2 字母)
 const MBTI_HEAD = ['IN', 'IS', 'EN', 'ES']
@@ -105,10 +106,13 @@ Component({
         wx.navigateTo({ url: '/page/login/login' })
         return
       }
-      // 每次显示时重新读取 MBTI（可能在其他页面修改过）
-      this._loadUserMbti()
-      // 检查翻牌状态
-      this._checkCardFlip()
+      // 延迟到下一帧，避免与 _syncDarkTheme 的 setData 递归
+      wx.nextTick(() => {
+        // 每次显示时重新读取 MBTI（可能在其他页面修改过）
+        this._loadUserMbti()
+        // 检查翻牌状态
+        this._checkCardFlip()
+      })
     },
 
     // ----------------------------------------------------------
@@ -192,7 +196,19 @@ Component({
     revealCard() {
       this.setData({ cardRevealed: true })
       if (this.data.cardFlipMode === 1) {
-        wx.setStorageSync('lastCardReveal', new Date().toDateString())
+        const today = new Date().toDateString()
+        const lastReveal = wx.getStorageSync('lastCardReveal') || ''
+        wx.setStorageSync('lastCardReveal', today)
+        // 每天第一次翻牌奖励 50 积分
+        if (lastReveal !== today) {
+          creditService.earnCredit(50).then(result => {
+            if (result.success) {
+              console.log('[Home] 翻牌奖励 50 积分，当前积分:', result.data.credit)
+            }
+          }).catch(e => {
+            console.warn('[Home] 翻牌积分奖励失败:', e)
+          })
+        }
       }
     },
 
@@ -206,7 +222,7 @@ Component({
       query.select('.card-back-face').boundingClientRect(function (rect) {
         if (rect && rect.width > 0 && rect.height > 0) {
           // px → rpx 换算
-          const { windowWidth } = wx.getSystemInfoSync()
+          const { windowWidth } = wx.getWindowInfo()
           const ratio = 750 / windowWidth
           self.setData({
             constellation: constellationRing.maybeGenConstellation(rect.width * ratio, rect.height * ratio),
@@ -271,8 +287,10 @@ Component({
       if (!isWineReset) {
         app.globalData.darkThemeAccent = hex
       }
-      // 通知 shell 页面更新背景色/导航栏/TabBar
-      this.triggerEvent('themeChange', { isDark: isLight, accentColor: hex })
+      // 延迟到下一帧触发事件，避免递归 setData
+      wx.nextTick(() => {
+        this.triggerEvent('themeChange', { isDark: isLight, accentColor: hex })
+      })
     },
 
     // =============================================
@@ -385,7 +403,9 @@ Component({
       }
       if (Object.keys(updates).length > 0) {
         this.setData(updates)
-        this.triggerEvent('themeChange', { isDark, accentColor: hex })
+        wx.nextTick(() => {
+          this.triggerEvent('themeChange', { isDark, accentColor: hex })
+        })
       }
     },
   }

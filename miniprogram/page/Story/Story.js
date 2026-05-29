@@ -280,8 +280,10 @@ Page({
       const result = await storyService.submitFirstRound(params)
 
       if (!result.success) {
+        const isCreditError = result.error && result.error.code === 'INSUFFICIENT_CREDIT'
+        const errorMsg = isCreditError ? '积分不足，无法生成故事' : ((result.error && result.error.message) || '故事生成失败，请重试')
         this._finishLoadingProgress(() => {
-          this.setData({ isLoading: false, hasError: true, errorMsg: (result.error && result.error.message) || '故事生成失败，请重试' })
+          this.setData({ isLoading: false, hasError: true, errorMsg })
         })
         return
       }
@@ -336,8 +338,10 @@ Page({
       const result = await storyService.submitContinueRound(params)
 
       if (!result.success) {
+        const isCreditError = result.error && result.error.code === 'INSUFFICIENT_CREDIT'
+        const errorMsg = isCreditError ? '积分不足，无法续写故事' : ((result.error && result.error.message) || '续写失败，请重试')
         this._finishLoadingProgress(() => {
-          this.setData({ isLoading: false, hasError: true, errorMsg: (result.error && result.error.message) || '续写失败，请重试' })
+          this.setData({ isLoading: false, hasError: true, errorMsg })
         })
         return
       }
