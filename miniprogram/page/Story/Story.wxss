@@ -163,6 +163,10 @@ page {
   height: 32rpx;
 }
 
+.page-dark .home-icon {
+  filter: brightness(0) invert(1);
+}
+
 /* 第二行：标题 + 徽章水平对齐 */
 .header-title-row {
   display: flex;
@@ -199,6 +203,10 @@ page {
   color: #FFFFFF;
   font-weight: var(--font-weight-medium);
   line-height: 1;
+}
+
+.page-dark .round-count-badge text {
+  color: #1A1A1A;
 }
 
 /* ===== 历史按钮（固定高度，与续写气泡一致） ===== */
@@ -401,6 +409,10 @@ page {
   background-color: #FFFFFF;
   border: 1rpx solid var(--color-primary);
   color: var(--color-primary);
+}
+
+.page-dark .btn-outline {
+  background-color: var(--color-bg-card);
 }
 
 /* 续写按钮：红色底白字 */
