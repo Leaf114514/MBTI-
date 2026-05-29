@@ -72,8 +72,8 @@ Page({
   //    - sessionId: string（已有故事的 ID）
   // ----------------------------------------------------------
   onLoad(options) {
-    const sysInfo = wx.getSystemInfoSync()
-    const statusBarHeight = sysInfo.statusBarHeight || 20
+    const sysInfo = wx.getWindowInfo()
+    const statusBarHeight = wx.getMenuButtonBoundingClientRect().top || 20
     this._windowHeight = sysInfo.windowHeight
     this._scrollTop = 0
     this._lastProgress = 0
@@ -96,6 +96,19 @@ Page({
     })
 
     this.loadStory()
+  },
+
+  onShow() {
+    const app = getApp()
+    const isDark = !!app.globalData.darkTheme
+    const hex = app.globalData.darkThemeAccent || '#FF6B6B'
+    if (isDark !== this.data.darkTheme || hex !== this.data.themeColor) {
+      this.setData({
+        darkTheme: isDark,
+        themeColor: hex,
+        themeColorRgb: hexToRgb(hex),
+      })
+    }
   },
 
   // ----------------------------------------------------------
@@ -280,8 +293,10 @@ Page({
       const result = await storyService.submitFirstRound(params)
 
       if (!result.success) {
+        const isCreditError = result.error && result.error.code === 'INSUFFICIENT_CREDIT'
+        const errorMsg = isCreditError ? '积分不足，无法生成故事' : ((result.error && result.error.message) || '故事生成失败，请重试')
         this._finishLoadingProgress(() => {
-          this.setData({ isLoading: false, hasError: true, errorMsg: (result.error && result.error.message) || '故事生成失败，请重试' })
+          this.setData({ isLoading: false, hasError: true, errorMsg })
         })
         return
       }
@@ -336,8 +351,10 @@ Page({
       const result = await storyService.submitContinueRound(params)
 
       if (!result.success) {
+        const isCreditError = result.error && result.error.code === 'INSUFFICIENT_CREDIT'
+        const errorMsg = isCreditError ? '积分不足，无法续写故事' : ((result.error && result.error.message) || '续写失败，请重试')
         this._finishLoadingProgress(() => {
-          this.setData({ isLoading: false, hasError: true, errorMsg: (result.error && result.error.message) || '续写失败，请重试' })
+          this.setData({ isLoading: false, hasError: true, errorMsg })
         })
         return
       }

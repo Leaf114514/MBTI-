@@ -85,7 +85,7 @@ App({
   //  - shapesEnabled:  背景形状动画开关（持久化到 storage）
   // ----------------------------------------------------------
   globalData: {
-    theme: wx.getSystemInfoSync().theme,
+    theme: wx.getWindowInfo().theme || 'light',
     themeColor: '#FF6B6B',
     hasLogin: false,
     openid: null,

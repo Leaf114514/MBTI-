@@ -178,7 +178,7 @@
       bindtap="onRightBtnTap"
       wx:if="{{currentIndex === questions.length - 1}}"
     >
-      <text>{{storyGenerated ? storyTitle : (isContinueMode ? (isSubmitting ? '提交中...' : '提交续写') : (submitBtnWarn ? submitBtnWarn : (isSubmitting ? '提交中...' : '提交答案')))}}</text>
+      <text>{{storyGenerated ? storyTitle : (isContinueMode ? (isSubmitting ? '提交中...' : '续写故事 25积分') : (submitBtnWarn ? submitBtnWarn : (submitConfirmPending ? '确认 生成故事' : (isSubmitting ? '提交中...' : '生成故事 30积分'))))}}</text>
     </view>
   </view>
 </view>

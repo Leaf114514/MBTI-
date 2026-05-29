@@ -15,6 +15,7 @@ const MBTI_TAIL = ['TJ', 'TP', 'FJ', 'FP']
 
 // 背景形状动画 behavior
 const fallingShapes = require('../../behaviors/falling-shapes')
+const creditService = require('../../services/credit-service')
 
 // ----------------------------------------------------------
 //  16 种 MBTI 的中文描述（用于 Profile 页展示）
@@ -53,6 +54,7 @@ Page({
     MBTI_HEAD,
     MBTI_TAIL,
     darkTheme: false,
+    userCredit: 0,
 
     // MBTI 选择器状态
     isMbtiSelecting: false,      // 选择器是否展开
@@ -72,6 +74,7 @@ Page({
   // ----------------------------------------------------------
   onLoad() {
     this._loadMbti()
+    this._loadCredit()
     const app = getApp()
     const enabled = app.globalData.shapesEnabled !== false
     const isDark = !!app.globalData.darkTheme
@@ -88,6 +91,7 @@ Page({
     this._syncDarkTheme()
     this._playPageAnim()
     this._loadMbti()
+    this._loadCredit()
   },
 
   // ----------------------------------------------------------
@@ -104,6 +108,20 @@ Page({
       }
     } catch (e) {
       console.warn('[Profile] 读取 MBTI 失败', e)
+    }
+  },
+
+  async _loadCredit() {
+    try {
+      const result = await creditService.getCredit()
+      if (result.success && result.data) {
+        const credit = result.data.credit
+        if (credit !== this.data.userCredit) {
+          this.setData({ userCredit: credit })
+        }
+      }
+    } catch (e) {
+      console.warn('[Profile] 读取积分失败', e)
     }
   },
 

@@ -16,6 +16,30 @@
 
 /* shape 掉落、toggle-btn 切换按钮、expand 动画 —— 已移至 common/index.wxss */
 
+/* ===== 右上角积分显示 ===== */
+.credit-box {
+  position: absolute;
+  top: 20rpx;
+  right: 24rpx;
+  padding: 5rpx 16rpx;
+  background: #FF6B6B;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.35);
+  z-index: 10;
+}
+
+.credit-text {
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-bold);
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+/* ===== 内容区下移，避开顶部按钮 ===== */
+.profile-content {
+  padding-top: 100rpx;
+}
+
 /* ===== 卡片通用 ===== */
 .profile-card {
   background-color: var(--color-bg-card);

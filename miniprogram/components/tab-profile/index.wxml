@@ -19,6 +19,11 @@
     <view wx:for="{{shapes}}" wx:key="index" class="shape shape-{{item.type}}" style="{{item.inlineStyle}}"></view>
   </view>
 
+  <!-- ===== 右上角积分显示 ===== -->
+  <view class="credit-box" style="background:{{themeColor}};box-shadow:0 4rpx 16rpx rgba({{themeColorRgb}},0.35);">
+    <text class="credit-text">积分:{{userCredit}}</text>
+  </view>
+
   <view class="profile-content">
 
     <!-- ===== MBTI 选择卡片 ===== -->

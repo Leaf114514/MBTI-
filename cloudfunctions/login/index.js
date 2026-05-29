@@ -85,6 +85,7 @@ exports.main = async (event, context) => {
             nickName: '',
             avatarUrl: ''
           },
+          credit: existingUser.credit !== undefined ? existingUser.credit : 100,
           createdAt: existingUser.createdAt,
           lastLoginAt: now
         }
@@ -110,6 +111,7 @@ exports.main = async (event, context) => {
         openid: OPENID,
         createdAt: now,
         lastLoginAt: now,
+        credit: 100,
         profile: {
           nickName: (profile && profile.nickName) || '',
           avatarUrl: (profile && profile.avatarUrl) || '',
@@ -134,6 +136,7 @@ exports.main = async (event, context) => {
           mbti: normalizedMbti,
           gender: normalizedGender
         },
+        credit: 100,
         createdAt: now,
         lastLoginAt: now
       }

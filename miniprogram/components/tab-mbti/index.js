@@ -46,6 +46,19 @@ Component({
   },
 
   // ----------------------------------------------------------
+  //  属性监听：shell 更新 darkTheme 属性时立即同步
+  // ----------------------------------------------------------
+  observers: {
+    darkTheme(isDark) {
+      const app = getApp()
+      const hex = app.globalData.darkThemeAccent || '#FF6B6B'
+      if (hex !== this.data.themeColor) {
+        this.setData({ themeColor: hex, themeColorRgb: hexToRgb(hex) })
+      }
+    }
+  },
+
+  // ----------------------------------------------------------
   //  页面数据
   // ----------------------------------------------------------
   data: {
@@ -97,6 +110,7 @@ Component({
     startBtnShaking: false,      // 开始按钮抖动
     submitBtnWarn: '',           // 提交按钮警告文字
     submitBtnShaking: false,     // 提交按钮抖动
+    submitConfirmPending: false, // 提交二次确认待确认
 
     // ——— 元素动画 class ———
     mbtiCardAnim: '',            // MBTI 卡片动画
@@ -132,7 +146,6 @@ Component({
       const isDark = !!app.globalData.darkTheme
       const hex = app.globalData.darkThemeAccent || '#FF6B6B'
       this.setData({
-        darkTheme: isDark,
         themeColor: hex,
         themeColorRgb: hexToRgb(hex),
       })
@@ -151,6 +164,9 @@ Component({
     // 如果上次提交未完成（页面被切走了），重置提交状态
     if (this.data.isSubmitting) {
       this.setData({ isSubmitting: false })
+    }
+    if (this.data.submitConfirmPending) {
+      this.setData({ submitConfirmPending: false, submitBtnShaking: false })
     }
 
     const app = getApp()
@@ -187,14 +203,15 @@ Component({
     const isDark = !!app.globalData.darkTheme
     const hex = app.globalData.darkThemeAccent || '#FF6B6B'
     const updates = {}
-    if (isDark !== this.data.darkTheme) updates.darkTheme = isDark
     if (hex !== this.data.themeColor) {
       updates.themeColor = hex
       updates.themeColorRgb = hexToRgb(hex)
     }
     if (Object.keys(updates).length > 0) {
       this.setData(updates)
-      this.triggerEvent('themeChange', { isDark, accentColor: hex })
+      wx.nextTick(() => {
+        this.triggerEvent('themeChange', { isDark, accentColor: hex })
+      })
     }
   },
 
@@ -386,29 +403,12 @@ Component({
       return
     }
 
-    // 1. 先从云函数获取题目
-    const result = await questionService.getRandomQuestions({ count: QUESTION_COUNT })
-    if (!result.success || !result.data || !result.data.questions) {
-      this._shakeButton('start', '题目加载失败，请重试')
-      return
-    }
-    const questions = this._mapCloudQuestions(result.data.questions)
-
-    // 校验题目数据完整性（缺少 question 字段则报错）
-    const badQ = questions.find(q => !q.question || typeof q.question !== 'string' || q.question.trim() === '')
-    if (badQ) {
-      console.error('[MBTI] 题目数据异常，缺少 question 字段。原始云函数返回:', JSON.stringify(result.data.questions).substring(0, 500))
-      this._shakeButton('start', '题目数据异常，请联系开发者')
-      return
-    }
-
-    // 2. 三个元素各自随机掉落时长 300~600ms
+    // 1. 立即启动掉落动画（不等云函数）
     const dur1 = (300 + Math.random() * 300).toFixed(0) + 'ms'
     const dur2 = (300 + Math.random() * 300).toFixed(0) + 'ms'
     const dur3 = (300 + Math.random() * 300).toFixed(0) + 'ms'
     const maxDur = Math.max(parseInt(dur1), parseInt(dur2), parseInt(dur3))
 
-    // 收起已展开的选择器，开始掉落动画
     this.setData({
       selectLeaving: true,
       isMbtiSelecting: false,
@@ -423,8 +423,44 @@ Component({
       startBtnDur: 'animation-duration:' + dur3,
     })
 
-    // 暂存答题数据（动画完成后再写入）
-    this._pendingQuiz = {
+    // 2. 并行请求云函数题目
+    const fetchPromise = questionService.getRandomQuestions({ count: QUESTION_COUNT })
+
+    // 3. 等掉落动画完成
+    await new Promise(resolve => setTimeout(resolve, maxDur + 80))
+
+    // 4. 拿题目结果
+    const result = await fetchPromise
+    if (!result.success || !result.data || !result.data.questions) {
+      // 请求失败 → 回退到选择阶段
+      this.setData({
+        selectLeaving: false,
+        mbtiCardAnim: '', genderCardAnim: '', startBtnAnim: '',
+        mbtiCardDur: '', genderCardDur: '', startBtnDur: '',
+      })
+      this._shakeButton('start', '题目加载失败，请重试')
+      return
+    }
+    const questions = this._mapCloudQuestions(result.data.questions)
+
+    const badQ = questions.find(q => !q.question || typeof q.question !== 'string' || q.question.trim() === '')
+    if (badQ) {
+      console.error('[MBTI] 题目数据异常，缺少 question 字段。原始云函数返回:', JSON.stringify(result.data.questions).substring(0, 500))
+      this.setData({
+        selectLeaving: false,
+        mbtiCardAnim: '', genderCardAnim: '', startBtnAnim: '',
+        mbtiCardDur: '', genderCardDur: '', startBtnDur: '',
+      })
+      this._shakeButton('start', '题目数据异常，请联系开发者')
+      return
+    }
+
+    // 5. 切换到答题阶段
+    this.setData({
+      phase: 'quiz',
+      selectLeaving: false,
+      mbtiCardAnim: '', genderCardAnim: '', startBtnAnim: '',
+      mbtiCardDur: '', genderCardDur: '', startBtnDur: '',
       questions,
       currentIndex: 0,
       answers: {},
@@ -434,29 +470,15 @@ Component({
       answeredPercent: '0%',
       cancelConfirmPending: false,
       isSubmitting: false,
-    }
-
-    // 3. 掉落动画结束后切换到答题阶段
+      questionAnim: 'anim-drop-in',
+      progressAnim: 'anim-hidden',
+      actionsAnim: 'anim-hidden',
+    })
+    setTimeout(() => { this.setData({ progressAnim: 'anim-fade-in' }) }, 200)
+    setTimeout(() => { this.setData({ actionsAnim: 'anim-fade-in' }) }, 350)
     setTimeout(() => {
-      const d = this._pendingQuiz
-      this.setData({
-        phase: 'quiz',
-        selectLeaving: false,
-        mbtiCardAnim: '', genderCardAnim: '', startBtnAnim: '',
-        mbtiCardDur: '', genderCardDur: '', startBtnDur: '',
-        ...d,
-        questionAnim: 'anim-drop-in',    // 题目下落
-        progressAnim: 'anim-hidden',     // 进度条先隐藏
-        actionsAnim: 'anim-hidden',      // 按钮先隐藏
-      })
-      // 题目落下后，进度条和按钮依次淡入
-      setTimeout(() => { this.setData({ progressAnim: 'anim-fade-in' }) }, 200)
-      setTimeout(() => { this.setData({ actionsAnim: 'anim-fade-in' }) }, 350)
-      // 清除所有动画 class（避免干扰后续翻页）
-      setTimeout(() => {
-        this.setData({ questionAnim: '', progressAnim: '', actionsAnim: '' })
-      }, 700)
-    }, maxDur + 80)
+      this.setData({ questionAnim: '', progressAnim: '', actionsAnim: '' })
+    }, 700)
   },
 
   /**
@@ -547,6 +569,7 @@ Component({
       answeredPercent: Math.round((newCount / this.data.questions.length) * 100) + '%',
     }
     if (cancelConfirmPending) updates.cancelConfirmPending = false  // 取消确认重置
+    if (this.data.submitConfirmPending) updates.submitConfirmPending = false  // 提交确认重置
     this.setData(updates)
   },
 
@@ -604,7 +627,7 @@ Component({
    * 3. 区分首次生成 / 续写模式，存入 globalData 并跳转 Story 页
    */
   onSubmit() {
-    const { answerCount, questions } = this.data
+    const { answerCount, questions, submitConfirmPending, isContinueMode } = this.data
     // 未答完 → 抖动提示
     if (answerCount < questions.length) {
       this._shakeButton('submit', '请答完所有题目')
@@ -612,7 +635,19 @@ Component({
     }
     if (this.data.isSubmitting) return  // 防止重复提交
 
-    const { answers, selectedMbti, selectedGender, isContinueMode, sessionId } = this.data
+    // 首次生成模式：二次确认
+    if (!isContinueMode && !submitConfirmPending) {
+      this.setData({ submitConfirmPending: true, submitBtnShaking: false })
+      setTimeout(() => { this.setData({ submitBtnShaking: true }) }, 30)
+      clearTimeout(this._submitConfirmTimer)
+      this._submitConfirmTimer = setTimeout(() => {
+        this.setData({ submitConfirmPending: false, submitBtnShaking: false })
+      }, 3000)
+      return
+    }
+    this.setData({ submitConfirmPending: false })
+
+    const { answers, selectedMbti, selectedGender, sessionId } = this.data
 
     // 将本地答题数据转换为云函数期望的格式 [{ question, options, selected }]
     const formattedAnswers = questions.map(q => ({

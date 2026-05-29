@@ -186,7 +186,7 @@ Page({
     query.select('.card-back-face').boundingClientRect(function (rect) {
       if (rect && rect.width > 0 && rect.height > 0) {
         // px → rpx 换算
-        const { windowWidth } = wx.getSystemInfoSync()
+        const { windowWidth } = wx.getWindowInfo()
         const ratio = 750 / windowWidth
         self.setData({
           constellation: constellationRing.maybeGenConstellation(rect.width * ratio, rect.height * ratio),
