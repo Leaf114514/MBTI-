@@ -98,7 +98,7 @@ page {
   font-size: 80rpx;
   font-weight: var(--font-weight-bold);
   color: #FFFFFF;
-  -webkit-text-stroke: 1rpx rgba(255, 107, 107, 0.6);
+  -webkit-text-stroke: 1rpx rgba(var(--color-primary-rgb), 0.6);
   margin-bottom: var(--spacing-lg);
 }
 
@@ -163,6 +163,10 @@ page {
   height: 32rpx;
 }
 
+.page-dark .home-icon {
+  filter: brightness(0) invert(1);
+}
+
 /* 第二行：标题 + 徽章水平对齐 */
 .header-title-row {
   display: flex;
@@ -201,6 +205,10 @@ page {
   line-height: 1;
 }
 
+.page-dark .round-count-badge text {
+  color: #1A1A1A;
+}
+
 /* ===== 历史按钮（固定高度，与续写气泡一致） ===== */
 .header-badge {
   height: 36rpx;
@@ -208,14 +216,14 @@ page {
   padding: 0 16rpx;
   display: flex;
   align-items: center;
-  background-color: rgba(167, 139, 250, 0.12);
+  background-color: rgba(var(--color-primary-rgb), 0.12);
   border-radius: var(--radius-sm);
   flex-shrink: 0;
 }
 
 .header-badge text {
   font-size: var(--font-size-micro);
-  color: var(--color-accent-purple);
+  color: var(--color-text-primary);
   font-weight: var(--font-weight-medium);
   line-height: 1;
 }
@@ -227,8 +235,8 @@ page {
 /* 红色分隔线（淡色 + 阴影） */
 .header-divider {
   height: 2rpx;
-  background-color: rgba(255, 107, 107, 0.3);
-  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.15);
+  background-color: rgba(var(--color-primary-rgb), 0.3);
+  box-shadow: 0 4rpx 16rpx rgba(var(--color-primary-rgb), 0.15);
 }
 
 /* ===== 故事内容区 ===== */
@@ -269,7 +277,7 @@ page {
 
 .story-text text {
   font-size: var(--font-size-body);
-  color: #333333;
+  color: var(--color-text-primary);
   line-height: var(--line-height-relaxed);
   text-indent: 2em;
   display: block;
@@ -351,7 +359,7 @@ page {
 
 /* 展开后注释内容（颜色更淡） */
 .annotation-expand-content {
-  background-color: rgba(255, 107, 107, 0.04);
+  background-color: rgba(var(--color-primary-rgb), 0.04);
   border-radius: var(--radius-md);
   padding: var(--spacing-md) var(--spacing-lg);
 }
@@ -403,11 +411,19 @@ page {
   color: var(--color-primary);
 }
 
+.page-dark .btn-outline {
+  background-color: var(--color-bg-card);
+}
+
 /* 续写按钮：红色底白字 */
 .btn-solid {
   background-color: var(--color-primary);
   color: #FFFFFF;
   border: none;
+}
+
+.page-dark .btn-solid {
+  color: #1A1A1A;
 }
 
 /* 通用抖动动画 */

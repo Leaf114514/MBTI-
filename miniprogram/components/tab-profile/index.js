@@ -1,5 +1,5 @@
 // ============================================================
-//  page/profile/index.js — 个人中心页（Tab 3）
+//  components/tab-profile/index.js — 个人中心（Tab 3）组件版
 // ============================================================
 //  职责：
 //    1. MBTI 类型选择器（双列滚轮展开/收起）
@@ -15,6 +15,7 @@ const MBTI_TAIL = ['TJ', 'TP', 'FJ', 'FP']
 
 // 背景形状动画 behavior
 const fallingShapes = require('../../behaviors/falling-shapes')
+const { hexToRgb } = require('../../common/color-utils')
 
 // ----------------------------------------------------------
 //  16 种 MBTI 的中文描述（用于 Profile 页展示）
@@ -41,18 +42,31 @@ const MBTI_DESC = {
 // 选择器收起飞出动画时长（ms），需与 WXSS 保持一致
 const ANIM_OUT_DURATION = 260
 
-Page({
+Component({
   // 混入背景形状动画
   behaviors: [fallingShapes],
 
   // ----------------------------------------------------------
-  //  页面数据
+  //  组件属性
+  // ----------------------------------------------------------
+  properties: {
+    active: {
+      type: Boolean,
+      value: false,
+    },
+    darkTheme: {
+      type: Boolean,
+      value: false,
+    },
+  },
+
+  // ----------------------------------------------------------
+  //  组件数据
   // ----------------------------------------------------------
   data: {
     // 选择器数据源
     MBTI_HEAD,
     MBTI_TAIL,
-    darkTheme: false,
 
     // MBTI 选择器状态
     isMbtiSelecting: false,      // 选择器是否展开
@@ -65,29 +79,44 @@ Page({
     // 形状动画开关
     toggleLabel: 'O',            // O=显示 / \=关闭
     toggleShaking: false,        // 开关抖动动画
+
+    themeColor: '#FF6B6B',
+    themeColorRgb: '255, 107, 107',
   },
 
   // ----------------------------------------------------------
-  //  页面加载：读取已有 MBTI + 同步开关状态
+  //  生命周期：组件附加 — 初始化 MBTI + 开关状态
   // ----------------------------------------------------------
-  onLoad() {
+  lifetimes: {
+    attached() {
+      this._loadMbti()
+      const app = getApp()
+      const enabled = app.globalData.shapesEnabled !== false
+      const isDark = !!app.globalData.darkTheme
+      const hex = app.globalData.darkThemeAccent || '#FF6B6B'
+      this.setData({
+        toggleLabel: enabled ? 'O' : '\\',
+        darkTheme: isDark,
+        themeColor: hex,
+        themeColorRgb: hexToRgb(hex),
+      })
+    },
+  },
+
+  methods: {
+  // ----------------------------------------------------------
+  //  Tab 激活：刷新 MBTI + 同步主题
+  // ----------------------------------------------------------
+  onTabActive() {
     this._loadMbti()
-    const app = getApp()
-    const enabled = app.globalData.shapesEnabled !== false
-    const isDark = !!app.globalData.darkTheme
-    this.setData({ toggleLabel: enabled ? 'O' : '\\', darkTheme: isDark })
-  },
-
-  // ----------------------------------------------------------
-  //  页面显示：同步 TabBar + 入页动画 + 刷新 MBTI
-  // ----------------------------------------------------------
-  onShow() {
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 2 })
-    }
     this._syncDarkTheme()
-    this._playPageAnim()
-    this._loadMbti()
+  },
+
+  // ----------------------------------------------------------
+  //  Tab 失活（空操作）
+  // ----------------------------------------------------------
+  onTabInactive() {
+    // no-op
   },
 
   // ----------------------------------------------------------
@@ -107,35 +136,19 @@ Page({
     }
   },
 
-  // Tab 切换时的页面滑入动画
-  _playPageAnim() {
-    const app = getApp()
-    const dir = app.globalData.tabSwitchDirection
-    if (!dir) return
-    app.globalData.tabSwitchDirection = null
-    this.setData({ pageAnim: dir === 'right' ? 'page-slide-in-right' : 'page-slide-in-left' })
-    setTimeout(() => { this.setData({ pageAnim: '' }) }, 320)
-  },
-
   _syncDarkTheme() {
     const app = getApp()
     const isDark = !!app.globalData.darkTheme
-    // 始终同步页面背景色（防止 Tab 切换动画时出现白屏）
-    wx.setBackgroundColor({ backgroundColor: isDark ? '#1A1A28' : '#FFFBFB' })
-    if (isDark !== this.data.darkTheme) {
-      this.setData({ darkTheme: isDark })
+    const hex = app.globalData.darkThemeAccent || '#FF6B6B'
+    const updates = {}
+    if (isDark !== this.data.darkTheme) updates.darkTheme = isDark
+    if (hex !== this.data.themeColor) {
+      updates.themeColor = hex
+      updates.themeColorRgb = hexToRgb(hex)
     }
-    // 每个页面的 TabBar / 导航栏实例独立，每次 onShow 都需同步
-    wx.setNavigationBarColor({
-      frontColor: isDark ? '#ffffff' : '#000000',
-      backgroundColor: isDark ? '#1E1E2A' : '#ffffff',
-      animation: { duration: 200, timingFunc: 'easeIn' }
-    })
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({
-        darkMode: isDark,
-        themeColor: app.globalData.darkThemeAccent || '#e74c3c'
-      })
+    if (Object.keys(updates).length > 0) {
+      this.setData(updates)
+      this.triggerEvent('themeChange', { isDark, accentColor: hex })
     }
   },
 
@@ -216,9 +229,9 @@ Page({
     wx.navigateTo({ url: '/page/history/history' })
   },
 
-  // 跳转故事生成页（Tab 页）
+  // 跳转故事生成页 → 通知父组件切换 Tab
   onGoStory() {
-    wx.switchTab({ url: '/page/mbti/index' })
+    this.triggerEvent('switchTab', { index: 1 })
   },
 
   // =============================================
@@ -241,5 +254,6 @@ Page({
     setTimeout(() => {
       this.setData({ toggleShaking: false })
     }, 500)
+  },
   },
 })

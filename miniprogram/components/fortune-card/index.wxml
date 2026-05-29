@@ -21,7 +21,7 @@
   ========================================
 -->
 <import src="/common/corner-decorations/decorations.wxml" />
-<view class="fortune-card {{contentVisible ? 'content-visible' : ''}}" style="--accent: {{accentColor}}; --ar: {{accentRgb}};">
+<view class="fortune-card anim-phase-{{animPhase}} {{isLightAccent ? 'theme-dark' : ''}}" style="--accent: {{accentColor}}; --ar: {{accentRgb}}; --color-primary:{{themeColor}}; --color-primary-rgb:{{themeColorRgb}}">
   <!-- 四角装饰（与卡背统一使用 corner-decorations 体系） -->
   <template is="corner-decorations" data="{{cornerDecor}}" />
 
@@ -50,10 +50,10 @@
       </view>
     </block>
 
-    <!-- ----- 签语正文：装饰曼陀罗 + 引号包裹的文案 ----- -->
+    <!-- ----- 签语正文：多层动画结构 ----- -->
     <block wx:elif="{{message}}">
       <view class="card-center">
-        <!-- 装饰性曼陀罗花纹（同心圆 + 十字线 + 类型水印） -->
+        <!-- Layer 0: 曼陀罗背景 -->
         <view class="card-mandala">
           <view class="mandala-outer"></view>
           <view class="mandala-ring"></view>
@@ -61,7 +61,33 @@
           <view class="mandala-cross"></view>
           <text class="mandala-type">{{mbtiType}}</text>
         </view>
-        <!-- 正文：左侧「右侧」包裹的签语文案 -->
+
+        <!-- Layer 1: 大阿卡纳牌面 -->
+        <view class="arcana-illustration" wx:if="{{arcanaCard}}">
+          <view class="arcana-card-frame">
+            <view class="arcana-shapes-wrap">
+              <block wx:for="{{arcanaCard.shapes}}" wx:key="index">
+                <view wx:if="{{item.type === 'circle'}}"
+                  class="arcana-shape arcana-circle"
+                  style="left:{{item.x - item.r}}rpx;top:{{item.y - item.r}}rpx;width:{{item.r * 2}}rpx;height:{{item.r * 2}}rpx;"></view>
+                <view wx:if="{{item.type === 'line'}}"
+                  class="arcana-shape arcana-line"
+                  style="left:{{item.x1}}rpx;top:{{item.y1}}rpx;width:{{item.len}}rpx;transform:rotate({{item.angle}}deg);"></view>
+                <view wx:if="{{item.type === 'rect'}}"
+                  class="arcana-shape arcana-rect"
+                  style="left:{{item.x}}rpx;top:{{item.y}}rpx;width:{{item.w}}rpx;height:{{item.h}}rpx;"></view>
+              </block>
+            </view>
+            <text class="arcana-numeral">{{arcanaCard.numeral}}</text>
+          </view>
+        </view>
+
+        <!-- Layer 2: 牌名（从上方坠落到分割线上方） -->
+        <view class="arcana-name-area" wx:if="{{arcanaCard}}">
+          <text class="arcana-name">{{arcanaCard.name}}</text>
+        </view>
+
+        <!-- Layer 3: 签语正文 -->
         <view class="fortune-message-wrap">
           <text class="fortune-quote-left">「</text>
           <text class="fortune-message">{{message}}</text>

@@ -86,9 +86,11 @@ App({
   // ----------------------------------------------------------
   globalData: {
     theme: wx.getSystemInfoSync().theme,
-    themeColor: '#e74c3c',
+    themeColor: '#FF6B6B',
     hasLogin: false,
     openid: null,
     shapesEnabled: wx.getStorageSync('shapesEnabled') !== false,
+    darkTheme: false,
+    darkThemeAccent: '#FF6B6B',
   }
 })

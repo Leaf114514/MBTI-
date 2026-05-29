@@ -113,10 +113,11 @@
  /* 在这里引入了各种可以调用的wxss参数，内容预复制小叶子的预设计，有略微修改 */
 /* ===== 颜色系统 ===== */
 page {
-  background: linear-gradient(180deg, #FFFBFB 0%, #FFF5F5 100%);
+  background-color: #FFFBFB;
 
   /* 主色 */
   --color-primary: #FF6B6B;
+  --color-primary-rgb: 255, 107, 107;
   --color-primary-light: #FF8E8E;
   --color-primary-dark: #E85555;
 
@@ -197,6 +198,26 @@ page {
   --color-back-pink-deep: 255, 160, 160;  /* 深粉 — 主星高亮 / 星芒 */
 }
 
+/* ===== 暗色主题覆盖（浅色幸运色时通过 .page-dark 启用） ===== */
+.page-dark {
+  background: #1A1A28;
+  --color-bg-page: #1A1A28;
+  --color-bg-card: #2A2A3A;
+  --color-bg-input: #2A2A3A;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: rgba(255, 255, 255, 0.65);
+  --color-text-tertiary: rgba(255, 255, 255, 0.4);
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-divider: rgba(255, 255, 255, 0.06);
+  --shadow-card: 0 4rpx 24rpx rgba(0, 0, 0, 0.25);
+}
+
+/* 浅色幸运色时按钮背景偏浅，文字改为深色以保证可读性 */
+.page-dark .btn-primary,
+.page-dark .picker-confirm-btn {
+  color: #1A1A1A;
+}
+
 /* ===== 掉落几何图形（通用） ===== */
 .shapes-container {
   position: absolute;
@@ -260,8 +281,8 @@ page {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
-  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.35);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  box-shadow: 0 4rpx 16rpx rgba(var(--color-primary-rgb), 0.35);
   z-index: 10;
 }
 
@@ -312,7 +333,7 @@ page {
   align-items: center;
   justify-content: center;
   height: 88rpx;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  background-color: var(--color-primary);
   color: var(--color-text-inverse);
   font-size: var(--font-size-body);
   font-weight: var(--font-weight-medium);
@@ -336,7 +357,7 @@ page {
   align-items: center;
   justify-content: center;
   height: 72rpx;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  background-color: var(--color-primary);
   color: var(--color-text-inverse);
   font-size: var(--font-size-body);
   font-weight: var(--font-weight-medium);

@@ -9,7 +9,7 @@
   状态流转：isLoading → 加载 / hasError → 错误 / else → 故事
   ========================================
 -->
-<view class="page-container">
+<view class="page-container {{darkTheme ? 'page-dark' : ''}}" style="--color-primary:{{themeColor}};--color-primary-rgb:{{themeColorRgb}}">
   <!-- ================================================================== -->
   <!-- 加载态：双进度条 + 弹跳点 + 文案                                       -->
   <!-- ================================================================== -->

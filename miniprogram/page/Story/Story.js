@@ -18,6 +18,7 @@
 const API_BASE = 'https://your-api-endpoint.com/api'
 const TEST_CONTENT = require('./test-content.js')          // 本地测试数据
 const storyService = require('../../services/story-service') // 故事云服务
+const { hexToRgb } = require('../../common/color-utils')
 
 Page({
   // ----------------------------------------------------------
@@ -57,7 +58,11 @@ Page({
     continueConfirming: false,
 
     // 续写次数（后端传入，默认 1）
-    continueCount: 1
+    continueCount: 1,
+
+    darkTheme: false,
+    themeColor: '#FF6B6B',
+    themeColorRgb: '255, 107, 107',
   },
 
   // ----------------------------------------------------------
@@ -78,11 +83,16 @@ Page({
     this._sessionId = (options && options.sessionId) || ''
     this._mode = mode
 
+    const app = getApp()
+
     this.setData({
       statusBarHeight,
       navBarHeight: statusBarHeight + 80,
       progressTop: statusBarHeight + 90,  // 进度条从导航栏下方开始
-      progressBottom: 100
+      progressBottom: 100,
+      darkTheme: !!app.globalData.darkTheme,
+      themeColor: app.globalData.darkThemeAccent || '#FF6B6B',
+      themeColorRgb: hexToRgb(app.globalData.darkThemeAccent || '#FF6B6B'),
     })
 
     this.loadStory()
@@ -498,7 +508,7 @@ Page({
       wx.navigateBack()          // 有上一页 → 返回
       return
     }
-    wx.switchTab({ url: '/page/mbti/index' })  // 无上一页 → 跳到故事 Tab
+    wx.reLaunch({ url: '/page/shell/index?tab=1' })
   },
 
   // 续写 → 回到 mbti 页的续写答题流程
@@ -512,7 +522,8 @@ Page({
       }
       // 保存当前所有轮次（续写完成后追加展示）
       app.globalData.prevStoryRounds = this.data.storyRounds
-      wx.switchTab({ url: '/page/mbti/index' })
+      app.globalData.pendingTab = 1
+      wx.navigateBack()
     })
   },
 
@@ -525,7 +536,8 @@ Page({
 
   // 跳转主页
   goHome() {
-    wx.switchTab({ url: '/page/home/index' })
+    getApp().globalData.pendingTab = 0
+    wx.navigateBack()
   },
 
   // ----------------------------------------------------------

@@ -187,9 +187,9 @@ Page({
 
       console.log('Login success:', result)
 
-      // 600ms 后跳转到主页
+      // 600ms 后启动 shell 页（全新实例，避免页面栈残留）
       setTimeout(() => {
-        wx.switchTab({ url: '/page/home/index' })
+        wx.reLaunch({ url: '/page/shell/index' })
       }, 600)
 
     } catch (err) {

@@ -1,5 +1,5 @@
 // ============================================================
-//  page/mbti/index.js — 故事生成页（Tab 2）
+//  components/tab-mbti/index.js — 故事生成页（Tab 2）
 // ============================================================
 //  职责：
 //    1. 选择阶段：MBTI 类型选择器 + 性别选择器 → 开始答题
@@ -13,6 +13,7 @@
 const questionService = require('../../services/question-service')   // 题目获取
 const storyService = require('../../services/story-service')         // 故事 session 管理
 const fallingShapes = require('../../behaviors/falling-shapes')      // 背景形状动画
+const { hexToRgb } = require('../../common/color-utils')
 
 // MBTI 头部 —— 第一列滚轮选项（决定内向/外向 + 感知/直觉）
 const MBTI_HEAD = ['IN', 'IS', 'EN', 'ES']
@@ -32,9 +33,17 @@ const QUESTION_COUNT = 5
 // 翻页动画时长（ms）
 const FLIP_DURATION = 250
 
-Page({
+Component({
   // 混入背景形状动画
   behaviors: [fallingShapes],
+
+  // ----------------------------------------------------------
+  //  组件属性
+  // ----------------------------------------------------------
+  properties: {
+    active: { type: Boolean, value: false },
+    darkTheme: { type: Boolean, value: false },
+  },
 
   // ----------------------------------------------------------
   //  页面数据
@@ -42,7 +51,6 @@ Page({
   data: {
     // ——— 页面阶段 ———
     phase: 'select', // 'select' 选择阶段 | 'quiz' 答题阶段
-    darkTheme: false,
 
     // ——— 转场标记（转场期间需要保留旧阶段 DOM） ———
     selectLeaving: false, // 选择器正在掉落离场
@@ -113,26 +121,32 @@ Page({
     sessionId: '',               // 故事会话 ID
     storyWordCount: 0,
     canContinue: false,
+
+    themeColor: '#FF6B6B',
+    themeColorRgb: '255, 107, 107',
   },
 
-  onLoad() {
-    const isDark = !!getApp().globalData.darkTheme
-    if (isDark) this.setData({ darkTheme: isDark })
+  lifetimes: {
+    attached() {
+      const app = getApp()
+      const isDark = !!app.globalData.darkTheme
+      const hex = app.globalData.darkThemeAccent || '#FF6B6B'
+      this.setData({
+        darkTheme: isDark,
+        themeColor: hex,
+        themeColorRgb: hexToRgb(hex),
+      })
+    },
   },
 
+  methods: {
   // ----------------------------------------------------------
-  //  页面显示时：
-  //  1. 同步 TabBar
-  //  2. 播放入页动画
-  //  3. 检查是否有待处理的续写请求
-  //  4. 检查是否已有生成的故事 → 按钮变"查看故事"
+  //  Tab 激活时：
+  //  1. 检查是否有待处理的续写请求
+  //  2. 检查是否已有生成的故事 → 按钮变"查看故事"
   // ----------------------------------------------------------
-  onShow() {
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 1 })
-    }
+  onTabActive() {
     this._syncDarkTheme()
-    this._playPageAnim()
 
     // 如果上次提交未完成（页面被切走了），重置提交状态
     if (this.data.isSubmitting) {
@@ -164,33 +178,23 @@ Page({
     }
   },
 
-  // Tab 切换时的页面滑入动画
-  _playPageAnim() {
-    const app = getApp()
-    const dir = app.globalData.tabSwitchDirection
-    if (!dir) return
-    app.globalData.tabSwitchDirection = null
-    this.setData({ pageAnim: dir === 'right' ? 'page-slide-in-right' : 'page-slide-in-left' })
-    setTimeout(() => { this.setData({ pageAnim: '' }) }, 320)
+  onTabInactive() {
+    // no-op
   },
 
   _syncDarkTheme() {
     const app = getApp()
     const isDark = !!app.globalData.darkTheme
-    wx.setBackgroundColor({ backgroundColor: isDark ? '#1A1A28' : '#FFFBFB' })
-    if (isDark !== this.data.darkTheme) {
-      this.setData({ darkTheme: isDark })
+    const hex = app.globalData.darkThemeAccent || '#FF6B6B'
+    const updates = {}
+    if (isDark !== this.data.darkTheme) updates.darkTheme = isDark
+    if (hex !== this.data.themeColor) {
+      updates.themeColor = hex
+      updates.themeColorRgb = hexToRgb(hex)
     }
-    wx.setNavigationBarColor({
-      frontColor: isDark ? '#ffffff' : '#000000',
-      backgroundColor: isDark ? '#1E1E2A' : '#ffffff',
-      animation: { duration: 200, timingFunc: 'easeIn' }
-    })
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({
-        darkMode: isDark,
-        themeColor: app.globalData.darkThemeAccent || '#e74c3c'
-      })
+    if (Object.keys(updates).length > 0) {
+      this.setData(updates)
+      this.triggerEvent('themeChange', { isDark, accentColor: hex })
     }
   },
 
@@ -741,5 +745,6 @@ Page({
         text: o.text
       }))
     }))
+  },
   },
 })

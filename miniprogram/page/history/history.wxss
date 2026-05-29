@@ -2,7 +2,7 @@
 
 .page-container {
   min-height: 100vh;
-  background-color: #ffffff;
+  background-color: var(--color-bg-page, #ffffff);
   padding: var(--spacing-lg);
   padding-bottom: calc(130rpx + env(safe-area-inset-bottom));
 }
@@ -79,7 +79,7 @@
   width: 28rpx;
   height: 28rpx;
   border-radius: 50%;
-  background-color: #ffffff;
+  background-color: var(--color-bg-page, #ffffff);
   border: 1rpx solid var(--color-primary);
   z-index: 2;
   left: -14rpx;
@@ -100,6 +100,10 @@
   background-color: #ffffff;
 }
 
+.page-dark .notch-top::after {
+  background-color: #1A1A28;
+}
+
 .notch-bottom {
   bottom: -14rpx;
 }
@@ -113,6 +117,10 @@
   bottom: -1rpx;
   height: 15rpx;
   background-color: #ffffff;
+}
+
+.page-dark .notch-bottom::after {
+  background-color: #1A1A28;
 }
 
 /* ===== 主内容区 ===== */

@@ -1,0 +1,29 @@
+<!--
+  ========================================
+  Shell 页 — 单页容器，内含 swiper 三 tab + 底部 tabbar
+  ========================================
+-->
+<view class="shell-page">
+  <swiper
+    class="tab-swiper"
+    current="{{currentTab}}"
+    bindchange="onSwiperChange"
+    duration="300"
+  >
+    <swiper-item>
+      <tab-home id="tab-home" active="{{currentTab === 0}}" darkTheme="{{darkTheme}}"
+        bind:themeChange="onThemeUpdate" bind:switchTab="onSwitchTab" />
+    </swiper-item>
+    <swiper-item>
+      <tab-mbti id="tab-mbti" active="{{currentTab === 1}}" darkTheme="{{darkTheme}}"
+        bind:themeChange="onThemeUpdate" bind:switchTab="onSwitchTab" />
+    </swiper-item>
+    <swiper-item>
+      <tab-profile id="tab-profile" active="{{currentTab === 2}}" darkTheme="{{darkTheme}}"
+        bind:themeChange="onThemeUpdate" bind:switchTab="onSwitchTab" />
+    </swiper-item>
+  </swiper>
+  <tab-bar id="tab-bar" current="{{currentTab}}"
+    darkMode="{{darkTheme}}" themeColor="{{themeColor}}"
+    bind:tabSwitch="onSwitchTab" />
+</view>

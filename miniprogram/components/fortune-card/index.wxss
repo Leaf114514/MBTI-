@@ -244,16 +244,151 @@
   text-align: center;
 }
 
-/* 正文区：翻牌动画 + 颜色过渡全部结束后渐显，完全避开 3D 上下文中的文字渲染 */
+/* ===== 多阶段动画系统 ===== */
+
+/* Phase 0: 所有动画层隐藏 */
+.arcana-illustration {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 280rpx;
+  height: 360rpx;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.8s ease;
+}
+
+.arcana-name-area {
+  position: absolute;
+  bottom: -10rpx;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 3;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
 .fortune-message-wrap,
 .card-bottom {
   opacity: 0;
-  transition: opacity 0.5s ease 0.1s;
+  transition: opacity 0.5s ease;
 }
 
-.fortune-card.content-visible .fortune-message-wrap,
-.fortune-card.content-visible .card-bottom {
+/* Phase 1: 大阿卡纳牌面渐显 */
+.anim-phase-1 .arcana-illustration {
   opacity: 1;
+}
+
+/* Phase 2: 牌名坠落 + 牌面淡出背景 */
+@keyframes arcana-name-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-60rpx);
+  }
+  40% {
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(6rpx);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.anim-phase-2 .arcana-illustration,
+.anim-phase-3 .arcana-illustration,
+.anim-phase-4 .arcana-illustration {
+  opacity: 0.1;
+  transform: translate(-50%, -50%) scale(0.92);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.anim-phase-2 .arcana-name-area,
+.anim-phase-3 .arcana-name-area,
+.anim-phase-4 .arcana-name-area {
+  opacity: 1;
+  animation: arcana-name-drop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Phase 2: 关键词 + 分割线渐显（与牌名坠落同步） */
+.anim-phase-2 .card-bottom,
+.anim-phase-3 .card-bottom,
+.anim-phase-4 .card-bottom {
+  opacity: 1;
+}
+
+/* Phase 3: 正文渐显 */
+.anim-phase-3 .fortune-message-wrap,
+.anim-phase-4 .fortune-message-wrap {
+  opacity: 1;
+}
+
+/* ===== 大阿卡纳牌面样式 ===== */
+
+.arcana-card-frame {
+  width: 100%;
+  height: 100%;
+  border: 3rpx solid rgba(var(--ar), 0.35);
+  border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(var(--ar), 0.06) 0%,
+    transparent 60%
+  );
+}
+
+.arcana-shapes-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.arcana-shape {
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.arcana-circle {
+  border: 4rpx solid rgba(var(--ar), 0.55);
+  border-radius: 50%;
+}
+
+.arcana-line {
+  height: 4rpx;
+  background-color: rgba(var(--ar), 0.5);
+  transform-origin: 0 50%;
+}
+
+.arcana-rect {
+  border: 4rpx solid rgba(var(--ar), 0.5);
+  border-radius: 4rpx;
+}
+
+.arcana-numeral {
+  position: absolute;
+  bottom: 12rpx;
+  right: 16rpx;
+  font-size: 30rpx;
+  color: rgba(var(--ar), 0.5);
+  font-weight: var(--font-weight-bold);
+}
+
+/* ===== 牌名样式 ===== */
+
+.arcana-name {
+  font-size: 56rpx;
+  font-weight: var(--font-weight-bold);
+  color: var(--accent);
+  letter-spacing: 20rpx;
+  margin-right: -20rpx;
+  text-shadow: 0 2rpx 16rpx rgba(var(--ar), 0.2);
+  transition: color 1.5s ease;
 }
 
 .fortune-error-text {
@@ -334,7 +469,7 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 2rpx solid rgba(255, 107, 107, 0.15);
+  border: 2rpx solid rgba(var(--color-primary-rgb), 0.15);
 }
 
 .back-ring-inner {
@@ -344,7 +479,7 @@
   right: 20rpx;
   bottom: 20rpx;
   border-radius: 50%;
-  border: 1rpx dashed rgba(255, 107, 107, 0.1);
+  border: 1rpx dashed rgba(var(--color-primary-rgb), 0.1);
 }
 
 .back-symbol {
@@ -354,7 +489,7 @@
   transform: translate(-50%, -50%);
   font-size: 80rpx;
   font-weight: var(--font-weight-bold);
-  color: rgba(255, 107, 107, 0.12);
+  color: rgba(var(--color-primary-rgb), 0.12);
 }
 
 .card-back-text {
@@ -365,8 +500,8 @@
 
 .prompt-btn {
   padding: var(--spacing-sm) var(--spacing-xl);
-  background: rgba(255, 107, 107, 0.06);
-  border: 1rpx solid rgba(255, 107, 107, 0.25);
+  background: rgba(var(--color-primary-rgb), 0.06);
+  border: 1rpx solid rgba(var(--color-primary-rgb), 0.25);
   color: var(--color-primary);
   font-size: var(--font-size-body);
   border-radius: var(--radius-full);
@@ -375,7 +510,7 @@
 
 .prompt-btn:active {
   opacity: 0.9;
-  background-color: rgba(255, 107, 107, 0.1);
+  background-color: rgba(var(--color-primary-rgb), 0.1);
 }
 
 /* Loading */
@@ -389,4 +524,66 @@
   font-size: var(--font-size-caption);
   color: var(--color-text-tertiary);
   border-radius: var(--radius-lg);
+}
+
+/* ===== 暗色主题（浅色幸运色时自动启用） ===== */
+/* 组件级兜底变量会覆盖继承的 .page-dark 值，需在此处显式重置 */
+
+.theme-dark {
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: rgba(255, 255, 255, 0.65);
+  --color-text-tertiary: rgba(255, 255, 255, 0.4);
+  background: linear-gradient(
+    180deg,
+    var(--color-bg-card) 0%,
+    rgba(var(--ar), 0.08) 40%,
+    rgba(var(--ar), 0.12) 100%
+  );
+  border-color: rgba(var(--ar), 0.5);
+}
+
+.theme-dark::after {
+  border-color: rgba(var(--ar), 0.2);
+}
+
+.theme-dark .fortune-quote-left,
+.theme-dark .fortune-quote-right {
+  color: var(--accent);
+  opacity: 0.6;
+}
+
+.theme-dark .mandala-outer {
+  border-color: rgba(var(--ar), 0.15);
+}
+
+.theme-dark .mandala-ring {
+  border-color: rgba(var(--ar), 0.18);
+}
+
+.theme-dark .mandala-inner {
+  border-color: rgba(var(--ar), 0.14);
+}
+
+.theme-dark .mandala-cross::before,
+.theme-dark .mandala-cross::after {
+  background-color: rgba(var(--ar), 0.12);
+}
+
+.theme-dark .mandala-type {
+  color: var(--accent);
+  opacity: 0.12;
+}
+
+.theme-dark .arcana-card-frame {
+  border-color: rgba(var(--ar), 0.35);
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(var(--ar), 0.08) 0%,
+    transparent 60%
+  );
+}
+
+.theme-dark .fortune-loading {
+  background-color: rgba(30, 30, 42, 0.7);
+  color: var(--color-text-tertiary);
 }

@@ -55,6 +55,7 @@ Component({
   data: {
     selected: 0,
     themeColor: '#e74c3c',
+    darkMode: false,
     tabList: [],
   },
 
@@ -86,12 +87,13 @@ Component({
     //  避免在 WXML 中用复杂逻辑动态切换图片
     // ----------------------------------------------------------
     _updateIcons() {
-      const { themeColor, selected } = this.data
+      const { themeColor, selected, darkMode } = this.data
+      const grayColor = darkMode ? 'rgba(255,255,255,0.35)' : '#999999'
       const tabList = TAB_LIST.map((tab, index) => ({
         ...tab,
-        graySrc: buildSvgDataUri(SVG_PATHS[tab.icon], '#999999'),  // 未选中：灰色
-        colorSrc: buildSvgDataUri(SVG_PATHS[tab.icon], themeColor), // 选中：主题色
-        active: index === selected,                                  // 是否当前 Tab
+        graySrc: buildSvgDataUri(SVG_PATHS[tab.icon], darkMode ? '#555555' : '#999999'),
+        colorSrc: buildSvgDataUri(SVG_PATHS[tab.icon], themeColor),
+        active: index === selected,
       }))
       this.setData({ tabList })
     },
@@ -122,6 +124,9 @@ Component({
   // ----------------------------------------------------------
   observers: {
     selected() {
+      this._updateIcons()
+    },
+    darkMode() {
       this._updateIcons()
     },
   },

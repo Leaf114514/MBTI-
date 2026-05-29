@@ -7,6 +7,11 @@
   border-top: 1rpx solid #e5e5e5;
   padding-bottom: env(safe-area-inset-bottom);
   transition: background-color 0.3s ease, border-color 0.3s ease;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
 }
 
 /* 暗色模式 */
