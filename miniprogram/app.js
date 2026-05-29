@@ -90,5 +90,7 @@ App({
     hasLogin: false,
     openid: null,
     shapesEnabled: wx.getStorageSync('shapesEnabled') !== false,
+    darkTheme: false,
+    darkThemeAccent: '#e74c3c',
   }
 })

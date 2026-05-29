@@ -10,7 +10,7 @@
   图标切换：通过叠加两张图 + class 控制显隐实现激活/非激活态平滑过渡
   ========================================
 -->
-<view class="tab-bar">
+<view class="tab-bar {{darkMode ? 'dark-mode' : ''}}">
   <!--
     遍历所有 tab 项
     - item.active 控制 active class 的追加

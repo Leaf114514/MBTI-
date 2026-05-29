@@ -1,5 +1,5 @@
 // ============================================================
-//  page/mbti/index.js — 故事生成页（Tab 2）
+//  components/tab-mbti/index.js — 故事生成页（Tab 2）
 // ============================================================
 //  职责：
 //    1. 选择阶段：MBTI 类型选择器 + 性别选择器 → 开始答题
@@ -32,9 +32,17 @@ const QUESTION_COUNT = 5
 // 翻页动画时长（ms）
 const FLIP_DURATION = 250
 
-Page({
+Component({
   // 混入背景形状动画
   behaviors: [fallingShapes],
+
+  // ----------------------------------------------------------
+  //  组件属性
+  // ----------------------------------------------------------
+  properties: {
+    active: { type: Boolean, value: false },
+    darkTheme: { type: Boolean, value: false },
+  },
 
   // ----------------------------------------------------------
   //  页面数据
@@ -42,7 +50,6 @@ Page({
   data: {
     // ——— 页面阶段 ———
     phase: 'select', // 'select' 选择阶段 | 'quiz' 答题阶段
-    darkTheme: false,
 
     // ——— 转场标记（转场期间需要保留旧阶段 DOM） ———
     selectLeaving: false, // 选择器正在掉落离场
@@ -115,24 +122,21 @@ Page({
     canContinue: false,
   },
 
-  onLoad() {
-    const isDark = !!getApp().globalData.darkTheme
-    if (isDark) this.setData({ darkTheme: isDark })
+  lifetimes: {
+    attached() {
+      const isDark = !!getApp().globalData.darkTheme
+      if (isDark) this.setData({ darkTheme: isDark })
+    },
   },
 
+  methods: {
   // ----------------------------------------------------------
-  //  页面显示时：
-  //  1. 同步 TabBar
-  //  2. 播放入页动画
-  //  3. 检查是否有待处理的续写请求
-  //  4. 检查是否已有生成的故事 → 按钮变"查看故事"
+  //  Tab 激活时：
+  //  1. 检查是否有待处理的续写请求
+  //  2. 检查是否已有生成的故事 → 按钮变"查看故事"
   // ----------------------------------------------------------
-  onShow() {
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 1 })
-    }
+  onTabActive() {
     this._syncDarkTheme()
-    this._playPageAnim()
 
     // 如果上次提交未完成（页面被切走了），重置提交状态
     if (this.data.isSubmitting) {
@@ -164,32 +168,18 @@ Page({
     }
   },
 
-  // Tab 切换时的页面滑入动画
-  _playPageAnim() {
-    const app = getApp()
-    const dir = app.globalData.tabSwitchDirection
-    if (!dir) return
-    app.globalData.tabSwitchDirection = null
-    this.setData({ pageAnim: dir === 'right' ? 'page-slide-in-right' : 'page-slide-in-left' })
-    setTimeout(() => { this.setData({ pageAnim: '' }) }, 320)
+  onTabInactive() {
+    // no-op
   },
 
   _syncDarkTheme() {
     const app = getApp()
     const isDark = !!app.globalData.darkTheme
-    wx.setBackgroundColor({ backgroundColor: isDark ? '#1A1A28' : '#FFFBFB' })
     if (isDark !== this.data.darkTheme) {
       this.setData({ darkTheme: isDark })
-    }
-    wx.setNavigationBarColor({
-      frontColor: isDark ? '#ffffff' : '#000000',
-      backgroundColor: isDark ? '#1E1E2A' : '#ffffff',
-      animation: { duration: 200, timingFunc: 'easeIn' }
-    })
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({
-        darkMode: isDark,
-        themeColor: app.globalData.darkThemeAccent || '#e74c3c'
+      this.triggerEvent('themeChange', {
+        isDark,
+        accentColor: app.globalData.darkThemeAccent || '#e74c3c'
       })
     }
   },
@@ -741,5 +731,6 @@ Page({
         text: o.text
       }))
     }))
+  },
   },
 })

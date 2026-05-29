@@ -36,9 +36,10 @@ Page({
     calcExpanded: false,
 
     // 翻牌控制
-    cardFlipMode: 0,       // 0=始终显示 / 1=每日翻牌
+    cardFlipMode: 1,       // 0=始终显示 / 1=每日翻牌
     cardRevealed: false,   // 当前是否已翻牌
     shareVisible: false,   // 分享按钮是否已渐显
+    darkTheme: false,      // 浅色幸运色暗色主题
 
     // 卡背星芒装饰点（随机生成的位置/符号/旋转）
     backSparks: [],
@@ -69,6 +70,7 @@ Page({
     this._loadUserMbti()
     this._genSparks()      // 生成卡背星芒
     this._genConstellation()  // 按概率生成卡背星座
+    this._syncDarkTheme()
   },
 
   // ----------------------------------------------------------
@@ -79,6 +81,7 @@ Page({
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 0 })
     }
+    this._syncDarkTheme()    // 先同步深色主题（防止动画白屏）
     this._playPageAnim()   // 入页滑入动画
 
     const app = getApp()
@@ -165,7 +168,7 @@ Page({
     if (this.data.cardFlipMode === 1) {
       wx.setStorageSync('lastCardReveal', new Date().toDateString())
     }
-    // 翻牌(1.04s) + 变色(1.5s) + 文本渐显(0.6s) 全部结束后渐显分享按钮
+    // 翻牌(1.04s) + 牌面动画(~1.5s) 全部结束后渐显分享按钮
     if (this._shareTimer) clearTimeout(this._shareTimer)
     this._shareTimer = setTimeout(() => {
       this.setData({ shareVisible: true })
@@ -247,6 +250,31 @@ Page({
   // 点击 MBTI 类型文字 → 跳转到个人中心去修改
   onFortuneTypeTap() {
     wx.switchTab({ url: '/page/profile/index' })
+  },
+
+  // 签语卡片主题变化（浅色幸运色 → 暗色背景）
+  onThemeChange(e) {
+    const { isLight, accentColor } = e.detail
+    this.setData({ darkTheme: isLight })
+    // 持久化到全局，其他 Tab 页同步读取
+    const app = getApp()
+    app.globalData.darkTheme = isLight
+    app.globalData.darkThemeAccent = accentColor || '#e74c3c'
+    // 同步页面背景色（防止 Tab 切换动画白屏）
+    wx.setBackgroundColor({ backgroundColor: isLight ? '#1A1A28' : '#FFFBFB' })
+    // 同步导航栏颜色
+    wx.setNavigationBarColor({
+      frontColor: isLight ? '#ffffff' : '#000000',
+      backgroundColor: isLight ? '#1E1E2A' : '#ffffff',
+      animation: { duration: 300, timingFunc: 'easeIn' }
+    })
+    // 同步 TabBar 暗色模式
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({
+        darkMode: isLight,
+        themeColor: accentColor || '#e74c3c'
+      })
+    }
   },
 
   // 分享签语 — 唤起分享面板
@@ -357,4 +385,27 @@ Page({
 
   // 空函数占位（WXML 中的占位事件绑定）
   noop() {},
+
+  // ----------------------------------------------------------
+  //  同步深色主题（Tab 切换回来时恢复状态）
+  // ----------------------------------------------------------
+  _syncDarkTheme() {
+    const app = getApp()
+    const isDark = !!app.globalData.darkTheme
+    wx.setBackgroundColor({ backgroundColor: isDark ? '#1A1A28' : '#FFFBFB' })
+    if (isDark !== this.data.darkTheme) {
+      this.setData({ darkTheme: isDark })
+    }
+    wx.setNavigationBarColor({
+      frontColor: isDark ? '#ffffff' : '#000000',
+      backgroundColor: isDark ? '#1E1E2A' : '#ffffff',
+      animation: { duration: 200, timingFunc: 'easeIn' }
+    })
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({
+        darkMode: isDark,
+        themeColor: app.globalData.darkThemeAccent || '#e74c3c'
+      })
+    }
+  },
 })

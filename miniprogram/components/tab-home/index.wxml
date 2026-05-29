@@ -1,6 +1,6 @@
 <!--
   ========================================
-  首页（home）
+  首页 Tab 组件（tab-home）
   功能：每日签语展示 + MBTI 配对计算器
   核心组件：
     · fortune-card — 塔罗风格签语卡片（翻牌交互）
@@ -9,7 +9,7 @@
 -->
 <import src="/common/constellation-ring.wxml" />
 <import src="/common/corner-decorations/decorations.wxml" />
-<view class="container {{pageAnim}} {{darkTheme ? 'page-dark' : ''}}">
+<view class="container {{darkTheme ? 'page-dark' : ''}}">
   <!-- ===== 背景掉落几何图形（由 JS 控制显隐，常驻 DOM 避免动画重置） ===== -->
   <view class="shapes-container {{shapesHidden ? 'shapes-hidden' : ''}}">
     <view wx:for="{{shapes}}" wx:key="index" class="shape shape-{{item.type}}" style="{{item.inlineStyle}}"></view>

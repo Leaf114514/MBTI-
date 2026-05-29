@@ -1,0 +1,15 @@
+<view class="tab-bar {{darkMode ? 'dark-mode' : ''}}">
+  <view
+    wx:for="{{tabList}}"
+    wx:key="pagePath"
+    class="tab-item {{item.active ? 'active' : ''}}"
+    data-index="{{index}}"
+    bindtap="onTabTap"
+  >
+    <view class="icon-wrapper">
+      <image class="tab-icon" src="{{item.graySrc}}" mode="aspectFit" />
+      <image class="tab-icon tab-icon-colored {{item.active ? 'icon-filled' : 'icon-drained'}}" src="{{item.colorSrc}}" mode="aspectFit" />
+    </view>
+    <text class="tab-text" style="color: {{item.active ? themeColor : (darkMode ? 'rgba(255,255,255,0.35)' : '#999999')}}">{{item.text}}</text>
+  </view>
+</view>

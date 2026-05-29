@@ -1,0 +1,11 @@
+.shell-page {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.tab-swiper {
+  height: 100vh;
+  width: 100%;
+}

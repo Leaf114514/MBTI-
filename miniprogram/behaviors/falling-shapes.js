@@ -41,13 +41,30 @@ module.exports = Behavior({
     this.setData({ shapes: generateShapes(12) })
   },
 
+  // active 属性 observer：swiper 切换 tab 时由 shell 控制
+  observers: {
+    active(val) {
+      if (val) {
+        const enabled = getApp().globalData.shapesEnabled !== false
+        this.setData({ shapesHidden: !enabled })
+      } else {
+        this.setData({ shapesHidden: true })
+      }
+    }
+  },
+
+  // 保留 pageLifetimes 用于整个应用前后台切换
   pageLifetimes: {
     show() {
-      const enabled = getApp().globalData.shapesEnabled !== false
-      this.setData({ shapesHidden: !enabled })
+      if (this.data.active === undefined) {
+        const enabled = getApp().globalData.shapesEnabled !== false
+        this.setData({ shapesHidden: !enabled })
+      }
     },
     hide() {
-      this.setData({ shapesHidden: true })
+      if (this.data.active === undefined) {
+        this.setData({ shapesHidden: true })
+      }
     },
   },
 })

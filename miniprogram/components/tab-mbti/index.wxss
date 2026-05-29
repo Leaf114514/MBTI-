@@ -1,7 +1,7 @@
 @import "../../common/index.wxss";
 
 /* ===== 页面根容器 ===== */
-.page-root {
+.tab-mbti-root {
   position: relative;
   min-height: 100vh;
   overflow: hidden;
@@ -9,7 +9,7 @@
   transition: background 0.3s ease;
 }
 
-.page-root.page-dark {
+.tab-mbti-root.page-dark {
   background: #1A1A28;
 }
 

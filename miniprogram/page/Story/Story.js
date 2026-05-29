@@ -498,7 +498,7 @@ Page({
       wx.navigateBack()          // 有上一页 → 返回
       return
     }
-    wx.switchTab({ url: '/page/mbti/index' })  // 无上一页 → 跳到故事 Tab
+    wx.reLaunch({ url: '/page/shell/index?tab=1' })
   },
 
   // 续写 → 回到 mbti 页的续写答题流程
@@ -512,7 +512,8 @@ Page({
       }
       // 保存当前所有轮次（续写完成后追加展示）
       app.globalData.prevStoryRounds = this.data.storyRounds
-      wx.switchTab({ url: '/page/mbti/index' })
+      app.globalData.pendingTab = 1
+      wx.navigateBack()
     })
   },
 
@@ -525,7 +526,8 @@ Page({
 
   // 跳转主页
   goHome() {
-    wx.switchTab({ url: '/page/home/index' })
+    getApp().globalData.pendingTab = 0
+    wx.navigateBack()
   },
 
   // ----------------------------------------------------------

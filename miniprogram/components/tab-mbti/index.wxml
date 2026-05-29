@@ -1,6 +1,6 @@
 <!--
   ========================================
-  MBTI 故事之旅页（mbti/index）
+  MBTI 故事之旅页（tab-mbti/index）
   功能：三步流程 — 选择 MBTI+性别 → 回答 5 个场景题 → 生成故事
   核心阶段：
     phase='select' — 选择器阶段（选 MBTI + 性别）
@@ -9,14 +9,14 @@
   续写模式：isContinueMode 为 true 时复用相同流程但文案不同
   ========================================
 -->
-<view class="page-root {{darkTheme ? 'page-dark' : ''}}">
+<view class="tab-mbti-root {{darkTheme ? 'page-dark' : ''}}">
   <!-- ===== 背景掉落几何图形（常驻 DOM，class 控制显隐） ===== -->
   <view class="shapes-container {{shapesHidden ? 'shapes-hidden' : ''}}">
     <view wx:for="{{shapes}}" wx:key="index" class="shape shape-{{item.type}}" style="{{item.inlineStyle}}"></view>
   </view>
 
   <!-- ===== 页面标题区域（全程可见） ===== -->
-  <view class="{{pageAnim}}">
+  <view>
     <view class="header-section">
       <view class="title-row">
         <text class="page-title">MBTI 故事之旅</text>
@@ -144,7 +144,7 @@
   <!-- ================================================================ -->
 
   <!-- ----- 开始答题按钮（选择器阶段可见） ----- -->
-  <view class="btn-primary start-btn {{pageAnim}} {{startBtnAnim}} {{(!selectedMbti || !selectedGender) ? 'btn-warn' : ''}} {{startBtnShaking ? 'anim-shake' : ''}}"
+  <view class="btn-primary start-btn {{startBtnAnim}} {{(!selectedMbti || !selectedGender) ? 'btn-warn' : ''}} {{startBtnShaking ? 'anim-shake' : ''}}"
     wx:if="{{phase === 'select' || selectLeaving}}"
     style="{{startBtnDur}}" bindtap="onStartQuiz">
     <!-- 未满足条件时显示警告文案，否则显示"开始答题" -->
@@ -152,7 +152,7 @@
   </view>
 
   <!-- ----- 答题底部操作栏（答题阶段可见） ----- -->
-  <view class="quiz-actions {{pageAnim}} {{actionsAnim}}" wx:if="{{phase === 'quiz' || quizLeaving}}">
+  <view class="quiz-actions {{actionsAnim}}" wx:if="{{phase === 'quiz' || quizLeaving}}">
     <!-- 左侧按钮：上下文决定功能
          故事已生成 → "再来一篇"
          当前第1题 → "取消答题"/"确认取消答题"（二次确认）

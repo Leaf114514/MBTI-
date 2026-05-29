@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "MBTI",
+  "usingComponents": {
+    "tab-home": "/components/tab-home/index",
+    "tab-mbti": "/components/tab-mbti/index",
+    "tab-profile": "/components/tab-profile/index",
+    "tab-bar": "/components/tab-bar/index"
+  }
+}

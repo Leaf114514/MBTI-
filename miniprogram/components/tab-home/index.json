@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "fortune-card": "/components/fortune-card/index"
+  }
+}

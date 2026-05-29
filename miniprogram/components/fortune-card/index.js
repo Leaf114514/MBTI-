@@ -4,11 +4,12 @@
 //  职责：
 //    1. 根据 mbtiType 调用云函数 getDailyFortune 获取当日的签语/AI 解读
 //    2. 展示签语消息、幸运色、关键词等信息
-//    3. 翻牌动效：卡背→卡面翻转时同步变换强调色
+//    3. 翻牌动效：卡背→卡面后多阶段动画（大阿卡纳→牌名坠落→正文渐显）
 //    4. 同一类型+同一天内缓存请求，避免重复调用云函数
 // ============================================================
 
 const cornerDecor = require('../../common/corner-decorations/decorations')
+const arcanaData = require('../../data/major-arcana')
 
 Component({
   // ----------------------------------------------------------
@@ -44,7 +45,9 @@ Component({
     keywords: [],
     showPrompt: true,
     cornerDecor: null,
-    contentVisible: false, // 正文是否可见（翻牌完成 + 颜色过渡结束后才渐显）
+    arcanaCard: null,             // 匹配到的大阿卡纳牌对象
+    animPhase: 0,                 // 动画阶段：0=待机 1=牌面渐显 2=牌名坠落+牌面淡出 3=正文渐显 4=完成
+    isLightAccent: false,         // 当前强调色是否为浅色（驱动暗色主题）
   },
 
   // ----------------------------------------------------------
@@ -67,33 +70,46 @@ Component({
 
     cardRevealed(val) {
       if (val) {
-        // 正文先隐藏，翻牌动画（1.04s）结束后 0.5s 渐显
-        this.setData({ contentVisible: false })
-        if (this._contentTimer) clearTimeout(this._contentTimer)
-        this._contentTimer = setTimeout(() => {
-          this.setData({ contentVisible: true })
-          this._contentTimer = null
+        // 重置动画阶段
+        this._clearAnimTimers()
+        this.setData({ animPhase: 0 })
+        // 翻牌动画（1.04s）完成后启动多阶段动画
+        this._animTimer1 = setTimeout(() => {
+          // Phase 1: 大阿卡纳牌面渐显
+          this.setData({ animPhase: 1 })
+          // Phase 2: 600ms 后牌名坠落 + 牌面淡出 + 关键词渐显
+          this._animTimer2 = setTimeout(() => {
+            this.setData({ animPhase: 2 })
+            // Phase 3: 400ms 后正文渐显
+            this._animTimer3 = setTimeout(() => {
+              this.setData({ animPhase: 3 })
+              // Phase 4: 标记完成
+              this._animTimer4 = setTimeout(() => {
+                this.setData({ animPhase: 4 })
+              }, 500)
+            }, 400)
+          }, 600)
         }, 1040)
         // 翻牌 1.04s 后渐变换色（等待翻转动效完成）
         setTimeout(() => {
           this._applyAccentTransition()
         }, 1040)
       } else {
-        // 翻回：立即隐藏正文，恢复默认酒红色
-        if (this._contentTimer) { clearTimeout(this._contentTimer); this._contentTimer = null }
-        this.setData({ contentVisible: false })
+        // 翻回：重置动画，恢复默认酒红色
+        this._clearAnimTimers()
+        this.setData({ animPhase: 0 })
         this._resetToWine()
       }
     }
   },
 
   lifetimes: {
-    // 组件挂载时初始化日期 + 随机四角装饰 + 已翻牌时正文直接可见
+    // 组件挂载时初始化日期 + 随机四角装饰
     attached() {
       this._updateDate()
       this.setData({
         cornerDecor: cornerDecor.getCornerDecor(),
-        contentVisible: this.data.cardRevealed,
+        animPhase: this.data.cardRevealed ? 4 : 0,
       })
     }
   },
@@ -123,13 +139,38 @@ Component({
     },
 
     // ----------------------------------------------------------
+    //  工具：判断颜色是否为浅色（亮度 > 阈值）
+    // ----------------------------------------------------------
+    _isLightColor(hex) {
+      const r = parseInt(hex.slice(1, 3), 16)
+      const g = parseInt(hex.slice(3, 5), 16)
+      const b = parseInt(hex.slice(5, 7), 16)
+      return (0.299 * r + 0.587 * g + 0.114 * b) > 160
+    },
+
+    // ----------------------------------------------------------
+    //  应用强调色并同步暗色主题状态
+    // ----------------------------------------------------------
+    _applyAccent(hex) {
+      const isLight = this._isLightColor(hex)
+      this.setData({
+        accentColor: hex,
+        accentRgb: this._hexToRgb(hex),
+        isLightAccent: isLight,
+      })
+      this.triggerEvent('themeChange', { isLight: isLight, accentColor: hex })
+    },
+
+    // ----------------------------------------------------------
     //  恢复为酒红色（卡背面的默认色）
     // ----------------------------------------------------------
     _resetToWine() {
       this.setData({
         accentColor: '#4A1942',
-        accentRgb: '74,25,66'
+        accentRgb: '74,25,66',
+        isLightAccent: false,
       })
+      this.triggerEvent('themeChange', { isLight: false, accentColor: '#4A1942' })
     },
 
     // ----------------------------------------------------------
@@ -137,10 +178,7 @@ Component({
     // ----------------------------------------------------------
     _applyAccentTransition() {
       const hex = this.data.luckyColor && this.data.luckyColor.hex ? this.data.luckyColor.hex : '#FF6B6B'
-      this.setData({
-        accentColor: hex,
-        accentRgb: this._hexToRgb(hex)
-      })
+      this._applyAccent(hex)
     },
 
     // ----------------------------------------------------------
@@ -162,17 +200,26 @@ Component({
         success: (res) => {
           if (res.result && res.result.success) {
             const hex = (res.result.data.luckyColor && res.result.data.luckyColor.hex) || '#FF6B6B'
+            const keywords = res.result.data.keywords || []
+            const arcanaCard = arcanaData.getArcanaByKeywords(keywords)
             this.setData({
               showPrompt: false,
               message: res.result.data.message,
               luckyColor: res.result.data.luckyColor,
-              // 根据当前翻牌状态决定是否立即应用幸运色
-              accentColor: this.data.cardRevealed ? hex : '#4A1942',
-              accentRgb: this.data.cardRevealed ? this._hexToRgb(hex) : '74,25,66',
-              keywords: res.result.data.keywords || [],
+              keywords: keywords,
+              arcanaCard: arcanaCard,
               loadError: false,
               loading: false,
             })
+            // 已翻牌状态立即应用强调色
+            if (this.data.cardRevealed) {
+              this._applyAccent(hex)
+            }
+            // 异步竞态处理：数据迟到但翻牌已完成且动画未启动
+            if (this.data.cardRevealed && this.data.animPhase === 0) {
+              this.setData({ animPhase: 1 })
+              this._startPhaseTimers()
+            }
           } else {
             this.setData({ loadError: true, loading: false })
           }
@@ -181,6 +228,34 @@ Component({
           this.setData({ loadError: true, loading: false })
         }
       })
+    },
+
+    // ----------------------------------------------------------
+    //  清理所有动画计时器
+    // ----------------------------------------------------------
+    _clearAnimTimers() {
+      if (this._animTimer1) clearTimeout(this._animTimer1)
+      if (this._animTimer2) clearTimeout(this._animTimer2)
+      if (this._animTimer3) clearTimeout(this._animTimer3)
+      if (this._animTimer4) clearTimeout(this._animTimer4)
+      if (this._animTimer5) clearTimeout(this._animTimer5)
+      this._animTimer1 = this._animTimer2 = this._animTimer3 = null
+      this._animTimer4 = this._animTimer5 = null
+    },
+
+    // ----------------------------------------------------------
+    //  从 Phase 2 开始的计时器链（用于数据迟到时手动启动）
+    // ----------------------------------------------------------
+    _startPhaseTimers() {
+      this._animTimer2 = setTimeout(() => {
+        this.setData({ animPhase: 2 })
+        this._animTimer3 = setTimeout(() => {
+          this.setData({ animPhase: 3 })
+          this._animTimer4 = setTimeout(() => {
+            this.setData({ animPhase: 4 })
+          }, 500)
+        }, 400)
+      }, 600)
     },
 
     // ----------------------------------------------------------

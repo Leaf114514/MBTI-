@@ -1,6 +1,6 @@
 <!--
   ========================================
-  个人中心页（profile / 我的）
+  个人中心组件（tab-profile / 我的）
   功能：MBTI 类型选择 + 类型描述展示 + 快捷入口导航
   交互：
     · toggle-btn → 背景掉落图形开关
@@ -8,7 +8,7 @@
     · 菜单项 → 跳转历史故事 / 开始新故事
   ========================================
 -->
-<view class="container {{pageAnim}} {{darkTheme ? 'page-dark' : ''}}">
+<view class="container {{darkTheme ? 'page-dark' : ''}}">
   <!-- ===== 背景掉落图形开关按钮 ===== -->
   <view class="toggle-btn {{toggleShaking ? 'toggle-shake' : ''}}" bindtap="onToggleShapes">
     <text class="toggle-label">{{toggleLabel}}</text>
