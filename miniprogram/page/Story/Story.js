@@ -72,8 +72,8 @@ Page({
   //    - sessionId: string（已有故事的 ID）
   // ----------------------------------------------------------
   onLoad(options) {
-    const sysInfo = wx.getSystemInfoSync()
-    const statusBarHeight = sysInfo.statusBarHeight || 20
+    const sysInfo = wx.getWindowInfo()
+    const statusBarHeight = wx.getMenuButtonBoundingClientRect().top || 20
     this._windowHeight = sysInfo.windowHeight
     this._scrollTop = 0
     this._lastProgress = 0
@@ -96,6 +96,19 @@ Page({
     })
 
     this.loadStory()
+  },
+
+  onShow() {
+    const app = getApp()
+    const isDark = !!app.globalData.darkTheme
+    const hex = app.globalData.darkThemeAccent || '#FF6B6B'
+    if (isDark !== this.data.darkTheme || hex !== this.data.themeColor) {
+      this.setData({
+        darkTheme: isDark,
+        themeColor: hex,
+        themeColorRgb: hexToRgb(hex),
+      })
+    }
   },
 
   // ----------------------------------------------------------

@@ -52,7 +52,6 @@ Component({
     // 翻牌控制
     cardFlipMode: 1,       // 0=每次都需翻牌 / 1=每日翻牌
     cardRevealed: false,   // 当前是否已翻牌
-    darkTheme: false,      // 浅色幸运色暗色主题
     themeColor: '#FF6B6B',
     themeColorRgb: '255, 107, 107',
 
@@ -282,7 +281,7 @@ Component({
       // 翻回卡背时 fortune-card 会发 #4A1942（酒红色），不应覆盖已存储的幸运色
       const isWineReset = accentColor === '#4A1942'
       const hex = isWineReset ? (app.globalData.darkThemeAccent || '#FF6B6B') : (accentColor || '#FF6B6B')
-      this.setData({ darkTheme: isLight, themeColor: hex, themeColorRgb: hexToRgb(hex) })
+      this.setData({ themeColor: hex, themeColorRgb: hexToRgb(hex) })
       app.globalData.darkTheme = isLight
       if (!isWineReset) {
         app.globalData.darkThemeAccent = hex
@@ -396,7 +395,6 @@ Component({
       const isDark = !!app.globalData.darkTheme
       const hex = app.globalData.darkThemeAccent || '#FF6B6B'
       const updates = {}
-      if (isDark !== this.data.darkTheme) updates.darkTheme = isDark
       if (hex !== this.data.themeColor) {
         updates.themeColor = hex
         updates.themeColorRgb = hexToRgb(hex)

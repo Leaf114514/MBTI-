@@ -62,6 +62,19 @@ Component({
   },
 
   // ----------------------------------------------------------
+  //  属性监听：shell 更新 darkTheme 属性时立即同步
+  // ----------------------------------------------------------
+  observers: {
+    darkTheme(isDark) {
+      const app = getApp()
+      const hex = app.globalData.darkThemeAccent || '#FF6B6B'
+      if (hex !== this.data.themeColor) {
+        this.setData({ themeColor: hex, themeColorRgb: hexToRgb(hex) })
+      }
+    }
+  },
+
+  // ----------------------------------------------------------
   //  组件数据
   // ----------------------------------------------------------
   data: {

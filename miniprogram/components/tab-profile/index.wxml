@@ -20,7 +20,7 @@
   </view>
 
   <!-- ===== 右上角积分显示 ===== -->
-  <view class="credit-box">
+  <view class="credit-box" style="background:{{themeColor}};box-shadow:0 4rpx 16rpx rgba({{themeColorRgb}},0.35);">
     <text class="credit-text">积分:{{userCredit}}</text>
   </view>
 

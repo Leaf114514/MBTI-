@@ -22,16 +22,16 @@
   top: 20rpx;
   right: 24rpx;
   padding: 5rpx 16rpx;
-  background: linear-gradient(135deg, var(--color-accent-yellow), #FFB347);
+  background: #FF6B6B;
   border-radius: var(--radius-lg);
-  box-shadow: 0 4rpx 16rpx rgba(255, 209, 102, 0.35);
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.35);
   z-index: 10;
 }
 
 .credit-text {
   font-size: var(--font-size-caption);
   font-weight: var(--font-weight-bold);
-  color: #7A5700;
+  color: #FFFFFF;
   line-height: 1;
 }
 

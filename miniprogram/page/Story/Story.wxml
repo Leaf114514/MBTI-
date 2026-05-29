@@ -146,7 +146,7 @@
       </view>
       <!-- 续写按钮（红色实底，仅当 canContinue 时显示） -->
       <view class="action-button btn-solid {{continueConfirming ? 'shaking' : ''}}" bindtap="goContinue" wx:if="{{canContinue}}">
-        <text>{{continueConfirming ? '为此篇续写？' : '续写'}}</text>
+        <text>{{continueConfirming ? '为此篇续写？' : '续写故事 25积分'}}</text>
       </view>
     </view>
   </view>
