@@ -6,7 +6,7 @@
   状态流转：loading → 加载中 / empty → 空态 / list → 故事列表
   ========================================
 -->
-<view class="page-container">
+<view class="page-container {{darkTheme ? 'page-dark' : ''}}">
   <!-- ===== 加载中 ===== -->
   <view wx:if="{{loading}}" class="loading-state">
     <text class="loading-text">加载中...</text>

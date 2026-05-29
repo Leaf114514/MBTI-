@@ -39,13 +39,34 @@ Page({
     stories: [],    // 故事列表（含 displayTime、mbtiGroup 等增强字段）
     loading: true,  // 是否加载中（骨架屏状态）
     empty: false,   // 是否为空列表
+    darkTheme: false,
   },
 
   // ----------------------------------------------------------
   //  页面加载 → 请求历史故事
   // ----------------------------------------------------------
   onLoad() {
+    this._syncDarkTheme()
     this.loadStories()
+  },
+
+  onShow() {
+    this._syncDarkTheme()
+  },
+
+  _syncDarkTheme() {
+    const app = getApp()
+    const isDark = !!app.globalData.darkTheme
+    if (isDark !== this.data.darkTheme) {
+      this.setData({ darkTheme: isDark })
+    }
+    if (isDark) {
+      wx.setNavigationBarColor({
+        frontColor: '#ffffff',
+        backgroundColor: '#1E1E2A',
+        animation: { duration: 200, timingFunc: 'easeIn' }
+      })
+    }
   },
 
   // ----------------------------------------------------------
