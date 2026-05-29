@@ -410,6 +410,10 @@ page {
   border: none;
 }
 
+.page-dark .btn-solid {
+  color: #1A1A1A;
+}
+
 /* 通用抖动动画 */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }

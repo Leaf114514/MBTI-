@@ -72,7 +72,13 @@ Page({
     const index = e.detail.current
     if (index === this.data.currentTab) return
     this._callActiveTab('onTabInactive')
-    this.setData({ currentTab: index })
+    // 切 tab 前从 globalData 同步最新主题状态，避免翻牌后切页颜色延迟
+    const app = getApp()
+    this.setData({
+      currentTab: index,
+      darkTheme: !!app.globalData.darkTheme,
+      themeColor: app.globalData.darkThemeAccent || '#FF6B6B',
+    })
     this._callActiveTab('onTabActive')
     this._applyTheme()
   },
@@ -105,7 +111,11 @@ Page({
   // =============================================
 
   _applyTheme() {
-    const isDark = !!this.data.darkTheme
+    // 始终从 globalData 读取最新值，确保翻牌后切 tab 导航栏也即时更新
+    const app = getApp()
+    const isDark = !!app.globalData.darkTheme
+    const accentColor = app.globalData.darkThemeAccent || '#FF6B6B'
+    this.setData({ darkTheme: isDark, themeColor: accentColor })
     wx.setBackgroundColor({ backgroundColor: isDark ? '#1A1A28' : '#FFFBFB' })
     wx.setNavigationBarColor({
       frontColor: isDark ? '#ffffff' : '#000000',

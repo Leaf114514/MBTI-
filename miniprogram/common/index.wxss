@@ -212,6 +212,12 @@ page {
   --shadow-card: 0 4rpx 24rpx rgba(0, 0, 0, 0.25);
 }
 
+/* 浅色幸运色时按钮背景偏浅，文字改为深色以保证可读性 */
+.page-dark .btn-primary,
+.page-dark .picker-confirm-btn {
+  color: #1A1A1A;
+}
+
 /* ===== 掉落几何图形（通用） ===== */
 .shapes-container {
   position: absolute;
@@ -327,7 +333,7 @@ page {
   align-items: center;
   justify-content: center;
   height: 88rpx;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  background-color: var(--color-primary);
   color: var(--color-text-inverse);
   font-size: var(--font-size-body);
   font-weight: var(--font-weight-medium);
@@ -351,7 +357,7 @@ page {
   align-items: center;
   justify-content: center;
   height: 72rpx;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  background-color: var(--color-primary);
   color: var(--color-text-inverse);
   font-size: var(--font-size-body);
   font-weight: var(--font-weight-medium);

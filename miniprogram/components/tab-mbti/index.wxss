@@ -325,6 +325,10 @@
   color: var(--color-text-inverse);
 }
 
+.page-dark .option-card.selected .option-key {
+  color: #1A1A1A;
+}
+
 .option-text {
   font-size: var(--font-size-body);
   color: var(--color-text-primary);
@@ -359,6 +363,10 @@
 .btn-danger {
   background-color: var(--color-primary) !important;
   color: var(--color-text-inverse) !important;
+}
+
+.page-dark .btn-danger {
+  color: #1A1A1A !important;
 }
 
 .btn-danger:active {
