@@ -13,6 +13,7 @@
 const questionService = require('../../services/question-service')   // 题目获取
 const storyService = require('../../services/story-service')         // 故事 session 管理
 const fallingShapes = require('../../behaviors/falling-shapes')      // 背景形状动画
+const { hexToRgb } = require('../../common/color-utils')
 
 // MBTI 头部 —— 第一列滚轮选项（决定内向/外向 + 感知/直觉）
 const MBTI_HEAD = ['IN', 'IS', 'EN', 'ES']
@@ -120,12 +121,21 @@ Component({
     sessionId: '',               // 故事会话 ID
     storyWordCount: 0,
     canContinue: false,
+
+    themeColor: '#FF6B6B',
+    themeColorRgb: '255, 107, 107',
   },
 
   lifetimes: {
     attached() {
-      const isDark = !!getApp().globalData.darkTheme
-      if (isDark) this.setData({ darkTheme: isDark })
+      const app = getApp()
+      const isDark = !!app.globalData.darkTheme
+      const hex = app.globalData.darkThemeAccent || '#FF6B6B'
+      this.setData({
+        darkTheme: isDark,
+        themeColor: hex,
+        themeColorRgb: hexToRgb(hex),
+      })
     },
   },
 
@@ -175,12 +185,16 @@ Component({
   _syncDarkTheme() {
     const app = getApp()
     const isDark = !!app.globalData.darkTheme
-    if (isDark !== this.data.darkTheme) {
-      this.setData({ darkTheme: isDark })
-      this.triggerEvent('themeChange', {
-        isDark,
-        accentColor: app.globalData.darkThemeAccent || '#e74c3c'
-      })
+    const hex = app.globalData.darkThemeAccent || '#FF6B6B'
+    const updates = {}
+    if (isDark !== this.data.darkTheme) updates.darkTheme = isDark
+    if (hex !== this.data.themeColor) {
+      updates.themeColor = hex
+      updates.themeColorRgb = hexToRgb(hex)
+    }
+    if (Object.keys(updates).length > 0) {
+      this.setData(updates)
+      this.triggerEvent('themeChange', { isDark, accentColor: hex })
     }
   },
 

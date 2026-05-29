@@ -187,9 +187,9 @@ Page({
 
       console.log('Login success:', result)
 
-      // 600ms 后返回 shell 页（shell 在页面栈底部）
+      // 600ms 后启动 shell 页（全新实例，避免页面栈残留）
       setTimeout(() => {
-        wx.navigateBack()
+        wx.reLaunch({ url: '/page/shell/index' })
       }, 600)
 
     } catch (err) {

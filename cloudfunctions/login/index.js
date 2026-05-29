@@ -91,17 +91,19 @@ exports.main = async (event, context) => {
       };
     }
 
-    // 新用户路径：校验 profile 入参
-    const validation = validateProfileForRegistration(
-      event && event.profile ? event.profile : null
-    );
-    if (!validation.valid) {
-      return { success: false, error: validation.error };
-    }
+    // 新用户路径：profile 可选，未传则创建最简记录，后续在个人中心补充
+    const profile = event && event.profile ? event.profile : null;
+    let normalizedMbti = '';
+    let normalizedGender = '';
 
-    // 归一化后写入
-    const normalizedMbti = event.profile.mbti.trim().toUpperCase();
-    const normalizedGender = event.profile.gender.trim();
+    if (profile) {
+      const validation = validateProfileForRegistration(profile);
+      if (!validation.valid) {
+        return { success: false, error: validation.error };
+      }
+      normalizedMbti = profile.mbti.trim().toUpperCase();
+      normalizedGender = profile.gender.trim();
+    }
 
     const addResult = await usersCollection.add({
       data: {
@@ -109,8 +111,8 @@ exports.main = async (event, context) => {
         createdAt: now,
         lastLoginAt: now,
         profile: {
-          nickName: event.profile.nickName || '',
-          avatarUrl: event.profile.avatarUrl || '',
+          nickName: (profile && profile.nickName) || '',
+          avatarUrl: (profile && profile.avatarUrl) || '',
           mbti: normalizedMbti,
           gender: normalizedGender
         }
@@ -127,8 +129,8 @@ exports.main = async (event, context) => {
         _id: addResult._id,
         openid: OPENID,
         profile: {
-          nickName: event.profile.nickName || '',
-          avatarUrl: event.profile.avatarUrl || '',
+          nickName: (profile && profile.nickName) || '',
+          avatarUrl: (profile && profile.avatarUrl) || '',
           mbti: normalizedMbti,
           gender: normalizedGender
         },

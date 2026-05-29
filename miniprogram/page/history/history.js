@@ -23,6 +23,13 @@ const MBTI_GROUPS = {
 //  @param {string} mbti — 如 "ENFP"
 //  @returns {string} — 'analyst' | 'diplomat' | 'sentinel' | 'explorer'
 // ----------------------------------------------------------
+const { hexToRgb } = require('../../common/color-utils')
+
+// ----------------------------------------------------------
+//  根据 MBTI 类型返回所属分组名
+//  @param {string} mbti — 如 "ENFP"
+//  @returns {string} — 'analyst' | 'diplomat' | 'sentinel' | 'explorer'
+// ----------------------------------------------------------
 function getMbtiGroup(mbti) {
   const upper = (mbti || '').toUpperCase()
   for (const [group, types] of Object.entries(MBTI_GROUPS)) {
@@ -40,6 +47,8 @@ Page({
     loading: true,  // 是否加载中（骨架屏状态）
     empty: false,   // 是否为空列表
     darkTheme: false,
+    themeColor: '#FF6B6B',
+    themeColorRgb: '255, 107, 107',
   },
 
   // ----------------------------------------------------------
@@ -57,8 +66,15 @@ Page({
   _syncDarkTheme() {
     const app = getApp()
     const isDark = !!app.globalData.darkTheme
-    if (isDark !== this.data.darkTheme) {
-      this.setData({ darkTheme: isDark })
+    const hex = app.globalData.darkThemeAccent || '#FF6B6B'
+    const updates = {}
+    if (isDark !== this.data.darkTheme) updates.darkTheme = isDark
+    if (hex !== this.data.themeColor) {
+      updates.themeColor = hex
+      updates.themeColorRgb = hexToRgb(hex)
+    }
+    if (Object.keys(updates).length > 0) {
+      this.setData(updates)
     }
     if (isDark) {
       wx.setNavigationBarColor({

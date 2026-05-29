@@ -27,7 +27,7 @@ Component({
   properties: {
     current: { type: Number, value: 0 },
     darkMode: { type: Boolean, value: false },
-    themeColor: { type: String, value: '#e74c3c' },
+    themeColor: { type: String, value: '#FF6B6B' },
   },
 
   data: {

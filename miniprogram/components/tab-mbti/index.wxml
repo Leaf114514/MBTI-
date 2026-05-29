@@ -9,7 +9,7 @@
   续写模式：isContinueMode 为 true 时复用相同流程但文案不同
   ========================================
 -->
-<view class="tab-mbti-root {{darkTheme ? 'page-dark' : ''}}">
+<view class="tab-mbti-root {{darkTheme ? 'page-dark' : ''}}" style="--color-primary:{{themeColor}};--color-primary-rgb:{{themeColorRgb}}">
   <!-- ===== 背景掉落几何图形（常驻 DOM，class 控制显隐） ===== -->
   <view class="shapes-container {{shapesHidden ? 'shapes-hidden' : ''}}">
     <view wx:for="{{shapes}}" wx:key="index" class="shape shape-{{item.type}}" style="{{item.inlineStyle}}"></view>

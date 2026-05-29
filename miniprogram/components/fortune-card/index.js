@@ -10,6 +10,7 @@
 
 const cornerDecor = require('../../common/corner-decorations/decorations')
 const arcanaData = require('../../data/major-arcana')
+const { hexToRgb } = require('../../common/color-utils')
 
 Component({
   // ----------------------------------------------------------
@@ -48,6 +49,8 @@ Component({
     arcanaCard: null,             // 匹配到的大阿卡纳牌对象
     animPhase: 0,                 // 动画阶段：0=待机 1=牌面渐显 2=牌名坠落+牌面淡出 3=正文渐显 4=完成
     isLightAccent: false,         // 当前强调色是否为浅色（驱动暗色主题）
+    themeColor: '#FF6B6B',
+    themeColorRgb: '255, 107, 107',
   },
 
   // ----------------------------------------------------------
@@ -73,6 +76,19 @@ Component({
         // 重置动画阶段
         this._clearAnimTimers()
         this.setData({ animPhase: 0 })
+
+        // 立即将幸运色写入 globalData（不等待动画完成）
+        // 这样用户翻牌后切到其他页面时，其他 tab 的 _syncDarkTheme 能读到正确颜色
+        // 注意：这里只写 globalData，不触发 themeChange 事件，避免翻牌动画中途重渲染
+        const luckyHex = (this.data.luckyColor && this.data.luckyColor.hex)
+          || getApp().globalData._pendingLuckyHex
+          || null
+        if (luckyHex) {
+          const app = getApp()
+          app.globalData.darkTheme = this._isLightColor(luckyHex)
+          app.globalData.darkThemeAccent = luckyHex
+        }
+
         // 翻牌动画（1.04s）完成后启动多阶段动画
         this._animTimer1 = setTimeout(() => {
           // Phase 1: 大阿卡纳牌面渐显
@@ -107,9 +123,14 @@ Component({
     // 组件挂载时初始化日期 + 随机四角装饰
     attached() {
       this._updateDate()
+      // 从全局同步主色调（幸运色）
+      const app = getApp()
+      const hex = app.globalData.darkThemeAccent || '#FF6B6B'
       this.setData({
         cornerDecor: cornerDecor.getCornerDecor(),
         animPhase: this.data.cardRevealed ? 4 : 0,
+        themeColor: hex,
+        themeColorRgb: hexToRgb(hex),
       })
     }
   },
@@ -211,6 +232,11 @@ Component({
               loadError: false,
               loading: false,
             })
+            // 云函数返回后立即缓存幸运色到 globalData
+            // 翻牌时 cardRevealed observer 可立即读取，无需等待动画延迟
+            if (hex && hex !== '#FF6B6B') {
+              getApp().globalData._pendingLuckyHex = hex
+            }
             // 已翻牌状态立即应用强调色
             if (this.data.cardRevealed) {
               this._applyAccent(hex)

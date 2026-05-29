@@ -30,7 +30,7 @@
   display: block;
   font-size: var(--font-size-subtitle);
   font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
+  color: var(--color-primary);
   margin-bottom: var(--spacing-md);
 }
 

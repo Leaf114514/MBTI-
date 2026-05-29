@@ -13,7 +13,7 @@ Page({
   data: {
     currentTab: 0,
     darkTheme: false,
-    themeColor: '#e74c3c',
+    themeColor: '#FF6B6B',
   },
 
   // ----------------------------------------------------------
@@ -23,10 +23,10 @@ Page({
     if (options && options.tab !== undefined) {
       this.setData({ currentTab: parseInt(options.tab) })
     }
-    // 登录检查
+    // 登录检查：未登录直接替换为登录页（避免主页闪现）
     const app = getApp()
     if (!app.globalData.hasLogin) {
-      wx.navigateTo({ url: '/page/login/login' })
+      wx.redirectTo({ url: '/page/login/login' })
     }
   },
 
@@ -45,7 +45,7 @@ Page({
     }
     // 同步主题
     const isDark = !!app.globalData.darkTheme
-    const accentColor = app.globalData.darkThemeAccent || '#e74c3c'
+    const accentColor = app.globalData.darkThemeAccent || '#FF6B6B'
     this.setData({ darkTheme: isDark, themeColor: accentColor })
     this._applyTheme()
     // 已登录才通知活跃 tab（避免未登录时触发翻牌动画）
@@ -95,8 +95,8 @@ Page({
     const { isDark, accentColor } = e.detail
     const app = getApp()
     app.globalData.darkTheme = isDark
-    app.globalData.darkThemeAccent = accentColor || '#e74c3c'
-    this.setData({ darkTheme: isDark, themeColor: accentColor || '#e74c3c' })
+    app.globalData.darkThemeAccent = accentColor || '#FF6B6B'
+    this.setData({ darkTheme: isDark, themeColor: accentColor || '#FF6B6B' })
     this._applyTheme()
   },
 

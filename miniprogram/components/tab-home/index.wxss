@@ -23,36 +23,6 @@
   position: relative;
 }
 
-/* 顶部导航栏区域分享按钮（翻牌+变色+文本渐显全部结束后渐显） */
-.share-btn {
-  position: absolute;
-  top: 4rpx;
-  left: 16rpx;
-  width: 64rpx;
-  height: 64rpx;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
-  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.35);
-  z-index: 10;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
-}
-
-.share-btn.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.share-btn-icon {
-  width: 36rpx;
-  height: 36rpx;
-  filter: brightness(0) invert(1);
-}
-
 /* ===== 签语卡片区域 ===== */
 .fortune-section {
   height: 80%;
@@ -97,7 +67,7 @@
   justify-content: space-between;
   border-radius: var(--radius-lg);
   background: linear-gradient(180deg, #3D1A2E 0%, #2B1424 40%, #3D1A2E 100%);
-  border: 2rpx solid rgba(255, 107, 107, 0.25);
+  border: 2rpx solid rgba(var(--color-primary-rgb), 0.25);
   box-shadow: 0 4rpx 32rpx rgba(61, 26, 46, 0.4);
   overflow: hidden;
   padding: var(--spacing-xl) 0;
@@ -112,13 +82,13 @@
 
 .back-arch-top {
   border-radius: 240rpx 240rpx 0 0;
-  border: 2rpx solid rgba(255, 107, 107, 0.15);
+  border: 2rpx solid rgba(var(--color-primary-rgb), 0.15);
   border-bottom: none;
 }
 
 .back-arch-bottom {
   border-radius: 0 0 240rpx 240rpx;
-  border: 2rpx solid rgba(255, 107, 107, 0.15);
+  border: 2rpx solid rgba(var(--color-primary-rgb), 0.15);
   border-top: none;
 }
 
@@ -128,7 +98,7 @@
   left: 12rpx;
   right: 12rpx;
   bottom: 0;
-  border: 1rpx dashed rgba(255, 107, 107, 0.1);
+  border: 1rpx dashed rgba(var(--color-primary-rgb), 0.1);
 }
 
 .back-arch-top .arch-ring {
@@ -147,7 +117,7 @@
 .back-mandala {
   font-size: 88rpx;
   font-weight: var(--font-weight-bold);
-  color: rgba(255, 107, 107, 0.22);
+  color: rgba(var(--color-primary-rgb), 0.22);
   letter-spacing: 14rpx;
   position: absolute;
   top: 45%;
@@ -197,7 +167,7 @@
   z-index: 10;
   background-color: var(--color-bg-card);
   border-radius: var(--radius-xl);
-  border: 2rpx solid rgba(255, 107, 107, 0.3);
+  border: 2rpx solid rgba(var(--color-primary-rgb), 0.3);
   box-shadow: var(--shadow-card);
   transition: width 0.3s var(--ease-out);
 }
@@ -220,7 +190,7 @@
 }
 
 .calc-trigger:active {
-  background-color: rgba(255, 107, 107, 0.04);
+  background-color: rgba(var(--color-primary-rgb), 0.04);
 }
 
 .calc-body {
@@ -280,7 +250,7 @@
 .type-slot-text.has-value {
   color: var(--color-primary);
   font-weight: var(--font-weight-bold);
-  background-color: rgba(255, 107, 107, 0.06);
+  background-color: rgba(var(--color-primary-rgb), 0.06);
   border: 1rpx solid var(--color-primary);
 }
 
@@ -288,7 +258,7 @@
 .pair-line {
   width: 40rpx;
   height: 4rpx;
-  background-color: rgba(255, 107, 107, 0.6);
+  background-color: rgba(var(--color-primary-rgb), 0.6);
   flex-shrink: 0;
   margin-top: 40rpx;
 }
@@ -323,12 +293,12 @@
 
 /* 第一行 - 能量方向 (珊瑚红系) */
 .picker-btn-head {
-  background-color: rgba(255, 107, 107, 0.06);
+  background-color: rgba(var(--color-primary-rgb), 0.06);
   color: var(--color-text-secondary);
 }
 
 .picker-btn-head.active {
-  background-color: rgba(255, 107, 107, 0.15);
+  background-color: rgba(var(--color-primary-rgb), 0.15);
   color: var(--color-primary);
   font-weight: var(--font-weight-bold);
   border: 1rpx solid var(--color-primary);

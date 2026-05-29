@@ -18,6 +18,7 @@
 const API_BASE = 'https://your-api-endpoint.com/api'
 const TEST_CONTENT = require('./test-content.js')          // 本地测试数据
 const storyService = require('../../services/story-service') // 故事云服务
+const { hexToRgb } = require('../../common/color-utils')
 
 Page({
   // ----------------------------------------------------------
@@ -57,7 +58,11 @@ Page({
     continueConfirming: false,
 
     // 续写次数（后端传入，默认 1）
-    continueCount: 1
+    continueCount: 1,
+
+    darkTheme: false,
+    themeColor: '#FF6B6B',
+    themeColorRgb: '255, 107, 107',
   },
 
   // ----------------------------------------------------------
@@ -78,11 +83,16 @@ Page({
     this._sessionId = (options && options.sessionId) || ''
     this._mode = mode
 
+    const app = getApp()
+
     this.setData({
       statusBarHeight,
       navBarHeight: statusBarHeight + 80,
       progressTop: statusBarHeight + 90,  // 进度条从导航栏下方开始
-      progressBottom: 100
+      progressBottom: 100,
+      darkTheme: !!app.globalData.darkTheme,
+      themeColor: app.globalData.darkThemeAccent || '#FF6B6B',
+      themeColorRgb: hexToRgb(app.globalData.darkThemeAccent || '#FF6B6B'),
     })
 
     this.loadStory()

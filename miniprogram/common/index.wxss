@@ -117,6 +117,7 @@ page {
 
   /* 主色 */
   --color-primary: #FF6B6B;
+  --color-primary-rgb: 255, 107, 107;
   --color-primary-light: #FF8E8E;
   --color-primary-dark: #E85555;
 
@@ -274,8 +275,8 @@ page {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
-  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.35);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  box-shadow: 0 4rpx 16rpx rgba(var(--color-primary-rgb), 0.35);
   z-index: 10;
 }
 

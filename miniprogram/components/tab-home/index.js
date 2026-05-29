@@ -14,6 +14,7 @@ const compatibilityData = require('../../data/compatibility-data')  // 兼容性
 const fallingShapes = require('../../behaviors/falling-shapes')     // 背景形状动画 behavior
 const constellationRing = require('../../common/constellation-ring')  // 星座绘制工具
 const cornerDecor = require('../../common/corner-decorations/decorations')  // 四角装饰配置
+const { hexToRgb } = require('../../common/color-utils')
 
 // MBTI 类型拼接 —— 所有类型 = 头部(2 字母) + 尾部(2 字母)
 const MBTI_HEAD = ['IN', 'IS', 'EN', 'ES']
@@ -48,10 +49,11 @@ Component({
     calcExpanded: false,
 
     // 翻牌控制
-    cardFlipMode: 1,       // 0=始终显示 / 1=每日翻牌
+    cardFlipMode: 1,       // 0=每次都需翻牌 / 1=每日翻牌
     cardRevealed: false,   // 当前是否已翻牌
-    shareVisible: false,   // 分享按钮是否已渐显
     darkTheme: false,      // 浅色幸运色暗色主题
+    themeColor: '#FF6B6B',
+    themeColorRgb: '255, 107, 107',
 
     // 卡背星芒装饰点（随机生成的位置/符号/旋转）
     backSparks: [],
@@ -170,7 +172,7 @@ Component({
         return
       }
       if (this.data.cardFlipMode === 0) {
-        // 始终模式 → 先显示卡背，等待翻牌
+        // 每次都需翻牌模式 → 先显示卡背，等待翻牌
         this.setData({ cardRevealed: false })
       } else {
         // 每日翻牌模式 → 检查今天是否已翻过
@@ -188,16 +190,10 @@ Component({
     //  翻牌动作：翻开卡面并记录日期
     // ----------------------------------------------------------
     revealCard() {
-      this.setData({ cardRevealed: true, shareVisible: false })
+      this.setData({ cardRevealed: true })
       if (this.data.cardFlipMode === 1) {
         wx.setStorageSync('lastCardReveal', new Date().toDateString())
       }
-      // 翻牌(1.04s) + 牌面动画(~1.5s) 全部结束后渐显分享按钮
-      if (this._shareTimer) clearTimeout(this._shareTimer)
-      this._shareTimer = setTimeout(() => {
-        this.setData({ shareVisible: true })
-        this._shareTimer = null
-      }, 2800)
     },
 
     // ----------------------------------------------------------
@@ -266,27 +262,17 @@ Component({
     // 签语卡片主题变化（浅色幸运色 → 暗色背景）
     onThemeChange(e) {
       const { isLight, accentColor } = e.detail
-      this.setData({ darkTheme: isLight })
-      // 持久化到全局，其他 Tab 页同步读取
       const app = getApp()
+      // 翻回卡背时 fortune-card 会发 #4A1942（酒红色），不应覆盖已存储的幸运色
+      const isWineReset = accentColor === '#4A1942'
+      const hex = isWineReset ? (app.globalData.darkThemeAccent || '#FF6B6B') : (accentColor || '#FF6B6B')
+      this.setData({ darkTheme: isLight, themeColor: hex, themeColorRgb: hexToRgb(hex) })
       app.globalData.darkTheme = isLight
-      app.globalData.darkThemeAccent = accentColor || '#e74c3c'
-      // 通知 shell 页面更新背景色/导航栏/TabBar
-      this.triggerEvent('themeChange', { isDark: isLight, accentColor: accentColor || '#e74c3c' })
-    },
-
-    // 分享签语 — 唤起分享面板
-    onShareFortune() {
-      wx.showShareMenu({ withShareTicket: true })
-    },
-
-    // 获取分享文案（由 shell 页面在 onShareAppMessage 中调用）
-    getShareMessage() {
-      const mbti = this.data.userMbti || 'MBTI'
-      return {
-        title: `我的${mbti}每日签语，来看看你的吧！`,
-        path: '/page/shell/index'
+      if (!isWineReset) {
+        app.globalData.darkThemeAccent = hex
       }
+      // 通知 shell 页面更新背景色/导航栏/TabBar
+      this.triggerEvent('themeChange', { isDark: isLight, accentColor: hex })
     },
 
     // =============================================
@@ -390,10 +376,16 @@ Component({
     _syncDarkTheme() {
       const app = getApp()
       const isDark = !!app.globalData.darkTheme
-      const accentColor = app.globalData.darkThemeAccent || '#e74c3c'
-      if (isDark !== this.data.darkTheme) {
-        this.setData({ darkTheme: isDark })
-        this.triggerEvent('themeChange', { isDark, accentColor })
+      const hex = app.globalData.darkThemeAccent || '#FF6B6B'
+      const updates = {}
+      if (isDark !== this.data.darkTheme) updates.darkTheme = isDark
+      if (hex !== this.data.themeColor) {
+        updates.themeColor = hex
+        updates.themeColorRgb = hexToRgb(hex)
+      }
+      if (Object.keys(updates).length > 0) {
+        this.setData(updates)
+        this.triggerEvent('themeChange', { isDark, accentColor: hex })
       }
     },
   }

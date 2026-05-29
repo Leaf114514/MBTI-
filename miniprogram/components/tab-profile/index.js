@@ -15,6 +15,7 @@ const MBTI_TAIL = ['TJ', 'TP', 'FJ', 'FP']
 
 // 背景形状动画 behavior
 const fallingShapes = require('../../behaviors/falling-shapes')
+const { hexToRgb } = require('../../common/color-utils')
 
 // ----------------------------------------------------------
 //  16 种 MBTI 的中文描述（用于 Profile 页展示）
@@ -78,6 +79,9 @@ Component({
     // 形状动画开关
     toggleLabel: 'O',            // O=显示 / \=关闭
     toggleShaking: false,        // 开关抖动动画
+
+    themeColor: '#FF6B6B',
+    themeColorRgb: '255, 107, 107',
   },
 
   // ----------------------------------------------------------
@@ -89,7 +93,13 @@ Component({
       const app = getApp()
       const enabled = app.globalData.shapesEnabled !== false
       const isDark = !!app.globalData.darkTheme
-      this.setData({ toggleLabel: enabled ? 'O' : '\\', darkTheme: isDark })
+      const hex = app.globalData.darkThemeAccent || '#FF6B6B'
+      this.setData({
+        toggleLabel: enabled ? 'O' : '\\',
+        darkTheme: isDark,
+        themeColor: hex,
+        themeColorRgb: hexToRgb(hex),
+      })
     },
   },
 
@@ -129,10 +139,16 @@ Component({
   _syncDarkTheme() {
     const app = getApp()
     const isDark = !!app.globalData.darkTheme
-    if (isDark !== this.data.darkTheme) {
-      const accentColor = app.globalData.darkThemeAccent || '#e74c3c'
-      this.setData({ darkTheme: isDark })
-      this.triggerEvent('themeChange', { isDark, accentColor })
+    const hex = app.globalData.darkThemeAccent || '#FF6B6B'
+    const updates = {}
+    if (isDark !== this.data.darkTheme) updates.darkTheme = isDark
+    if (hex !== this.data.themeColor) {
+      updates.themeColor = hex
+      updates.themeColorRgb = hexToRgb(hex)
+    }
+    if (Object.keys(updates).length > 0) {
+      this.setData(updates)
+      this.triggerEvent('themeChange', { isDark, accentColor: hex })
     }
   },
 

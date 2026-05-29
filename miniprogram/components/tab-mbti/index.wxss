@@ -156,7 +156,7 @@
 }
 
 .gender-option.selected {
-  background-color: rgba(231, 76, 60, 0.1);
+  background-color: rgba(var(--color-primary-rgb), 0.1);
   border-color: var(--color-primary);
   color: var(--color-primary);
   font-weight: var(--font-weight-medium);
@@ -205,7 +205,7 @@
 }
 
 .btn-secondary:active {
-  background-color: rgba(231, 76, 60, 0.1);
+  background-color: rgba(var(--color-primary-rgb), 0.1);
 }
 
 .start-btn {
@@ -257,7 +257,7 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+  background-color: var(--color-primary);
   border-radius: 4rpx;
   transition: width var(--duration-normal) var(--ease-out);
 }
@@ -301,7 +301,7 @@
 }
 
 .option-card.selected {
-  background-color: rgba(255, 107, 107, 0.08);
+  background-color: rgba(var(--color-primary-rgb), 0.08);
   border-color: var(--color-primary);
 }
 
@@ -352,6 +352,7 @@
 /* 下一题 / 提交按钮高度与上一题一致 */
 .quiz-actions .btn-primary {
   height: 80rpx;
+  background: var(--color-primary);
 }
 
 /* 取消答题确认态（红色） */
