@@ -95,9 +95,9 @@ class CreditService {
     }
   }
 
-  async earnCredit(amount) {
+  async earnCredit(source) {
     try {
-      const result = await this._call('earn', { amount })
+      const result = await this._call('earn', { source })
       if (result && result.success) {
         let openid = null
         try {

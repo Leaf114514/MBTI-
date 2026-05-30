@@ -13,6 +13,7 @@
 const questionService = require('../../services/question-service')   // 题目获取
 const storyService = require('../../services/story-service')         // 故事 session 管理
 const fallingShapes = require('../../behaviors/falling-shapes')      // 背景形状动画
+const creditService = require('../../services/credit-service')       // 积分服务
 
 // MBTI 头部 —— 第一列滚轮选项（决定内向/外向 + 感知/直觉）
 const MBTI_HEAD = ['IN', 'IS', 'EN', 'ES']
@@ -618,6 +619,14 @@ Page({
     }))
 
     this.setData({ isSubmitting: true, submitBtnWarn: '' })
+
+    // MBTI 计算器消耗 1 积分
+    const creditResult = await creditService.consumeCredit(1)
+    if (!creditResult.success) {
+      this.setData({ isSubmitting: false })
+      this._shakeButton('submit', '积分不足')
+      return
+    }
 
     const app = getApp()
 

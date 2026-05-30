@@ -32,7 +32,7 @@ const CONTENT_SOFT_LIMIT = 2000
 const CONTENT_HARD_LIMIT = 3000
 
 /** 积分消耗：首轮故事 */
-const CREDIT_COST_FIRST_ROUND = 30
+const CREDIT_COST_FIRST_ROUND = 50
 
 /** 积分消耗：续写故事 */
 const CREDIT_COST_CONTINUE_ROUND = 25

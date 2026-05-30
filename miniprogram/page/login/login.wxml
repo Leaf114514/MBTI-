@@ -12,6 +12,11 @@
   ========================================
 -->
 <view class="login-page">
+  <!-- ===== 自定义导航栏（占位，无标题） ===== -->
+  <view class="custom-nav" style="padding-top: {{statusBarHeight}}px;">
+    <view class="custom-nav-bar"></view>
+  </view>
+
   <!-- ===== 左上角切换按钮：控制背景图形的显隐 ===== -->
   <view class="toggle-btn {{toggleShaking ? 'toggle-shake' : ''}}" bindtap="toggleShapes">
     <text class="toggle-label">{{toggleLabel}}</text>
@@ -27,15 +32,9 @@
     ></view>
   </view>
 
-  <!-- ===== 品牌标题：四字母各带独立光晕描边 ===== -->
+  <!-- ===== 品牌标题 ===== -->
   <view class="login-title">
-    <view class="title-letters">
-      <text class="title-letter" style="-webkit-text-stroke: 1rpx {{letterColors[0]}}; text-shadow: 0 0 12rpx {{letterColors[0]}}, 0 0 24rpx {{letterColors[0]}};">M</text>
-      <text class="title-letter" style="-webkit-text-stroke: 1rpx {{letterColors[1]}}; text-shadow: 0 0 12rpx {{letterColors[1]}}, 0 0 24rpx {{letterColors[1]}};">B</text>
-      <text class="title-letter" style="-webkit-text-stroke: 1rpx {{letterColors[2]}}; text-shadow: 0 0 12rpx {{letterColors[2]}}, 0 0 24rpx {{letterColors[2]}};">T</text>
-      <text class="title-letter" style="-webkit-text-stroke: 1rpx {{letterColors[3]}}; text-shadow: 0 0 12rpx {{letterColors[3]}}, 0 0 24rpx {{letterColors[3]}};">I</text>
-    </view>
-    <text class="title-suffix">洞察</text>
+    <text class="title-text">人格网路</text>
   </view>
 
   <!-- 标题下方红色分割线 -->

@@ -1,4 +1,4 @@
 {
   "usingComponents": {},
-  "navigationBarTitleText": "登录MBTI洞察"
+  "navigationStyle": "custom"
 }

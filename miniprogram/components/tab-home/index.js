@@ -198,11 +198,11 @@ Component({
         const today = new Date().toDateString()
         const lastReveal = wx.getStorageSync('lastCardReveal') || ''
         wx.setStorageSync('lastCardReveal', today)
-        // 每天第一次翻牌奖励 50 积分
+        // 每天第一次翻牌奖励 100 积分
         if (lastReveal !== today) {
-          creditService.earnCredit(50).then(result => {
+          creditService.earnCredit('dailyFlip').then(result => {
             if (result.success) {
-              console.log('[Home] 翻牌奖励 50 积分，当前积分:', result.data.credit)
+              console.log('[Home] 翻牌奖励 100 积分，当前积分:', result.data.credit)
             }
           }).catch(e => {
             console.warn('[Home] 翻牌积分奖励失败:', e)

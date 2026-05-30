@@ -12,11 +12,6 @@
 const { list: sloganList } = require('../../data/mbtiBanner')
 
 // ----------------------------------------------------------
-//  四个字母的边框描边颜色（渐变循环）
-// ----------------------------------------------------------
-const LETTER_COLORS = ['#A78BFA', '#4ECDC4', '#3B82F6', '#FFD166']
-
-// ----------------------------------------------------------
 //  几何形状颜色（半透明，用于背景飘落）
 // ----------------------------------------------------------
 const SHAPE_COLORS = [
@@ -28,19 +23,6 @@ const SHAPE_COLORS = [
 
 // 几何形状类型
 const SHAPE_TYPES = ['square', 'circle', 'diamond', 'triangle']
-
-// ----------------------------------------------------------
-//  工具：Fisher-Yates 洗牌算法
-//  用于随机分配字母颜色，避免每次相同
-// ----------------------------------------------------------
-function shuffle(arr) {
-  const a = arr.slice()
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]]
-  }
-  return a
-}
 
 // ----------------------------------------------------------
 //  工具：构建单个形状的内联样式
@@ -85,7 +67,6 @@ Page({
     userInfo: null,            // 用户信息（登录成功后）
     isNewUser: false,          // 是否新用户
     currentSlogan: '',         // 当前展示的标语
-    letterColors: [],          // 四个字母的颜色数组
 
     // 登录按钮状态
     btnText: '微信快捷登录',
@@ -99,16 +80,19 @@ Page({
     // 形状开关按钮
     toggleLabel: 'O',         // O=显示 / \=关闭
     toggleShaking: false,
+
+    statusBarHeight: 20,      // 状态栏高度（默认值，onLoad 中获取真实值）
   },
 
   // ----------------------------------------------------------
-  //  页面加载：随机选标语，生成形状，随机化字母颜色
+  //  页面加载：随机选标语，生成形状，获取状态栏高度
   // ----------------------------------------------------------
   onLoad() {
+    const sysInfo = wx.getSystemInfoSync()
     const randomIndex = Math.floor(Math.random() * sloganList.length)
     this.setData({
+      statusBarHeight: sysInfo.statusBarHeight || 20,
       currentSlogan: sloganList[randomIndex],
-      letterColors: shuffle(LETTER_COLORS),
       shapes: generateShapes(18)   // 18 个形状飘落
     })
   },

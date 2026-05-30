@@ -14,35 +14,49 @@
 
 /* shape 掉落图形、toggle-btn 切换按钮 —— 已移至 common/index.wxss */
 
+/* 登录页左上角按钮下移，避开自定义导航栏 */
+.login-page .toggle-btn {
+  top: 120rpx;
+}
+
+/* ===== 自定义导航栏 ===== */
+.custom-nav {
+  width: 100%;
+  position: relative;
+  z-index: 10;
+}
+
+.custom-nav-bar {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-nav-title {
+  font-size: 17px;
+  font-weight: bold;
+  color: #FF6B6B;
+}
+
 /* ===== 标题 ===== */
 .login-title {
   margin-top: 22vh;
   position: relative;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
   margin-bottom: var(--spacing-lg);
   z-index: 1;
 }
 
-.title-letters {
-  display: flex;
-  align-items: baseline;
-}
-
-.title-letter {
+.title-text {
   font-size: 80rpx;
   font-weight: 900;
   color: #FFFFFF;
-  letter-spacing: 6rpx;
-}
-
-.title-suffix {
-  font-size: 32rpx;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-  margin-left: 4rpx;
-  align-self: flex-end;
-  transform: translateY(12rpx);
+  letter-spacing: 12rpx;
+  -webkit-text-stroke: 1rpx #FF6B6B;
+  text-shadow: 0 0 12rpx #FF6B6B, 0 0 24rpx #FF6B6B;
 }
 
 /* ===== 分割线 ===== */
